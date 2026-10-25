@@ -9,6 +9,9 @@ Plugins get a settings page in the game's own style, config files, timers, game 
 per-save storage, and even a main-menu entry of their own, without shipping a pak. Each plugin can be switched on or
 off from the Mods menu while the game runs.
 
+The Mods menu also lists the game's other mods - UE4SS mods and pak mods - and switches them on or off for the next
+start, so every mod can be managed from inside the game.
+
 MogHub and its plugins speak the game's eight languages (English, French, German, Spanish, Japanese, Korean,
 Simplified and Traditional Chinese), following the game's text language and using its official terms.
 

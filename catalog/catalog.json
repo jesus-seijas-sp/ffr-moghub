@@ -1,0 +1,95 @@
+{
+  "format": 1,
+  "updated": "2026-10-25",
+  "mods": [
+    {
+      "id": "ue4ss",
+      "name": "UE4SS",
+      "author": "UE4SS team",
+      "kind": "loader",
+      "description": "The mod loader MogHub runs on. Set up for FINAL FANTASY RESONANCE (engine version 5.6).",
+      "homepage": "https://github.com/UE4SS-RE/RE-UE4SS",
+      "version": "3.0.1",
+      "source": { "type": "github-release", "repo": "UE4SS-RE/RE-UE4SS", "tag": "experimental-latest", "asset": "^UE4SS_v.*\\.zip$" },
+      "install": [ { "from": "", "to": "FFRS/Binaries/Win64" } ],
+      "keep": [ "ue4ss/Mods", "ue4ss/UE4SS-settings.ini" ],
+      "iniSet": [
+        { "file": "FFRS/Binaries/Win64/ue4ss/UE4SS-settings.ini", "section": "EngineVersionOverride", "key": "MajorVersion", "value": "5" },
+        { "file": "FFRS/Binaries/Win64/ue4ss/UE4SS-settings.ini", "section": "EngineVersionOverride", "key": "MinorVersion", "value": "6" }
+      ],
+      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/UE4SS.dll" },
+      "localVersion": { "file": "FFRS/Binaries/Win64/ue4ss/UE4SS.log", "pattern": "UE4SS - v([\\d.]+)" },
+      "versionFrom": { "asset": "UE4SS_v([\\d.]+)-" }
+    },
+    {
+      "id": "moghub",
+      "name": "MogHub",
+      "author": "jesus-seijas-sp",
+      "kind": "framework",
+      "description": "The mod framework: a Mods menu in the game for every mod, and the base FFR Trainer and FFR Bestiary run on.",
+      "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub",
+      "version": "0.1.0",
+      "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
+      "requires": [ "ue4ss" ],
+      "install": [
+        { "from": "moghub/runtime/MogHub", "to": "FFRS/Binaries/Win64/ue4ss/Mods/MogHub" },
+        { "from": "moghub/pak", "to": "FFRS/Content/Paks/~mods" }
+      ],
+      "exclude": [ "lang/en.ini" ],
+      "keep": [ "config.ini" ],
+      "create": [ "FFRS/Binaries/Win64/ue4ss/Mods/MogHub/enabled.txt" ],
+      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/MogHub/Scripts/main.lua" },
+      "localVersion": { "file": "FFRS/Binaries/Win64/ue4ss/Mods/MogHub/Scripts/kit/core.lua", "pattern": "VERSION = \"([^\"]+)\"" },
+      "versionFrom": { "file": "moghub/runtime/MogHub/Scripts/kit/core.lua", "pattern": "VERSION = \"([^\"]+)\"" }
+    },
+    {
+      "id": "ffr-trainer",
+      "name": "FFR Trainer",
+      "author": "jesus-seijas-sp",
+      "kind": "plugin",
+      "description": "Cheats and boosters, set from the Mods menu: god mode, turbo, auto battle, rewards, shops, abilities, and the save editor's quick actions in the running game.",
+      "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub/tree/main/plugins/trainer",
+      "version": "0.4.0",
+      "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
+      "requires": [ "moghub" ],
+      "install": [ { "from": "plugins/trainer/runtime/FFRTrainer", "to": "FFRS/Binaries/Win64/ue4ss/Mods/FFRTrainer" } ],
+      "exclude": [ "lang/en.ini" ],
+      "keep": [ "config.ini" ],
+      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/FFRTrainer/moghub.lua" },
+      "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/FFRTrainer/moghub.ini", "key": "Version" },
+      "versionFrom": { "ini": "plugins/trainer/runtime/FFRTrainer/moghub.ini", "key": "Version" }
+    },
+    {
+      "id": "ffr-bestiary",
+      "name": "FFR Bestiary",
+      "author": "Law19902 (MogHub port: jesus-seijas-sp)",
+      "kind": "plugin",
+      "description": "A bestiary in the main menu: every enemy you have met, by area, with its scan data, sprite, drop and steal chances, and each area's enemy levels.",
+      "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub/tree/main/plugins/bestiary",
+      "version": "0.2.0",
+      "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
+      "requires": [ "moghub" ],
+      "install": [
+        { "from": "plugins/bestiary/runtime/FFRBestiary", "to": "FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary" },
+        { "from": "plugins/bestiary/data/bestiary_data.lua", "to": "FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary/Scripts/bestiary_data.lua" }
+      ],
+      "exclude": [ "lang/en.ini" ],
+      "keep": [ "config.ini", "saves", "libra.json" ],
+      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary/moghub.lua" },
+      "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary/moghub.ini", "key": "Version" },
+      "versionFrom": { "ini": "plugins/bestiary/runtime/FFRBestiary/moghub.ini", "key": "Version" }
+    },
+    {
+      "id": "nexus-37",
+      "name": "MRP Multiplier",
+      "author": "MajinXIV",
+      "kind": "pak",
+      "description": "Multiplies the vision points (MRP) earned from battles.",
+      "homepage": "https://www.nexusmods.com/finalfantasyresonance/mods/37",
+      "version": "1.0",
+      "source": { "type": "nexus", "game": "finalfantasyresonance", "modId": 37 },
+      "install": [ { "from": "", "to": "FFRS/Content/Paks/~mods" } ],
+      "versionFrom": { "nexus": true }
+    }
+  ]
+}

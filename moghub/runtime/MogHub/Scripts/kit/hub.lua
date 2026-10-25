@@ -2,6 +2,8 @@
 -- native list on the left, a detail panel on the right for the row under the cursor.
 --   Confirm on a plugin: open / close it.  Left / Right on a plugin: switch it on / off, right away.
 --   Confirm on a setting: change it (toggles flip, lists step and wrap).  Left / Right on a setting: previous / next.
+-- Below the plugins, the game's other mods (UE4SS mods and paks, kit/others.lua): confirm or Left / Right switches one
+-- on or off for the next start.
 local M = {}
 local kit, valid, list
 
@@ -56,6 +58,11 @@ local function buildRows()
             end
         end
     end
+    local others = kit.others.list
+    if #others > 0 then
+        rows[#rows + 1] = { kind = "othersHeader" }
+        for _, m in ipairs(others) do rows[#rows + 1] = { kind = "other", other = m } end
+    end
     if #rows == 0 then rows[1] = { kind = "empty" } end
 end
 
@@ -67,6 +74,8 @@ local function label(i)
     if r.kind == "info" then return t("hub.menuEntry", "Menu entry") end
     if r.kind == "section" then return "- " .. r.mod.config:text(r.item, "label") .. " -" end
     if r.kind == "item" then return r.mod.config:text(r.item, "label") end
+    if r.kind == "othersHeader" then return "- " .. t("hub.otherMods", "Other mods") .. " -" end
+    if r.kind == "other" then return r.other.name end
     return t("hub.noPlugins", "No plugins installed")
 end
 
@@ -74,6 +83,10 @@ local function value(r)
     if r.kind == "plugin" then return pluginStatus(r.mod) end
     if r.kind == "switch" then return onOff(r.mod.enabled), r.mod.enabled and kit.ui.WHITE or kit.ui.DIM end
     if r.kind == "info" then return kit.menu.title(r.mod.ownScreen), kit.ui.GREY end
+    if r.kind == "other" then
+        local m = r.other
+        return (m.changed and "* " or "") .. "<  " .. onOff(m.on) .. "  >", m.on and kit.ui.WHITE or kit.ui.DIM
+    end
     if r.kind == "item" then
         local kind = r.item.type
         if kind == "action" then return r.mod.config:text(r.item, "button") or "", kit.ui.BLUE end
@@ -130,6 +143,22 @@ local function show(i)
                 val = val .. "\n" .. t("hub.default", "Default: {1}", cfg:format(item, item.default))
             end
         end
+    elseif r.kind == "othersHeader" then
+        name = t("hub.otherMods", "Other mods")
+        body = t("hub.othersHelp", "Mods that aren't MogHub plugins: UE4SS mods and pak mods. MogHub can switch them on "
+            .. "or off, but has no settings for them. A change takes effect the next time the game starts.")
+    elseif r.kind == "other" then
+        local m = r.other
+        name = m.name
+        sub = (m.kind == "ue4ss" and t("hub.kindUE4SS", "UE4SS mod") or t("hub.kindPak", "Pak mod")) .. "   " .. m.where
+        body = t("hub.othersHelp", "Mods that aren't MogHub plugins: UE4SS mods and pak mods. MogHub can switch them on "
+            .. "or off, but has no settings for them. A change takes effect the next time the game starts.")
+        if m.files and #m.files > 0 then body = body .. "\n\n" .. table.concat(m.files, "   ") end
+        if m.kind == "pak" and not m.zen then
+            body = body .. "\n\n" .. t("hub.oldPak", "An old-style pak (no .utoc / .ucas): the game keeps it locked while it runs, so switch it with the game closed.")
+        end
+        val = onOff(m.on) .. "      " .. t("hub.hintSwitchLR", "(Left / Right: switch on / off)")
+        if m.changed then val = val .. "\n* " .. t("hub.nextStart", "From the next time the game starts") end
     else
         name = t("hub.noPlugins", "No plugins installed")
         body = t("hub.noPluginsHelp", "Plugins are folders in ue4ss\\Mods with a moghub.lua file. See the MogHub page on Nexus Mods.")
@@ -189,6 +218,18 @@ local function change(i, dir, isConfirm)
     elseif r.kind == "plugin" then
         expanded[r.mod.id] = not expanded[r.mod.id] or nil
         refresh(i)
+    elseif r.kind == "other" then
+        local m = r.other
+        local ok, why = kit.others.setEnabled(m, not m.on)
+        if ok then
+            local said = m.on and t("hub.noticeOn", "{1} on", m.name) or t("hub.noticeOff", "{1} off", m.name)
+            kit.notice.show(said .. " - " .. t("hub.nextStart", "From the next time the game starts"), m.on and "on" or "off", 3000)
+        elseif why == "locked" then
+            kit.notice.show(t("hub.otherLocked", "{1} is in use: switch it with the game closed", m.name), "warn", 3000)
+        else
+            kit.notice.show(t("hub.otherFailed", "{1} could not be switched: {2}", m.name, why), "warn", 3000)
+        end
+        show(i)
     elseif r.kind == "item" then
         local item, cfg = r.item, r.mod.config
         if item.type == "action" then
@@ -211,6 +252,7 @@ local screen = {
     opened = function(host, u)
         view, shown = nil, nil
         if #kit.plugins == 1 then expanded[kit.plugins[1].id] = true end
+        kit.others.scan()                                 -- installed or removed since the last visit
         build(host, u)
         -- on the title screen there's no main-menu page header: the window's own title names the screen
         if kit.menu.open and kit.menu.open.name == kit.menu.titleHost and view.L.title then
@@ -231,7 +273,7 @@ local screen = {
         local focused = view.L:poll(function(i, e)
             local r = rows[i]
             if not r then return end
-            list.indent(e, (r.kind == "plugin" or r.kind == "empty") and 0 or NEST)
+            list.indent(e, (r.kind == "plugin" or r.kind == "empty" or r.kind == "othersHeader") and 0 or NEST)
             local text, color = value(r)
             list.setValue(e, text, color)
             if e.title and e.kind ~= r.kind then
@@ -243,7 +285,7 @@ local screen = {
         local dir = horizontal()
         if dir ~= 0 and focused then
             local r = rows[focused]
-            if r and (r.kind == "item" or r.kind == "plugin") then change(focused, dir, false); view.L:refresh() end
+            if r and (r.kind == "item" or r.kind == "plugin" or r.kind == "other") then change(focused, dir, false); view.L:refresh() end
         end
     end,
 }
