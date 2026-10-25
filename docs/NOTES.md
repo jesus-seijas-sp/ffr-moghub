@@ -1,3 +1,6 @@
+> These notes are from the standalone FFR Bestiary (0.1.x). Since the MogHub port (0.2.0) the menu entry comes from
+> MogHub, so the pak, installer and BestiaryMappings parts below are history.
+
 # Gap analysis: Bestiary detail vs the game's scan (Libra) panel
 
 Reference: the in-battle scan panel (Anet, Lv.19) and its data asset `/Game/UI/Battle/Libra/Data/DA_BtlLibra`, which

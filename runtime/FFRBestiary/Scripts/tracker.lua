@@ -9,7 +9,7 @@ local lastNamedArea
 
 -- area key for where the player is now (see tools/export_data.py: mapArea / islandArea / stageArea)
 function M.currentArea()
-    local map, island = game.location()
+    local map, island = kit.game.location()
     if not map then return lastNamedArea end
     local area
     if map == data.worldMapId then area = data.islandArea[tostring(island)]

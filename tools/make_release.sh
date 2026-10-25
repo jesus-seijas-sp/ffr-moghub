@@ -1,19 +1,18 @@
 #!/bin/sh
-# Assemble the release zip: a folder tree to extract into the game folder. Only the mod's own files and the small
-# menu-entry pak built by tools/build_pak.sh - no scripts, no programs, no UE4SS (players install it themselves;
+# Assemble the release zip: a folder tree to extract into the game folder, holding the plugin's own files only -
+# no scripts, no programs, no pak (MogHub provides the menu entry; players install MogHub and UE4SS themselves;
 # Nexus quarantines .bat/.ps1/.exe).
 set -e
 cd "$(dirname "$0")/.."
-VERSION=0.1.1
+VERSION=$(sed -n 's/^Version *= *//p' runtime/FFRBestiary/moghub.ini | tr -d '\r')
 D=dist/FFRBestiary
 M=$D/FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary
-P=$D/FFRS/Content/Paks/~mods
-rm -rf dist && mkdir -p $M/Scripts "$P"
+rm -rf dist && mkdir -p $M/Scripts
+cp runtime/FFRBestiary/moghub.ini runtime/FFRBestiary/moghub.lua $M/
 cp runtime/FFRBestiary/Scripts/*.lua data/bestiary_data.lua $M/Scripts/
-printf 'UE4SS loads this mod because this file exists.
-' > $M/enabled.txt   # no mods.txt edit needed
 cp release/README.txt $M/README.txt
-cp build/out/zzz_FFRBestiary_P.pak build/out/zzz_FFRBestiary_P.utoc build/out/zzz_FFRBestiary_P.ucas "$P/"
+# a MogHub plugin: UE4SS itself must not load it (that is MogHub's job)
+if [ -e $M/enabled.txt ] || [ -e $M/Scripts/main.lua ]; then echo "ERROR: enabled.txt / main.lua in $M" >&2; exit 1; fi
 # nothing executable may slip in
 if find $D -type f | grep -iqE '\.(bat|cmd|ps1|exe|dll|vbs|js)$'; then echo "ERROR: executable file in $D" >&2; exit 1; fi
 rm -f dist/FFRBestiary-$VERSION.zip

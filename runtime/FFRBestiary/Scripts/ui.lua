@@ -1,16 +1,19 @@
-﻿-- The Bestiary screen. The menu row opens the game's Help layout; this turns it into the bestiary: the window covers
--- the whole page, its native list shows areas (with counts) and their enemies, and a detail panel sits beside it.
--- Text uses the game's own style and heading widget (as on the Quests page); scanned enemies get the Quests check.
+-- The Bestiary screen. Its main-menu entry opens the game's Help layout (MogHub hosts it); this turns it into the
+-- bestiary: the window covers the whole page, Help's native list (kit.list) shows areas with counts and their
+-- enemies, and a detail panel sits beside it. Widgets come from MogHub's kit.ui: the game's own text style, headings
+-- and framed panels (as on the Quests and Equipment pages); scanned enemies get the Quests check.
 local game = require("game")
 local store = require("store")
 local tracker = require("tracker")
 local data = require("bestiary_data")
+local libra = require("libra")
 
 local M = {}
-M.showAll = false                  -- DEVELOPMENT: treat every enemy as seen everywhere (F7 toggles)
+M.showAll = false                  -- every enemy counts as seen, everywhere (the "Show all monsters" setting)
+M.libraAll = false                 -- DEVELOPMENT: every enemy counts as scanned (F7 toggles both)
 
 local valid = game.valid
-local function log(s) print("[FFRBestiary] " .. s .. "\n") end
+local function log(s) mod:log("%s", s) end
 
 -- layout, in the UI's 1920x1080 design units
 local WINDOW_W, WINDOW_H = 1760, 830
@@ -36,142 +39,35 @@ local MAX_CONDITIONS = 21           -- eUnitStatusCondition values a unit can re
 local NEST = 34                    -- enemy rows sit this far in from their area header
 local FACE = 40                    -- face icon before an enemy's name in the list
 local TOP_PAD = 26                 -- the window's title was collapsed; keep content clear of the frame
-local GREY = { R = 0.55, G = 0.58, B = 0.63, A = 1.0 }
-local DIM = { R = 0.42, G = 0.44, B = 0.48, A = 1.0 }
-local WHITE = { R = 1.0, G = 1.0, B = 1.0, A = 1.0 }
+local GREY, DIM, WHITE = kit.ui.GREY, kit.ui.DIM, kit.ui.WHITE
 local UNKNOWN = "???"
 local ENCOUNTERED, SCANNED = "Encountered", "Scanned"   -- the game has no strings for these
 
--- widget helpers --------------------------------------------------------------------------------------------------
-local function walk(w, test, depth)
-    depth = depth or 0
-    if not valid(w) or depth > 16 then return nil end
-    if test(w) then return w end
-    local okTree, tree = pcall(function() return w.WidgetTree end)
-    if okTree and valid(tree) and depth > 0 then return walk(tree.RootWidget, test, depth + 1) end
-    local okN, n = pcall(function() return w:GetChildrenCount() end)
-    if okN and n then
-        for i = 0, n - 1 do
-            local hit = walk(w:GetChildAt(i), test, depth + 1)
-            if hit then return hit end
-        end
-    end
-end
-local function find(w, name) return walk(w, function(x) return x:GetFName():ToString() == name end) end
+-- widget helpers: MogHub's kit.ui bound to the open screen, with the Bestiary's sizes ----------------------------------
+local host, ui, u, L               -- open host widget, the widgets built into it, kit.ui bound to it, its list
+local rowWidgets
 
-local host, ui                     -- open host widget, and the widgets built into it
-local create, widgetRow, panel, viewportScale, faceTexture
-local styleClass, subheadClass, checkTex
-
-local function new(kind, outer)
-    local module = kind:find("^Common") and "/Script/CommonUI." or (kind:find("^CPP_") and "/Script/mucha." or "/Script/UMG.")
-    local o = StaticConstructObject(StaticFindObject(module .. kind), outer or host.WidgetTree)
-    assert(valid(o), "cannot create " .. kind)
-    return o
-end
-
-local function paint(t, color) t:SetColorAndOpacity({ SpecifiedColor = color or WHITE, ColorUseRule = 0 }) end
-
--- body text in the game's SystemText style
-local function text(value, color)
-    local t = new("CommonTextBlock")
-    if valid(styleClass) then pcall(function() t:SetStyle(styleClass) end) end
-    t:SetText(FText(value or ""))
-    paint(t, color)
-    return t
-end
-
-local function set(t, value, color) t:SetText(FText(value or "")); paint(t, color) end
-
--- a heading with the game's underline (WBP_SystemSubhead)
-local function heading(value)
-    local pc = FindFirstOf("PlayerController")
-    local h = StaticFindObject("/Script/UMG.Default__WidgetBlueprintLibrary"):Create(pc, subheadClass, pc)
-    h:SetTitle(FText(value or ""))
-    return h
-end
-
-local function sized(content, w, h)
-    local b = new("SizeBox")
-    if w then b:SetWidthOverride(w) end
-    if h then b:SetHeightOverride(h) end
-    if content then b:SetContent(content) end
-    return b
-end
-
-local function spacer(h) local s = new("Spacer"); s:SetSize({ X = 1, Y = h }); return s end
-
-local function icon(size, outer)
-    local img = new("Image", outer)
-    if valid(checkTex) then img:SetBrushFromTexture(checkTex, false) end
-    img:SetDesiredSizeOverride({ X = size, Y = size })
-    return img
-end
-
--- a framed panel like the Equipment page's sections (WBP_Cmn_Window) around `content`; falls back to the bare
--- content if the game's widget is missing
-panel = function(content)
-    local pad = new("VerticalBox")
-    pad:AddChildToVerticalBox(content):SetPadding({ Left = PANEL_PAD, Top = 8, Right = PANEL_PAD, Bottom = 8 })
-    local w = create(game.WINDOW)
-    if not w then return pad end
-    local ok, err = pcall(function() find(w.WidgetTree.RootWidget, "Window_Content"):SetContent(pad) end)
-    if not ok then log("panel: " .. tostring(err)); return pad end
-    return w
-end
-
--- "Label    value" row; returns the value text
-local function row(parent, key, valueW)
-    local line = new("HorizontalBox")
-    line:AddChildToHorizontalBox(sized(text(game.libra(key) or key, GREY), LABEL_W, nil))
-    local v = text("")
-    pcall(function() v:SetAutoWrapText(true) end)
-    line:AddChildToHorizontalBox(sized(v, valueW or VALUE_W, nil))
-    parent:AddChildToVerticalBox(line):SetPadding({ Left = 0, Top = 3, Right = 0, Bottom = 3 })
-    return v
-end
-
--- a game widget (WBP class path) for this screen
-create = function(path)
-    local cls = game.class(path)
-    if not valid(cls) then log("missing widget " .. path); return nil end
-    local pc = FindFirstOf("PlayerController")
-    return StaticFindObject("/Script/UMG.Default__WidgetBlueprintLibrary"):Create(pc, cls, pc)
-end
-
--- "Label    [text][widgets]" row; returns the value text and the box that holds the widgets
-widgetRow = function(parent, key, labelW)
-    local line = new("HorizontalBox")
-    line:AddChildToHorizontalBox(sized(text(game.libra(key) or key, GREY), labelW or LABEL_W, nil))
-    local v = text("")
-    line:AddChildToHorizontalBox(v):SetVerticalAlignment(2)
-    local box = new("HorizontalBox")
-    line:AddChildToHorizontalBox(box):SetVerticalAlignment(2)
-    parent:AddChildToVerticalBox(line):SetPadding({ Left = 0, Top = 3, Right = 0, Bottom = 3 })
-    return v, box
-end
+local function new(kind, outer) return u.new(kind, outer) end
+local function text(value, color) return u.text(value, color) end
+local function set(t, value, color) u.set(t, value, color or WHITE) end   -- always repaints (fields go DIM and back)
+local function heading(value) return u.heading(value) end
+local function sized(content, w, h) return u.sized(content, w, h) end
+local function spacer(h) return u.spacer(h) end
+local function create(path) return u.create(path) end
+local function panel(content) return u.panel(content, PANEL_PAD) end
+-- "Label    value" with a scan-panel label (an ST_UI_Libra key); returns the value text
+local function row(parent, key, valueW) return u.row(parent, game.libra(key) or key, LABEL_W, valueW or VALUE_W) end
+-- the same with room for the game's icon widgets; returns the value text and their box
+local function widgetRow(parent, key, labelW) return u.widgetRow(parent, game.libra(key) or key, labelW or LABEL_W) end
 
 -- build (once per host widget; the game pools it) ---------------------------------------------------------------
 local function build()
-    -- looked up again on every build: after a return to the title the old screen (and with it the only references to
-    -- these) can be gone, and a cached wrapper would point at freed memory
-    styleClass = game.class(game.TEXT_STYLE)
-    subheadClass = game.class(game.SUBHEAD)
-    checkTex = game.load(game.CHECK_ICON)
-
-    local root = host.WidgetTree.RootWidget
-    local box, title, gap = find(root, "CPP_CommonSizeBox_0"), find(root, "Text_Title"), find(root, "Spacer_101")
-    local slot, listBox, lv = find(root, "NamedSlot_93"), find(root, "SizeBox_0"), find(root, "CmnListView")
-    assert(box and title and slot and listBox and lv, "host layout changed")
-    ui = { list = lv, entryIcons = {} }
-
-    box:SetWidthOverride(WINDOW_W); box:SetHeightOverride(WINDOW_H)
-    listBox:SetWidthOverride(LIST_W); listBox:SetHeightOverride(LIST_H)
-    title:SetVisibility(1)                                -- Collapsed: the page header already says BESTIARY
-    if gap then gap:SetVisibility(1) end
+    -- kit.list sizes the window and list and collapses Help's own title (the page header already says BESTIARY)
+    L = kit.list.attach(host, u, { window = { WINDOW_W, WINDOW_H }, list = { LIST_W, LIST_H }, lead = FACE, row = rowWidgets })
+    ui = {}
 
     local body = new("HorizontalBox")
-    slot:SetContent(body)                                 -- detaches the list box from the slot
+    L:setContent(body)
     local column = new("VerticalBox")
     body:AddChildToHorizontalBox(column)
     local summary = new("HorizontalBox")
@@ -180,24 +76,17 @@ local function build()
     summary:AddChildToHorizontalBox(text(ENCOUNTERED .. "  ", GREY))
     summary:AddChildToHorizontalBox(ui.summary)
     summary:AddChildToHorizontalBox(sized(nil, 30, nil))
-    summary:AddChildToHorizontalBox(icon(26)):SetVerticalAlignment(2)
+    summary:AddChildToHorizontalBox(u.check(26)):SetVerticalAlignment(2)
     summary:AddChildToHorizontalBox(text(" " .. SCANNED .. "  ", GREY))
     summary:AddChildToHorizontalBox(ui.summaryScanned)
     column:AddChildToVerticalBox(sized(summary, LIST_W, nil)):SetPadding({ Left = 14, Top = TOP_PAD, Right = 0, Bottom = 8 })
-    column:AddChildToVerticalBox(listBox)
+    L:takeList(column)
     body:AddChildToHorizontalBox(sized(nil, COLUMN_GAP, nil))
 
-    ui.faceHold = new("VerticalBox")                      -- keeps loaded face textures alive (never shown)
-    ui.faceHold:SetVisibility(1)
-    column:AddChildToVerticalBox(ui.faceHold)
-    local detail = new("VerticalBox")
     -- an enemy with many affinities / locations / long traits can need more room: the panel then shrinks to fit
-    local fit = new("ScaleBox")
-    ui.fit = fit
-    pcall(function() fit:SetStretch(2); fit:SetStretchDirection(1) end)   -- ScaleToFit, DownOnly
-    local fitSlot = fit:SetContent(detail)
-    pcall(function() fitSlot:SetHorizontalAlignment(1); fitSlot:SetVerticalAlignment(1) end)   -- top left
-    body:AddChildToHorizontalBox(sized(fit, DETAIL_W, LIST_H + 40))
+    local detail = new("VerticalBox")
+    ui.fit = u.fit(detail)
+    body:AddChildToHorizontalBox(sized(ui.fit, DETAIL_W, LIST_H + 40))
 
     detail:AddChildToVerticalBox(spacer(TOP_PAD))          -- clear of the window frame
     -- name bar like the scan panel's: name, then Lv. and the scanned check on the right
@@ -207,15 +96,12 @@ local function build()
     nameLine:AddChildToHorizontalBox(sized(nil, 24, nil))  -- keep the heading's underline clear of "Lv."
     ui.level = text("")
     nameLine:AddChildToHorizontalBox(sized(ui.level, 160, nil)):SetVerticalAlignment(2)
-    ui.check = icon(40)
+    ui.check = u.check(40)
     nameLine:AddChildToHorizontalBox(ui.check):SetVerticalAlignment(2)
     detail:AddChildToVerticalBox(nameLine)
     ui.forms = new("HorizontalBox")
-    ui.formsKey = create(game.KEY_ICON)
-    if ui.formsKey then
-        pcall(function() ui.formsKey:SetInputAction(game.load(game.DECIDE_ACTION)) end)
-        ui.forms:AddChildToHorizontalBox(ui.formsKey):SetVerticalAlignment(2)
-    end
+    ui.formsKey = u.keyIcon("decide")
+    if ui.formsKey then ui.forms:AddChildToHorizontalBox(ui.formsKey):SetVerticalAlignment(2) end
     ui.formsText = text("", GREY)
     ui.forms:AddChildToHorizontalBox(ui.formsText):SetPadding({ Left = 8, Top = 0, Right = 0, Bottom = 0 })
     detail:AddChildToVerticalBox(ui.forms):SetPadding({ Left = 4, Top = 2, Right = 0, Bottom = 0 })
@@ -311,10 +197,10 @@ local function areaName(key)
     return a and a.table and game.text(a.table, a.key) or key
 end
 
--- areas where some unit of entry `e` was seen
-local function seenAreasOf(e)
+-- areas where some unit of entry `e` was seen (`real`: even with "Show all monsters" on)
+local function seenAreasOf(e, real)
     local out = {}
-    if M.showAll then for _, a in ipairs(e.areas) do out[a] = true end; return out end
+    if M.showAll and not real then for _, a in ipairs(e.areas) do out[a] = true end; return out end
     for _, u in ipairs(e.units) do
         local s = store.units[u]
         if s then
@@ -329,7 +215,7 @@ end
 -- areas the list files entry `e` under: where it was seen, plus, if the save already knew it, its data areas the
 -- player has visited (all of them if none is marked visited)
 local function groupAreasOf(e)
-    local out = seenAreasOf(e)
+    local out = seenAreasOf(e, true)
     for _, u in ipairs(e.units) do
         local s = store.units[u]
         if s and s.fromSave then
@@ -342,12 +228,20 @@ local function groupAreasOf(e)
     return out
 end
 
-local function isScanned(e)
-    if M.showAll then return true end                     -- dev (F7): everything seen and scanned
+-- scanned in the game's save
+local function gameScanned(e)
     for _, u in ipairs(e.units) do
         local r = ui.records[u]; if r and r.IsAnalyzed then return true end
     end
     return false
+end
+
+-- scan data shown: as the game says, unless the player switched Libra on or off for this enemy
+local function isScanned(e)
+    if M.libraAll then return true end
+    local chosen = libra.get(e.units[1])
+    if chosen ~= nil then return chosen end
+    return gameScanned(e)
 end
 
 local function entryName(e)
@@ -449,7 +343,7 @@ local function setSprite(id)
         if m then bw, bh, cx, cy = m[2] - m[1], m[4] - m[3], (m[1] + m[2]) / 2, (m[3] + m[4]) / 2
         else bw, bh, cx, cy = b.w, b.h, 0, -(b.py * b.ch + b.cy) end
         local px = math.min(SPRITE_MAX_PX, (m and SPRITE_FILL_MEASURED or SPRITE_FILL) * SPRITE / math.max(bw, bh, 1))
-        local vs = viewportScale()                       -- screen px per design px
+        local vs = u.viewportScale()                     -- screen px per design px
         -- whole screen pixels per sprite pixel when there is room for 2 or more (sharp); below that the exact fit, as
         -- rounding 1.9 down to 1 would halve the enemy
         if px * vs >= 2 then px = math.floor(px * vs) / vs end
@@ -469,18 +363,6 @@ local function setSprite(id)
         end
         ui.sprite:PlayAnimation(FName(idle or "idle"), 0, 1.0, 0)
     end)
-end
-
--- screen pixels per UI design pixel (1080p design), for drawing sprites at whole pixels
-local vpScale
-viewportScale = function()
-    if not vpScale then
-        pcall(function()
-            vpScale = StaticFindObject("/Script/UMG.Default__WidgetLayoutLibrary"):GetViewportScale(FindFirstOf("PlayerController"))
-        end)
-        if not vpScale or vpScale <= 0 then vpScale = 1 end
-    end
-    return vpScale
 end
 
 -- every value field: texts set, the game's icon widgets hidden (text-only state: ??? or blank)
@@ -586,7 +468,7 @@ local function immunities(p)
 end
 
 local form = 1                     -- which unit (form / phase / mode) of the shown entry
-local function showEntry(e)
+local function showEntry(e, met)
     if form > #e.units then form = 1 end
     local id = e.units[form]
     local p = game.unitParam(id) or {}
@@ -598,12 +480,12 @@ local function showEntry(e)
     ui.name:SetTitle(FText(entryName(e)))
     ui.check:SetVisibility(scanned and 4 or 1)
     set(ui.level, (game.libra("UI_Libra_Level") or "Lv.") .. " " .. tostring(p.Level or "?"))
-    if #e.units > 1 then
-        ui.forms:SetVisibility(4)
-        set(ui.formsText, string.format("%d / %d", form, #e.units), GREY)    -- forms / phases: confirm shows the next
-    else
-        ui.forms:SetVisibility(1)
-    end
+    -- confirm switches Libra for this enemy; Left / Right (or Q / E) page through its forms / phases
+    local hint = (met and "" or "Not met yet        ") .. "Libra: " .. (scanned and "On" or "Off")
+    if libra.get(e.units[1]) ~= nil then hint = hint .. " (set by you)" end
+    if #e.units > 1 then hint = hint .. string.format("        Form %d / %d  (Left / Right)", form, #e.units) end
+    ui.forms:SetVisibility(4)
+    set(ui.formsText, hint, GREY)
 
     -- Affinities: the game's icons per Weak/Halved/Null/Absorb; before a scan only reactions already seen in battle
     local res, seen = resistances(p), (not scanned) and discovered(e) or nil
@@ -657,22 +539,31 @@ local function show(i, force)
     if not r or (shown == i and not force) then return end
     if shown ~= i then form = 1 end
     shown = i
-    if r.header then showHeader(r) elseif r.known then showEntry(r.entry) else showUnknown() end
+    if r.header then showHeader(r) elseif r.known then showEntry(r.entry, r.met) else showUnknown() end
 end
 
 -- list --------------------------------------------------------------------------------------------------------------
+-- With "Show all monsters" every enemy is listed under all of its areas, but the counts stay what was really met.
 local function buildRows()
-    local total, members, seenIn, seenCount, scannedCount = {}, {}, {}, 0, 0
+    local total, members, seenIn, metIn, seenCount, scannedCount = {}, {}, {}, {}, 0, 0
     for _, e in ipairs(data.entries) do
         for _, a in ipairs(e.areas) do
             total[a] = (total[a] or 0) + 1
             members[a] = members[a] or {}
             table.insert(members[a], e)
         end
-        local seen = groupAreasOf(e)
-        if next(seen) then
+        local met = groupAreasOf(e)
+        if next(met) then
             seenCount = seenCount + 1
             if isScanned(e) then scannedCount = scannedCount + 1 end
+        end
+        for a in pairs(met) do metIn[a] = metIn[a] or {}; metIn[a][e] = true end
+        local seen = met
+        if M.showAll then
+            seen = {}
+            for a in pairs(met) do seen[a] = true end
+            for _, a in ipairs(e.areas) do seen[a] = true end
+            if next(seen) == nil then seen["?"] = true end    -- no area in the data: under "no data"
         end
         for a in pairs(seen) do
             seenIn[a] = seenIn[a] or {}
@@ -693,15 +584,17 @@ local function buildRows()
     for _, a in ipairs(order) do
         local named = a == "?" or (data.areas[a] and data.areas[a].table)
         if named and (M.showAll or store.visited[a] or seenIn[a]) then
-            local list, seenHere = members[a] or {}, seenIn[a] or {}
+            local list, seenHere, metHere = members[a] or {}, seenIn[a] or {}, metIn[a] or {}
             local n, sc = 0, 0
-            for e in pairs(seenHere) do
+            for e in pairs(metHere) do
                 n = n + 1
                 if isScanned(e) then sc = sc + 1 end
             end
             rows[#rows + 1] = { header = a, seen = n, scanned = sc, total = math.max(total[a] or 0, #list) }
             if expanded[a] then
-                for _, e in ipairs(list) do rows[#rows + 1] = { entry = e, area = a, known = seenHere[e] == true } end
+                for _, e in ipairs(list) do
+                    rows[#rows + 1] = { entry = e, area = a, known = seenHere[e] == true, met = metHere[e] == true }
+                end
             end
         end
     end
@@ -713,31 +606,7 @@ end
 local function rowLabel(r) return r.header and areaName(r.header) or (r.known and entryName(r.entry) or UNKNOWN) end
 
 local function fillList(focus)
-    -- The Help list's navigator (WBP_ListViewMenu) owns the list items: SetChildrenCount makes one per row (keeping
-    -- the ones it has) and hands them to the list, so the count it moves the cursor through always matches ours (left
-    -- at Help's own 38, up on the first row wrapped to the wrong row). Being the game's, the items are never
-    -- garbage-collected under us. An item belongs to a position, not a row, so rows also set their entry's text
-    -- themselves (decorate); TutorialData.Name is kept in step for the entry's own first draw. (Earlier versions
-    -- made their own items: copying TutorialData through Lua, and writing the navigator's array from Lua, crashed.)
-    ui.pathMenu = valid(ui.pathMenu) and ui.pathMenu or find(host.WidgetTree.RootWidget, "WBP_HelpList"):GetPathMenu()
-    ui.pathMenu:SetChildrenCount(#rows, true)
-    local items = {}
-    local arr = ui.pathMenu.ListItems
-    for i = 1, #arr do
-        local it = arr[i]
-        if type(it) == "userdata" and not it.IsValid then it = it:get() end
-        items[i] = it
-    end
-    if #items ~= #rows then log("navigator made " .. #items .. " items for " .. #rows .. " rows") end
-    for i, r in ipairs(rows) do
-        local item = items[i]
-        if valid(item) then
-            item.ItemIndex = i - 1
-            item.TutorialData.Name = FText(rowLabel(r))
-        end
-    end
-    if ui.list:GetNumItems() ~= #items then pcall(function() ui.list:SetListItems(items) end) end
-    pcall(function() ui.list:RequestRefresh() end)       -- else rows added below the cursor show only after a scroll
+    L:setRows(#rows, function(i) return rowLabel(rows[i]) end)
     shown = nil
     if #rows == 0 then
         ui.name:SetTitle(FText("")); fields(""); setSprite(nil); ui.check:SetVisibility(1); ui.areasHead:SetVisibility(1)
@@ -754,151 +623,41 @@ local function refresh(focus)
     fillList(focus)
 end
 
--- the row under the cursor: the entry widget holding focus, mapped back to its list item
-local entryLib
--- each element of a TArray handed back by UE4SS (a Lua table or an array object; elements may be wrapped)
-local function each(arr, fn)
-    if type(arr) == "table" then
-        for _, v in ipairs(arr) do local ok, x = pcall(function() return v:get() end); fn(ok and x or v) end
-    elseif arr then
-        pcall(function() arr:ForEach(function(_, v) fn(v:get()) end) end)
-    end
-end
--- the list's entry widgets on screen (the list recycles them while scrolling)
-local function ourEntries()
-    local out = {}
-    local ok, arr = pcall(function() return ui.list:GetDisplayedEntryWidgets() end)
-    if ok then each(arr, function(w) if valid(w) then out[#out + 1] = w end end) end
-    if #out == 0 then                                     -- fallback: search all entry widgets (slow)
-        for _, w in ipairs(FindAllOf("WBP_HelpEntry_C") or {}) do
-            if valid(w) and w:GetFullName():find(game.HOST_PARENT, 1, true) then out[#out + 1] = w end
-        end
-    end
-    return out
-end
-local function rowOf(w)
-    entryLib = valid(entryLib) and entryLib or StaticFindObject("/Script/UMG.Default__UserObjectListEntryLibrary")
-    local item = entryLib:GetListItemObject(w)
-    if valid(item) then return item.ItemIndex + 1 end
+-- the extras on each list row (kit.list adds them once to each recycled row widget): on area headers the count, the
+-- check and the scanned count on the right; on enemies the check alone, when scanned
+rowWidgets = function(e, uu, tree)
+    e.count, e.scanned, e.icon = uu.text("", nil, tree), uu.text("", nil, tree), uu.check(26, tree)
+    pcall(function() e.count:SetJustification(2); e.scanned:SetJustification(2) end)   -- right
+    e.countBox = uu.sized(e.count, 110, nil, tree)
+    e.gap = uu.sized(nil, 18, nil, tree)
+    e.scanBox = uu.sized(e.scanned, 52, nil, tree)
+    e.right:AddChildToHorizontalBox(e.countBox)
+    e.right:AddChildToHorizontalBox(e.gap)
+    e.right:AddChildToHorizontalBox(e.icon):SetVerticalAlignment(2)
+    e.right:AddChildToHorizontalBox(e.scanBox)
 end
 
--- face icon textures: from this table, otherwise queued for the poll to load (two per tick) and kept
--- alive by an image in a hidden box (nothing else references them while their row is off screen)
-local faceTex, faceQueued, faceQueue = {}, {}, {}
-local function forgetCaches()                             -- a new screen: textures the old one held may be gone
-    faceTex, faceQueued, faceQueue = {}, {}, {}
-    vpScale = nil
-end
-faceTexture = function(path)
-    local t = faceTex[path]
-    if t and valid(t) then return t end
-    if not faceQueued[path] then faceQueued[path] = true; faceQueue[#faceQueue + 1] = path end
-end
-local function loadQueuedFaces()
-    local loaded = false
-    for _ = 1, 2 do
-        local path = table.remove(faceQueue, 1)
-        if not path then break end
-        faceQueued[path] = nil
-        local tex = game.load(path)
-        if tex then
-            faceTex[path] = tex
-            pcall(function()
-                local keep = new("Image"); keep:SetBrushFromTexture(tex, false)
-                ui.faceHold:AddChildToVerticalBox(keep)
-            end)
-            loaded = true
-        end
-    end
-    if loaded then for _, x in pairs(ui.entryIcons) do x.row = nil end end   -- rows pick their faces up next tick
-end
-
--- extras on list rows, added once to each (recycled) entry widget: the scanned check on enemy rows and the
--- right-aligned count on area headers
-local function decorate(w, i)
-    local key = w:GetAddress()
-    local extra = ui.entryIcons[key]
-    if not extra or not valid(extra.box) then
-        local button = w.WidgetTree.RootWidget                           -- WBP_LeftLineButton_C
-        local overlay = valid(button) and find(button.WidgetTree.RootWidget, "Overlay_0")
-        if not overlay then return end
-        local indentSlot = overlay.Slot                   -- SizeBox_0's slot: everything the button draws
-        local tree = button.WidgetTree
-        extra = { box = new("HorizontalBox", tree), count = text(""), icon = icon(26, tree), scanned = text("") }
-        pcall(function() extra.count:SetJustification(2); extra.scanned:SetJustification(2) end)   -- right
-        extra.countBox = new("SizeBox", tree); extra.countBox:SetWidthOverride(110); extra.countBox:SetContent(extra.count)
-        extra.scanBox = new("SizeBox", tree); extra.scanBox:SetWidthOverride(52); extra.scanBox:SetContent(extra.scanned)
-        extra.gap = new("SizeBox", tree); extra.gap:SetWidthOverride(18)
-        extra.box:AddChildToHorizontalBox(extra.countBox)
-        extra.box:AddChildToHorizontalBox(extra.gap)
-        extra.box:AddChildToHorizontalBox(extra.icon):SetVerticalAlignment(2)
-        extra.box:AddChildToHorizontalBox(extra.scanBox)
-        local s = overlay:AddChildToOverlay(extra.box)
-        s:SetHorizontalAlignment(3); s:SetVerticalAlignment(2)            -- right, centre
-        s:SetPadding({ Left = 0, Top = 0, Right = 18, Bottom = 0 })
-        -- the enemy's face (the battle timeline's icon) before its name: the entry's ScaleBox gets [face][name]
-        local inner = button.WidgetTree.RootWidget                       -- the name sits in the button's named slot
-        local scale, title = find(inner, "ScaleBox_0"), find(inner, "Text_Title")
-        if not (scale and title) then log("row layout: no ScaleBox_0 / Text_Title") end
-        if scale and title then
-            local line = new("HorizontalBox", w.WidgetTree)
-            local slot = scale:SetContent(line)
-            pcall(function() slot:SetHorizontalAlignment(1) end)   -- Left (the name used to fill the row)
-            -- every row is FACE tall (the list assumes one row height; taller enemy rows left a gap at its end);
-            -- on headers the face box is 0 wide so their text stays put
-            extra.face = new("Image", w.WidgetTree)
-            extra.face:SetDesiredSizeOverride({ X = FACE, Y = FACE })
-            extra.faceBox = new("SizeBox", w.WidgetTree)
-            extra.faceBox:SetHeightOverride(FACE); extra.faceBox:SetWidthOverride(FACE)
-            extra.faceBox:SetContent(extra.face)
-            extra.faceSlot = line:AddChildToHorizontalBox(extra.faceBox)
-            extra.faceSlot:SetVerticalAlignment(2)
-            extra.faceSlot:SetPadding({ Left = 0, Top = 0, Right = 10, Bottom = 0 })
-            line:AddChildToHorizontalBox(title):SetVerticalAlignment(2)
-            extra.title = title
-        end
-        extra.indentSlot = indentSlot
-        ui.entryIcons[key] = extra
-    end
+-- each visible row, every tick (the list recycles row widgets, so a row can't keep another row's state)
+local function decorate(i, e)
     local r = rows[i]
     local header = r and r.header
-    -- Nesting: the button's own content (bar, background, text) is padded inside the button. The list resets the
-    -- entry's outer padding whenever it reuses a row while scrolling, so indenting that made rows jump left until
-    -- the next tick; this inner slot is the mod's alone.
-    local want = header and 0 or NEST
-    if extra.indent ~= want and extra.indentSlot then
-        extra.indent = want
-        pcall(function() extra.indentSlot:SetPadding({ Left = want, Top = 0, Right = 0, Bottom = 0 }) end)
-    end
-    -- face: headers none; ??? rows keep the space (Hidden) so names line up. Visibility is set every tick (cheap)
-    -- so a row can't keep another row's state; the texture only when it changes
-    if extra.face then
-        local path = r and r.entry and r.known and data.faces[tostring(r.entry.units[1])]
-        local tex = path and faceTexture(path)
-        if tex and extra.faceTex ~= tex then
-            extra.face:SetBrushFromTexture(tex, false)
-            extra.face:SetDesiredSizeOverride({ X = FACE, Y = FACE })
-            extra.faceTex = tex
-        end
-        extra.face:SetVisibility(tex and 4 or 2)
-        local wide = r and r.entry and true or false
-        if extra.faceWide ~= wide then
-            extra.faceWide = wide
-            extra.faceBox:SetWidthOverride(wide and FACE or 0)
-            extra.faceSlot:SetPadding({ Left = 0, Top = 0, Right = wide and 10 or 0, Bottom = 0 })
-        end
-    end
-    if extra.row == r then return end                    -- already showing this row
-    extra.row = r
-    if extra.title and r then pcall(function() extra.title:SetText(FText(rowLabel(r))) end) end
+    kit.list.indent(e, header and 0 or NEST)              -- enemies sit in from their area
+    -- the enemy's face (the battle timeline's icon) before its name; ??? rows keep the space so names line up
+    local path = r and r.entry and r.known and data.faces[tostring(r.entry.units[1])]
+    kit.list.lead(e, (r and r.entry) and true or false, path and L:texture(path))
+    if not e.count or e.row == r then return end         -- the rest only changes with the row
+    e.row = r
+    -- listed but not met yet ("Show all monsters"): dimmed; other rows keep the game's own colours
+    local dim = (r and r.entry and r.known and not r.met) and true or false
+    if e.title and dim ~= (e.dim or false) then e.dim = dim; pcall(u.paint, e.title, dim and DIM or WHITE) end
     local scannedEnemy = r and r.entry and r.known and isScanned(r.entry)
-    extra.countBox:SetVisibility(header and 4 or 1)
-    extra.gap:SetVisibility(header and 4 or 1)
-    extra.scanBox:SetVisibility(header and 4 or 1)
-    extra.icon:SetVisibility((header or scannedEnemy) and 4 or 1)
+    e.countBox:SetVisibility(header and 4 or 1)
+    e.gap:SetVisibility(header and 4 or 1)
+    e.scanBox:SetVisibility(header and 4 or 1)
+    e.icon:SetVisibility((header or scannedEnemy) and 4 or 1)
     if header then
-        extra.count:SetText(FText(r.seen .. " / " .. r.total))
-        extra.scanned:SetText(FText(tostring(r.scanned)))
+        e.count:SetText(FText(r.seen .. " / " .. r.total))
+        e.scanned:SetText(FText(tostring(r.scanned)))
     end
 end
 
@@ -906,8 +665,7 @@ end
 -- CPP_BFL_GameWidgetManager:PushLayoutWidget(UI.Layout.Tutorial, PrioritizeExisting) and stops if it gets no tutorial
 -- widget back. While the Bestiary is open the push is turned into one of the main menu's own layout, which is
 -- already open, so nothing opens; the push also tells us a row was confirmed. On an area header that expands or
--- collapses the area; on an enemy with several forms it shows the next form.
-local TUTORIAL_LAYOUT, OPEN_LAYOUT = "UI.Layout.Tutorial", "UI.Layout.MainMenu"
+-- collapses the area; on an enemy it switches Libra (its scan data) on or off.
 local focusRow                     -- row of the entry widget holding focus (the detail panel may lag behind it)
 -- work left for the next poll by the push hook, the Q / E keys and confirm (nothing else schedules its own call:
 -- UE4SS callbacks running into each other broke its Lua state)
@@ -927,70 +685,41 @@ local function confirmed(row)
     if r and r.header then
         expanded[r.header] = not expanded[r.header] or nil
         pendingRefresh = row or true                      -- next tick, after the click has been handled
-    elseif r and r.entry and r.known and #r.entry.units > 1 then
-        if row ~= shown then show(row) end
-        M.switchForm(1)                                   -- controller: confirm pages through forms
+    elseif r and r.entry and r.known then                -- Libra on / off for this enemy
+        local e = r.entry
+        libra.set(e.units[1], not isScanned(e), gameScanned(e))
+        pendingRefresh = row or true                      -- the counts change too
     end
 end
 
-local lastClick, clickTick, ticks = 0, nil, 0
-function M.installHooks()
-    local ok, err = pcall(function()
-        RegisterHook("/Script/mucha.CPP_BFL_GameWidgetManager:PushLayoutWidget", function(_, tag)
-            if not host or not ui then return end
-            local t = tag:get()
-            if t.TagName:ToString() ~= TUTORIAL_LAYOUT then return end
-            t.TagName = FName(OPEN_LAYOUT)
-            lastClick = os.clock()
-            clickTick = ticks
-            local row = focusRow
-            pendingConfirm = row or true                  -- handled by the next poll, on the game thread
-        end)
-    end)
-    if not ok then log("hook PushLayoutWidget: " .. tostring(err)) end
+-- MogHub owns the PushLayoutWidget hook and the stray tutorial pop-up (for every screen it hosts) and calls this
+function M.confirm()
+    if not host or not ui then return end
+    pendingConfirm = focusRow or true                     -- handled by the next poll
 end
 
--- safety net: if the pop-up still opens, hide it and take it off the input stack at once
-local closing = {}
-local function closeStrayPopup()
-    for _, w in ipairs(FindAllOf("WBP_TutorialLayout_C") or {}) do
-        local ok, active = pcall(function() return w:IsActivated() end)
-        local key = w:GetAddress()
-        if ok and active and not closing[key] then
-            local vis = 4
-            pcall(function() vis = w:GetVisibility() end)
-            closing[key] = vis                               -- the game reuses it for the real Help: restore later
-            pcall(function() w:SetVisibility(1) end)        -- never shown
-            pcall(function() w:DeactivateWidget() end)      -- off the input stack (OnRequestClose only animates)
-            log("tutorial pop-up opened anyway; closed it")
-            if os.clock() - lastClick > 0.3 then confirmed() end
-        elseif ok and not active and closing[key] then
-            pcall(function() w:SetVisibility(closing[key]) end)
-            closing[key] = nil
-        end
-    end
-end
-
--- called every 100 ms ------------------------------------------------------------------------------------------------
-local builtFor, openAddr, pending, refreshedFor = nil, nil, nil, nil
-function M.poll()
-    local h = game.openHost()
-    if not h then host, openAddr = nil, nil; return end
+-- open / poll / close (MogHub's screen callbacks) ----------------------------------------------------------------------
+-- h: the Help layout MogHub hands over, uu: kit.ui bound to it. The game pools the widget: it is built once per
+-- object and refreshed each time it opens.
+local builtFor, pending
+function M.open(h, uu)
+    host, u = h, uu
     local addr = h:GetFullName()                          -- unique per object, unlike its address
-    if addr ~= openAddr then                              -- just opened (the widget is pooled: same object each time)
-        host, openAddr = h, addr
-        local ok, err = pcall(function()
-            if builtFor ~= addr then forgetCaches(); build(); builtFor = addr end
-            pendingForm, pendingConfirm, pendingRefresh = nil, nil, nil   -- input from before it was open
-            local here = tracker.currentArea()
-            if here then expanded[here] = true end           -- open on the area the player is in
-            refresh(1)
-        end)
-        if not ok then log("screen: " .. tostring(err)) end
-        return
-    end
-    ticks = ticks + 1
-    local c0 = os.clock()
+    local ok, err = pcall(function()
+        if builtFor ~= addr or not (ui and valid(ui.name)) then build(); builtFor = addr end
+        pendingForm, pendingConfirm, pendingRefresh = nil, nil, nil   -- input from before it was open
+        local here = tracker.currentArea()
+        if here then expanded[here] = true end           -- open on the area the player is in
+        refresh(1)
+    end)
+    if not ok then log("screen: " .. tostring(err)); host = nil end
+end
+
+function M.close() host = nil end
+
+-- every tick while open
+function M.poll()
+    if not host or not ui then return end
     if pendingRefresh then local r = pendingRefresh; pendingRefresh = nil; pcall(refresh, r ~= true and r or shown) end
     if pendingConfirm then local r = pendingConfirm; pendingConfirm = nil; pcall(confirmed, r ~= true and r or nil) end
     if pendingForm then local f = pendingForm; pendingForm = nil; pcall(M.switchForm, f) end
@@ -1001,8 +730,8 @@ function M.poll()
             devTargets, devIndex = { measure = M.measure }, 0
             local seen = {}
             for _, en in ipairs(data.entries) do
-                for f, u in ipairs(en.units) do
-                    local sp = data.sprites[tostring(u)]
+                for f, unit in ipairs(en.units) do
+                    local sp = data.sprites[tostring(unit)]
                     if not M.measure and f == 1 then devTargets[#devTargets + 1] = { en, f }
                     elseif M.measure and sp and not data.spriteBox[sp] and not seen[sp] then
                         seen[sp] = true; devTargets[#devTargets + 1] = { en, f }
@@ -1018,45 +747,21 @@ function M.poll()
         local id = e.units[t[2]]
         local path = data.sprites[tostring(id)]
         form = t[2]
-        pcall(showEntry, e)
+        pcall(showEntry, e, true)
         local ls = M.lastSprite or {}
         log(string.format("dev sprite %d unit %d %s k=%.5f vs=%.4f measure=%s", devIndex, id, tostring(path),
             ls.k or 0, ls.vs or 0, tostring(M.measure)))
         shown = focusRow                                  -- so the cursor's row does not replace it next tick
         return
     end
-    if clickTick and ticks - clickTick <= 10 then pcall(closeStrayPopup) end   -- just after a confirm only
-    pcall(loadQueuedFaces)
-    local c1 = os.clock()
-    focusRow = nil
-    local entries = ourEntries()
-    local c2 = os.clock()
-    for _, w in ipairs(entries) do
-        pcall(function()
-            local i = rowOf(w)
-            if i then
-                decorate(w, i)
-                if w:HasFocusedDescendants() then focusRow = i end
-            end
-        end)
-    end
+    focusRow = L:poll(decorate)
     -- the detail panel follows the cursor; an enemy (its sprite loads) waits until the cursor rests for one tick, so
     -- scrolling past rows stays smooth
-    local c3 = os.clock()
-    -- after the list scrolls to the cursor it can leave its last row empty until the next input; a refresh once the
-    -- cursor has rested on a new row fills it
-    if focusRow and focusRow ~= refreshedFor and pending == nil then
-        refreshedFor = focusRow
-        pcall(function() ui.list:RequestRefresh() end)
-    end
     if focusRow and focusRow ~= shown then
         local r = rows[focusRow]
         if not (r and r.entry and r.known) or pending == focusRow then show(focusRow); pending = nil
         else pending = focusRow end
     end
-    local c4 = os.clock()
-    M.lastTiming = string.format("pending/popup %.1f, entries %.1f, rows %.1f, detail %.1f", (c1 - c0) * 1000,
-        (c2 - c1) * 1000, (c3 - c2) * 1000, (c4 - c3) * 1000)
 end
 
 -- Q / E: previous / next form of the shown entry (only while the Bestiary is open)
@@ -1072,20 +777,8 @@ end
 function M.debugFocus()
     local out = {}
     pcall(function() out[#out + 1] = "host=" .. tostring(host and host:HasFocusedDescendants()) end)
-    pcall(function() out[#out + 1] = "list=" .. tostring(ui.list:HasFocusedDescendants()) end)
-    pcall(function() out[#out + 1] = "listKb=" .. tostring(ui.list:HasKeyboardFocus()) end)
-    for _, w in ipairs(ourEntries()) do
-        pcall(function() if w:HasFocusedDescendants() then out[#out + 1] = "entry row " .. tostring(rowOf(w)) end end)
-    end
-    pcall(function() out[#out + 1] = "rows=" .. #rows .. " items=" .. tostring(ui.list:GetNumItems()) .. " focusRow=" .. tostring(focusRow) end)
-    pcall(function()
-        local hl = find(host.WidgetTree.RootWidget, "WBP_HelpList")
-        local pm = hl:GetPathMenu()
-        out[#out + 1] = "pathMenu=" .. pm:GetFullName()
-        pcall(function() out[#out + 1] = "children=" .. tostring(pm:GetChildrenCount()) end)
-        pcall(function() out[#out + 1] = "focusedIdx=" .. tostring(pm:GetFocusedItemIndex(0)) end)
-        pcall(function() out[#out + 1] = "numItem=" .. tostring(pm:GetNumItem()) end)
-    end)
+    pcall(function() out[#out + 1] = "list=" .. tostring(L.view:HasFocusedDescendants()) end)
+    pcall(function() out[#out + 1] = "rows=" .. #rows .. " items=" .. tostring(L.view:GetNumItems()) .. " focusRow=" .. tostring(focusRow) end)
     log("focus: " .. table.concat(out, " "))
 end
 
