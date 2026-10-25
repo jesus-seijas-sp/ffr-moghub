@@ -31,13 +31,22 @@ cfg = mod:settings{
     { key = "InfiniteHP", label = "Infinite HP", type = "toggle", default = false, help = "The party's HP is refilled during battle." },
     { key = "InfiniteMP", label = "Infinite MP", type = "toggle", default = false, help = "The party's MP is refilled during battle." },
     { key = "FullLimitBreak", label = "Full Limit Burst", type = "toggle", default = false, help = "The Limit Burst gauge stays full." },
-    { key = "NoMPCost", label = "No MP cost", type = "toggle", default = false, help = "Skills cost no MP." },
+    mult("LBGainMultiplier", "Limit Burst gain", 0, 5, 0.5, "How fast the Limit Burst gauge fills."),
+    { key = "KeepLimitBurst", label = "Keep Limit Burst", type = "toggle", default = false,
+      help = "Each character's Limit Burst gauge carries over from one battle to the next." },
+    { key = "MPCostPercent", label = "MP cost", type = "number", min = 0, max = 100, step = 10, default = 100, format = "%g%%",
+      help = "Skill MP costs, in percent of normal (rounded up, so only 0% makes them free)." },
     { key = "OneHitKill", label = "One-hit kills", type = "toggle", default = false, help = "Enemies go down in one hit. Hotkey: Ctrl+F5." },
-    mult("DamageDealtMultiplier", "Damage dealt", 0, 10, 0.5),
-    mult("DamageTakenMultiplier", "Damage taken", 0, 5, 0.25),
-    mult("EnemyHPMultiplier", "Enemy HP", 0.25, 5, 0.25),
-    mult("EnemySpeedMultiplier", "Enemy speed", 0.25, 3, 0.25),
-    mult("EnemyBreakMultiplier", "Enemy break gauge", 0.25, 5, 0.25, "How much break gauge enemies have."),
+    { key = "Preset", label = "Difficulty preset", type = "choice", default = "custom",
+      choices = { { "custom", "Custom" }, { "normal", "Normal" }, { "hard", "Hard" }, { "veryhard", "Very hard" },
+                  { "nightmare", "Nightmare" } },
+      help = "Sets the five values below at once, on top of the game's own difficulty: Hard falls between Normal and "
+          .. "Expert, Nightmare goes well beyond Expert. Changing one of the five makes it Custom." },
+    mult("DamageDealtMultiplier", "Damage dealt", 0, 10, 0.1),
+    mult("DamageTakenMultiplier", "Damage taken", 0, 5, 0.1),
+    mult("EnemyHPMultiplier", "Enemy HP", 0.1, 5, 0.1),
+    mult("EnemySpeedMultiplier", "Enemy speed", 0.1, 3, 0.1),
+    mult("EnemyBreakMultiplier", "Enemy break gauge", 0.1, 5, 0.1, "How much break gauge enemies have."),
     { key = "AlwaysEscape", label = "Always escape", type = "toggle", default = false,
       help = "Running away always works, except in battles that can't be escaped." },
     { key = "HealAfterBattle", label = "Heal after battle", type = "toggle", default = false,
@@ -61,16 +70,33 @@ cfg = mod:settings{
     { key = "AlwaysDropRare", label = "Always drop rare items", type = "toggle", default = false },
     { key = "AlwaysSteal", label = "Steals always work", type = "toggle", default = false },
     { key = "AlwaysStealRare", label = "Steals give the rare item", type = "toggle", default = false },
+    mult("RareEnemyMultiplier", "Rare enemy chance", 1, 10, 1,
+         "How often Cactuars, Gil Snappers and Pots turn up in random battles."),
     { key = "GilAmount", label = "Gil to add", type = "choice", default = 10000, keep = true,
       choices = { { 1000, "1,000" }, { 10000, "10,000" }, { 100000, "100,000" }, { 1000000, "1,000,000" } } },
     { label = "Add Gil", type = "action", button = "Add", help = "Adds the amount above to your Gil.",
       run = function() actions.addGil() end },
+
+    { header = "Abilities" },
+    { key = "APCostPercent", label = "Ability AP cost", type = "number", min = 0, max = 100, step = 10, default = 100,
+      format = "%g%%", help = "The AP abilities, passives and master skills cost to equip, in percent of normal. 0% "
+          .. "makes everything free to equip." },
+
+    { header = "Shops" },
+    { key = "BuyPricePercent", label = "Buying prices", type = "number", min = 10, max = 200, step = 10, default = 100,
+      format = "%g%%", help = "What shops charge, in percent of normal." },
+    { key = "SellPricePercent", label = "Selling prices", type = "number", min = 10, max = 500, step = 10, default = 100,
+      format = "%g%%", help = "What shops pay for your items, in percent of normal." },
+    { key = "UnlimitedStock", label = "Unlimited stock", type = "toggle", default = false,
+      help = "Items that shops only sell a few of can be bought without limit." },
 
     { header = "Field" },
     { key = "Encounters", label = "Random encounters", type = "toggle", default = true, help = "Hotkey: Ctrl+F3." },
     mult("EncounterRate", "Encounter rate", 0.25, 4, 0.25),
 
     { header = "Your game" },
+    { label = "Heal party", type = "action", button = "Heal", run = act(live.healParty),
+      help = "Every character's HP and MP back to full, knocked-out characters included, anywhere." },
     { label = "Max Gil", type = "action", button = "Max", run = act(live.maxGil),
       help = "Sets your Gil to the most the game allows (99,999,999). Like everything in this section, it changes your "
           .. "game right away and is kept when you save; load a save without saving to undo it." },
@@ -230,9 +256,85 @@ local function applyBattleSpeed()
 end
 
 -- Skills: MP cost.
+-- Skills: MP cost and equip (AP) cost, in percent; rounded up, so only 0% makes a cost free.
+local function percent(v, pct)
+    if v <= 0 or pct >= 100 then return v end
+    if pct <= 0 then return 0 end
+    return math.ceil(v * pct / 100)
+end
 local function applySkills()
-    patch:apply("SKILL_DATA", tostring(cfg.NoMPCost), function(row, orig)
-        set(row, "Cost", cfg.NoMPCost and 0 or orig("Cost"), orig("Cost"))
+    local mp, ap = cfg.MPCostPercent, cfg.APCostPercent
+    patch:apply("SKILL_DATA", mp .. "|" .. ap, function(row, orig)
+        set(row, "Cost", percent(orig("Cost"), mp), orig("Cost"))
+        set(row, "equipCost", percent(orig("equipCost"), ap), orig("equipCost"))
+    end)
+    for _, struct in ipairs({ "PASSIVE_SKILL_DATA", "MASTER_SKILL_DATA" }) do
+        patch:apply(struct, tostring(ap), function(row, orig)
+            set(row, "equipCost", percent(orig("equipCost"), ap), orig("equipCost"))
+        end)
+    end
+end
+
+-- Shops: buying prices (each shop item's PriceRatio) and limited stock (MaxOrderNum, -1 = unlimited). Shop items are
+-- struct elements of an array, so their originals are kept here. Numbers only: the items' Condition (a story lock)
+-- is a string, and the version that rewrote it crashed the game at start-up (strings inside struct arrays are a weak
+-- spot of UE4SS 3.0.1).
+local shopOrig = {}
+local function applyShops()
+    local buy, unlimited = cfg.BuyPricePercent, cfg.UnlimitedStock
+    patch:apply("SHOP_ShopList1", buy .. "|" .. tostring(unlimited), function(row, _, rowName, t)
+        row.ItemList:ForEach(function(i, e)
+            local s = e:get()
+            local k = t.path .. "|" .. rowName .. "|" .. i
+            local o = shopOrig[k]
+            if not o then
+                o = { price = s.PriceRatio, max = s.MaxOrderNum }
+                shopOrig[k] = o
+            end
+            local price = o.price * buy / 100
+            if math.abs(s.PriceRatio - price) > 1e-6 then s.PriceRatio = price end
+            local max = unlimited and -1 or o.max
+            if s.MaxOrderNum ~= max then s.MaxOrderNum = max end
+        end)
+    end)
+end
+
+-- Selling prices: each item's sellingPrice.
+local function applySellPrices()
+    local pct = cfg.SellPricePercent
+    for _, struct in ipairs({ "CONSUMABLES_ITEM_DATA", "EQUIPMENT_ITEM_DATA", "SEED_ITEM_DATA" }) do
+        patch:apply(struct, tostring(pct), function(row, orig)
+            pcall(function()
+                local o = orig("sellingPrice")
+                if o then set(row, "sellingPrice", o * pct / 100, o) end
+            end)
+        end)
+    end
+end
+
+-- Rare enemies: the weight of the random-encounter groups they are in (ENCOUNT_GROUP_DATA encountRatio, out of the
+-- table's total). Unit ids from DT_UnitParameter: Cactuar (two), Metal Cactuar, the Gil Snappers and the Pots.
+local RARE = { [38] = true, [2092] = true, [297] = true, [293] = true, [294] = true, [295] = true, [299] = true,
+               [300] = true, [301] = true, [302] = true, [303] = true, [304] = true }
+local rareGroups
+local function findRareGroups()
+    local out = {}
+    for _, t in ipairs(tables.find("BATTLE_GROUP_DATA")) do
+        t.dt:ForEachRow(function(_, row)
+            row.UnitIdList:ForEach(function(_, e) if RARE[e:get()] then out[row.ID] = true end end)
+        end)
+    end
+    return next(out) and out or nil
+end
+local function applyRareEnemies()
+    local m = cfg.RareEnemyMultiplier
+    rareGroups = rareGroups or findRareGroups()
+    if not rareGroups then return end
+    patch:apply("ENCOUNT_GROUP_DATA", tostring(m), function(row, orig)
+        if rareGroups[row.battleGroupId] then
+            local o = orig("encountRatio")
+            set(row, "encountRatio", math.min(1000, o * m), o)
+        end
     end)
 end
 
@@ -255,7 +357,8 @@ end
 local function applyTables()
     for name, fn in pairs({ difficulty = applyDifficulty, enemies = applyUnits, ["battle groups"] = applyGroups,
                             maps = applyMaps, ["battle speed"] = applyBattleSpeed, skills = applySkills,
-                            ["encounter distance"] = applyPlayerThreshold }) do
+                            ["encounter distance"] = applyPlayerThreshold, shops = applyShops,
+                            ["selling prices"] = applySellPrices, ["rare enemies"] = applyRareEnemies }) do
         local ok, err = pcall(fn)
         if not ok then kit.logOnce(mod.tag, name, err) end
     end
@@ -283,6 +386,36 @@ local function refillParty()
     end
 end
 
+-- Limit Burst: gains scaled as they happen (each increase of a character's gauge since the last look is multiplied),
+-- and each gauge kept from one battle to the next (put back in the first seconds of a battle, after the game set it).
+local lbLast, lbKept, lbRestoreUntil = {}, {}, 0
+local function limitBurst()
+    local m, keep = cfg.LBGainMultiplier, cfg.KeepLimitBurst
+    if not kit.events.battle or ((m == 1 or cfg.FullLimitBreak) and not keep) then return end
+    local unitLib, battleLib = game.lib("CPP_BFL_Unit"), game.lib("CPP_BFL_Battle")
+    if not (unitLib and battleLib) then return end
+    local max = unitLib:GetLimitBurstPointMaxGauge()
+    local restoring = keep and os.clock() < lbRestoreUntil
+    for _, u in ipairs(game.battleSide(game.FRIENDLY)) do
+        local ok, err = pcall(function()
+            local id = u.id
+            local cur = u.param:GetLimitBurstPoint()
+            if restoring and lbKept[id] and cur < lbKept[id] then
+                cur = math.min(max, lbKept[id])
+                battleLib:SetBattleUnitLimitBurstPoint(id, cur)
+            end
+            local last = lbLast[id]
+            if last and cur > last and m ~= 1 and not cfg.FullLimitBreak then
+                local want = math.max(last, math.min(max, math.floor(last + (cur - last) * m + 0.5)))
+                if want ~= cur then battleLib:SetBattleUnitLimitBurstPoint(id, want); cur = want end
+            end
+            lbLast[id] = cur
+            if keep and not restoring then lbKept[id] = cur end
+        end)
+        if not ok then kit.logOnce(mod.tag, "limit burst", err) end
+    end
+end
+
 -- the party's maximums, remembered during battle and restored once it is over
 local party = {}
 local function rememberParty()
@@ -291,7 +424,10 @@ local function rememberParty()
         pcall(function() party[u.id] = { hp = u.param:GetMaxHitPoint(), mp = u.param:GetMaxMagicPoint() } end)
     end
 end
-mod:on("battleStart", function() party = {} end)
+mod:on("battleStart", function()
+    party = {}
+    lbLast, lbRestoreUntil = {}, os.clock() + 3
+end)
 mod:on("battleEnd", function()
     if not cfg.HealAfterBattle or not next(party) then return end
     local list = party
@@ -514,6 +650,30 @@ end, "TurboKey")
 ---------------------------------------------------------------------------------------------------
 -- Start
 ---------------------------------------------------------------------------------------------------
+-- Difficulty presets: damage dealt, damage taken, enemy HP, enemy speed, enemy break gauge, on top of the game's
+-- own difficulty (Hard sits between Normal and Expert, as Expert's own rates are 0.8 / 1.4 / 1.6 / 1.4 / 1.6)
+local PRESET_KEYS = { "DamageDealtMultiplier", "DamageTakenMultiplier", "EnemyHPMultiplier", "EnemySpeedMultiplier",
+                      "EnemyBreakMultiplier" }
+local PRESETS = { normal = { 1, 1, 1, 1, 1 }, hard = { 0.9, 1.2, 1.3, 1.2, 1.3 }, veryhard = { 0.8, 1.4, 1.6, 1.4, 1.6 },
+                  nightmare = { 0.7, 1.6, 2, 1.5, 2 } }
+local presetKey, settingPreset = {}, false
+for _, k in ipairs(PRESET_KEYS) do presetKey[k] = true end
+cfg:onChange(function(key, value)
+    if key == "Preset" and PRESETS[value] then
+        settingPreset = true
+        for i, k in ipairs(PRESET_KEYS) do cfg:set(k, PRESETS[value][i]) end
+        settingPreset = false
+    elseif presetKey[key] and not settingPreset and cfg.Preset ~= "custom" then
+        cfg:set("Preset", "custom")
+    end
+end)
+
+-- "No MP cost" (0.3.0) became "MP cost" in percent: a config that had it on gets 0%
+do
+    local old = kit.config.read(mod:path("config.ini"))
+    if old.NoMPCost and kit.config.bool(old.NoMPCost, false) and cfg.MPCostPercent == 100 then cfg:set("MPCostPercent", 0) end
+end
+
 cfg:onChange(function() applyTables(); applyTurbo(); applyFieldSpeed() end)
 -- switched off in the Mods menu: settings read as their defaults, so applying them undoes every change
 mod:onToggle(function() applyTables(); applyTurbo(); applyFieldSpeed() end)
@@ -526,5 +686,6 @@ mod:every(1000, function()
     applyTurbo()
 end, "main loop")
 mod:every(500, refillParty, "refill")
+mod:every(250, limitBurst, "limit burst")
 mod:every(400, confirmResults, "results")
 if QOL then mod:log("FFRS-QoL found: its settings are left to it") end

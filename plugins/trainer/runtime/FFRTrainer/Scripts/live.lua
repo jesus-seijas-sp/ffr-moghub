@@ -29,6 +29,23 @@ local function characters(sd)
     return ids
 end
 
+-- every character's HP and MP to full, knocked-out ones included (their maximums from the game's own parameters)
+function M.healParty()
+    local sd, err = save()
+    if not sd then return nil, err end
+    local unit = game.lib("CPP_BFL_Unit")
+    local n = 0
+    for _, id in ipairs(characters(sd)) do
+        local ok = pcall(function()
+            local p = unit:GetPlayableUnitParameterObj(id)
+            unit:SetPlayableUnitHitPoint(id, p:GetMaxHitPoint())
+            unit:SetPlayableUnitMagicPoint(id, p:GetMaxMagicPoint())
+        end)
+        if ok then n = n + 1 end
+    end
+    return mod:t("healDone", "{1} characters healed", n)
+end
+
 function M.maxGil()
     if not save() then return nil, mod:t("noGame", "load a game first") end
     local lib = game.lib("CPP_BFL_SaveDataPlayer")

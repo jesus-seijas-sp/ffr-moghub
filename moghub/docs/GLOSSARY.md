@@ -50,6 +50,7 @@ right in every language, including future ones.
 | Status ailments | Altérations d'état | Zustände | Estados alterados | 状態異常 | 상태이상 | 状态异常 | 狀態異常 |
 | Stagger (break) | choc | Schock | aturdir | ブレイク | 브레이크 | 破防 | 擊潰 |
 | Difficulty | Difficulté | Schwierigkeitsgrad | Dificultad | 難易度 | 난이도 | 难易度 | 難易度 |
+| Normal / Expert (difficulties) | Normal / Expert | Normal / Profi | Normal / Experto | Normal / Expert | Normal / Expert | 普通 / 专家 | 普通 / 專家 |
 | Tablet Shards | Fragments de tablette | Tafelfragmente | Fragmentos de tablilla | 石板のカケラ | 석판 조각 | 石板碎片 | 石板碎片 |
 | Treasure Chest | Coffre au trésor | Schatztruhe | Cofre | 宝箱 | 보물상자 | 宝箱 | 寶箱 |
 | Main Menu | Menu principal | Hauptmenü | Menú principal | メインメニュー | 메인 메뉴 | 主菜单 | 主選單 |

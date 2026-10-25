@@ -199,6 +199,7 @@ local function close()
     -- a Help layout borrowed on the title screen goes back to being the game's Help
     if o and o.name == M.titleHost then M.titleHost = nil end
     if o and o.screen.closed then kit.guarded(o.screen.owner, "screen closed", o.screen.closed) end
+    if o and kit.list then kit.list.giveKeys(o.name) end      -- the list's own Left / Right paging back
 end
 
 -- safety net: if a tutorial pop-up still opens over our screen, hide it and take it off the input stack
@@ -241,6 +242,10 @@ function M.poll()
         if not screen then return end
         local o = { host = host, name = name, screen = screen, ui = kit.ui.on(host) }
         M.open = o
+        -- Left / Right belong to the screen while it is open (kit.list.takeKeys; given back in close())
+        kit.trace("open %s: keys", screen.title)
+        pcall(function() kit.list.takeKeys(host, kit.ui.find(host.WidgetTree.RootWidget, "WBP_HelpList")) end)
+        kit.trace("open %s: opened()", screen.title)
         pendingConfirm = false
         if screen.opened then
             local ok = kit.guarded(screen.owner, "screen " .. screen.title, screen.opened, host, o.ui)

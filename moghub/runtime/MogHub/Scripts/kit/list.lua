@@ -32,7 +32,27 @@ function M.attach(host, u, layout)
     if layout.list then L.listBox:SetWidthOverride(layout.list[1]); L.listBox:SetHeightOverride(layout.list[2]) end
     if L.title then L.title:SetVisibility(1) end         -- the page header already names the screen
     if L.gap then L.gap:SetVisibility(1) end
+    M.takeKeys(host, L.helpList)
     return L
+end
+
+-- The list's navigator (WBP_ListViewMenu) moves the cursor JumpShiftAdd rows (5) on Left / Right: screens use those
+-- keys themselves (the Mods screen changes values, the Bestiary pages forms), so the jump is 0 while one of them owns
+-- the list, and the game's value comes back when it closes (the title screen borrows the game's own Help screen).
+local jumps = {}           -- host full name -> { menu, value }
+function M.takeKeys(host, helpList)
+    pcall(function()
+        local key = host:GetFullName()
+        local pm = helpList:GetPathMenu()
+        if not jumps[key] then jumps[key] = { menu = pm, value = pm.JumpShiftAdd } end
+        if pm.JumpShiftAdd ~= 0 then pm.JumpShiftAdd = 0 end
+    end)
+end
+function M.giveKeys(hostName)
+    local j = jumps[hostName]
+    if not j then return end
+    jumps[hostName] = nil
+    pcall(function() if valid(j.menu) then j.menu.JumpShiftAdd = j.value end end)
 end
 
 -- puts `content` in the window, with the list inside it where the screen wants: content must hold L.listBox
@@ -73,6 +93,7 @@ end
 -- The list's navigator owns the list items: SetChildrenCount makes one per row (keeping those it has), so the
 -- count its cursor moves through always matches ours. Being the game's, the items are never collected under us.
 function List:setRows(n, label)
+    kit.trace("list: setRows %d", n)
     self.label = label
     self.pathMenu = valid(self.pathMenu) and self.pathMenu or self.helpList:GetPathMenu()
     self.pathMenu:SetChildrenCount(n, true)
@@ -91,8 +112,10 @@ function List:setRows(n, label)
         end
     end
     self.n = n
+    kit.trace("list: items %d", #items)
     if self.view:GetNumItems() ~= #items then pcall(function() self.view:SetListItems(items) end) end
     pcall(function() self.view:RequestRefresh() end)
+    kit.trace("list: rows set")
     for _, e in pairs(extras) do if e.owner == self then e.shown = nil end end   -- every row redraws its text
 end
 
@@ -167,25 +190,28 @@ function List:extra(w)
     local key = w:GetAddress()
     local e = extras[key]
     if not (e and valid(e.value)) then
+        kit.trace("list: extras for a new row widget")
         e = base(self.u, w)
         if not e then return nil end
         extras[key] = e
     end
     if e.owner == self then return e end
     -- taking the row over
+    kit.trace("list: row taken over (lead %s, row widgets %s)", tostring(self.leadSize), tostring(self.rowBuilt ~= nil))
     local prev = e.owner
     if prev and prev.release then pcall(prev.release, e) end
     for _, x in ipairs(e.custom) do pcall(function() x:SetVisibility(1) end) end
     e.owner, e.shown, e.row = self, nil, nil
     M.indent(e, 0)
     M.setValue(e, "", nil)
-    if self.leadSize and not e.lead then addLead(self.u, w, e, self.leadSize) end
+    if self.leadSize and not e.lead then addLead(self.u, w, e, self.leadSize); kit.trace("list: lead added") end
     if e.lead then M.lead(e, false) end
     if self.rowBuilt then
         local mine = e.built[self.rowBuilt]
         if not mine then
             -- the widgets the screen adds to e.right are remembered, to hide them when another list takes the row
             local before = e.right:GetChildrenCount()
+            kit.trace("list: row widgets")
             local ok, err = pcall(self.rowBuilt, e, self.u, e.tree)
             if not ok then kit.logOnce("MogHub", "list row", err) end
             mine = {}
@@ -198,6 +224,7 @@ function List:extra(w)
         end
         for _, x in ipairs(mine) do pcall(function() x:SetVisibility(4) end) end
     end
+    kit.trace("list: row ready")
     return e
 end
 

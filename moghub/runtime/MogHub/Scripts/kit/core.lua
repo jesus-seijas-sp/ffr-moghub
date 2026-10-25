@@ -8,6 +8,8 @@ local function log(tag, fmt, ...)
     print("[" .. tag .. "] " .. (ok and msg or tostring(fmt)) .. "\n")
 end
 function kit.log(fmt, ...) log("MogHub", fmt, ...) end
+-- with Debug = 1 only: step-by-step lines for finding where something fails (a crash leaves the last one in the log)
+function kit.trace(fmt, ...) if kit.debug then log("trace", fmt, ...) end end
 
 -- an error logged once per distinct message, so a failure inside a loop doesn't flood the log
 local seen = {}

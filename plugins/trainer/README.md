@@ -5,14 +5,18 @@ menu (main menu > Mods > FFR Trainer) or from `config.ini`.
 
 ## Features
 
-- **Battle:** god mode, infinite HP / MP, full Limit Burst, no MP cost, one-hit kills, damage and enemy multipliers,
-  always escape, heal after battle, auto battle (with auto-confirmed results), battle speed and turbo.
+- **Battle:** god mode, infinite HP / MP, full Limit Burst, Limit Burst gain and carry-over between battles, MP
+  cost in percent, one-hit kills, damage and enemy multipliers with difficulty presets (Hard, Very hard,
+  Nightmare), always escape, heal after battle, auto battle (with auto-confirmed results), battle speed and turbo.
 - **Rewards:** EXP, Gil, MRP, AP and drop rate multipliers; always drop rare items; steals that always work and
-  give the rare item; add Gil.
+  give the rare item; rare enemies (Cactuars, Gil Snappers, Pots) more often; add Gil.
+- **Abilities:** AP cost of abilities, passives and master skills in percent (0%: everything free to equip).
+- **Shops:** buying and selling prices in percent, unlimited stock, every listed item for sale before the story
+  unlocks it.
 - **Field:** random encounters on / off, encounter rate, walking speed.
 - **Your game:** the [FFR Save Editor](https://github.com/jesus-seijas-sp/ffr-save-editor)'s quick actions done to
-  the running game: max Gil, raise every character to a level, stock every consumable, every artifact, max Mastery
-  Rank and awakening, Libra on every enemy met, restock shops, reveal every map.
+  the running game: heal the party anywhere, max Gil, raise every character to a level, stock every consumable,
+  every artifact, max Mastery Rank and awakening, Libra on every enemy met, restock shops, reveal every map.
 - **Hotkeys** (in `config.ini`): Ctrl+F1 god mode, Ctrl+F2 auto battle, Ctrl+F3 encounters, Ctrl+F4 walking speed,
   Ctrl+F5 one-hit kills, Ctrl+F6 turbo.
 

@@ -7,7 +7,7 @@ local kit, valid, list
 
 local WINDOW_W, WINDOW_H = 1760, 830
 local LIST_W, LIST_H = 820, 690
-local DETAIL_W = 820
+local DETAIL_W = 720                -- with the list and its cursor area, fills the window inside its frame
 local NEST = 34
 
 local rows = {}

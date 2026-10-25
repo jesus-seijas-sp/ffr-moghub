@@ -77,6 +77,7 @@ local function build()
     L = kit.list.attach(host, u, { window = { WINDOW_W, WINDOW_H }, list = { LIST_W, LIST_H }, lead = FACE,
                                    row = rowWidgets, release = releaseRow })
     ui = {}
+    kit.trace("bestiary build: list attached")
 
     local body = new("HorizontalBox")
     L:setContent(body)
@@ -97,6 +98,7 @@ local function build()
 
     -- an enemy with many affinities / locations / long traits can need more room: the panel then shrinks to fit
     local detail = new("VerticalBox")
+    kit.trace("bestiary build: summary and list")
     ui.fit = u.fit(detail)
     body:AddChildToHorizontalBox(sized(ui.fit, DETAIL_W, LIST_H + 40))
 
@@ -154,6 +156,7 @@ local function build()
         ui.affinityRows:AddChildToVerticalBox(g.row)
         ui.elementGroups[kind.value] = g
     end
+    kit.trace("bestiary build: affinities")
     ui.hp = row(info, "UI_Libra_HP")
     ui.race = row(info, "UI_Libra_Race")
     ui.resist, ui.resistBox = widgetRow(info, "UI_Libra_Condition_Invalid")
@@ -166,6 +169,7 @@ local function build()
         if not w then break end
         ui.conditionWrap:AddChildToWrapBox(w); ui.conditions[i] = w
     end
+    kit.trace("bestiary build: immunities")
     -- Libra+: the statuses it only partly resists, each with its icon and percentage (the scan shows immunities only)
     ui.partial, ui.partialBox = widgetRow(info, mod:t("statusResist", "Status resistance"))
     ui.partialWrap = new("WrapBox")
@@ -181,6 +185,7 @@ local function build()
         ui.partialWrap:AddChildToWrapBox(pair)
         ui.partials[i] = { box = pair, icon = w, text = pct }
     end
+    kit.trace("bestiary build: partial resistances")
     info:AddChildToVerticalBox(spacer(6))
     ui.traits = { row(info, "UI_Libra_1"), row(info, "UI_Libra_2"), row(info, "UI_Libra_3"), row(info, "UI_Libra_4") }
 
@@ -199,6 +204,7 @@ local function build()
         box:AddChildToHorizontalBox(pct):SetPadding({ Left = 8, Top = 0, Right = 0, Bottom = 0 })
         ui.items[#ui.items + 1] = { text = t, box = box, widget = w, field = f[3], rate = f[4], pct = pct }
     end
+    kit.trace("bestiary build: items")
     ui.scan = panel(scan)
     detail:AddChildToVerticalBox(ui.scan)
 
@@ -210,6 +216,7 @@ local function build()
     ui.areas = new("VerticalBox")
     ui.areasScroll:AddChild(ui.areas)
     ui.areasHead = panel(where)                           -- shown / hidden as a whole
+    kit.trace("bestiary build: done")
     detail:AddChildToVerticalBox(ui.areasHead)
 end
 
@@ -793,11 +800,14 @@ function M.open(h, uu)
     local ok, err = pcall(function()
         -- built again for a new widget, or when the language changed (texts are built in)
         local key = addr .. "|" .. kit.i18n.lang
+        kit.trace("bestiary: open (build %s)", tostring(builtFor ~= key or not (ui and valid(ui.name))))
         if builtFor ~= key or not (ui and valid(ui.name)) then build(); builtFor = key end
+        kit.trace("bestiary: refresh")
         pendingForm, pendingConfirm, pendingRefresh = nil, nil, nil   -- input from before it was open
         local here = tracker.currentArea()
         if here then expanded[here] = true end           -- open on the area the player is in
         refresh(1)
+        kit.trace("bestiary: open done")
     end)
     if not ok then log("screen: " .. tostring(err)); host = nil end
 end
