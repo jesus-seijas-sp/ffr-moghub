@@ -5,7 +5,7 @@ you have met, grouped by area, with the game's own scan (Libra) details once you
 battle sprite, and where it can be found.
 
 This is a fork of [FFR Bestiary](https://github.com/Law19902/ffr-bestiary) by Law19902, rebuilt as a plugin for
-**MogHub**, the FFR mod framework: MogHub provides the menu entry (no pak of its own), the screen's widgets and
+**[MogHub](../../README.md)**, the FFR mod framework: MogHub provides the menu entry (no pak of its own), the screen's widgets and
 list, per-save storage and the game's events.
 
 > First release, made for community feedback - expect rough edges. Bug reports and suggestions are very welcome in
@@ -31,7 +31,7 @@ list, per-save storage and the game's events.
 - Works with controller and keyboard; uses the game's own fonts, panels and icons
 
 ## Install
-1. Install MogHub (it comes with its own instructions, including the one-time UE4SS setup).
+1. Install [MogHub](../../README.md) (it comes with its own instructions, including the one-time UE4SS setup).
 2. Extract `FFRBestiary-<version>.zip` into the game folder (the one containing `FFRS`). It adds
    `FFRS\Binaries\Win64\ue4ss\Mods\FFRBestiary`. Bestiary appears in the main menu above System.
 
@@ -55,7 +55,7 @@ Made for game version 1.0.1.0.
 Developer notes are in [docs/NOTES.md](docs/NOTES.md) and the original design in [docs/SPEC.md](docs/SPEC.md).
 The data tools need the game's files extracted locally (`tools/ffr-dump`, a CUE4Parse dumper; a `.usmap` from
 UE4SS) - nothing extracted is committed. `tools/export_data.py` writes the data file, `tools/make_release.sh` the
-zip. During development, MogHub's `tools/deploy.sh` installs this plugin next to MogHub.
+zip. During development, the repository's `tools/deploy.sh` installs it next to MogHub.
 
 ## Credits and licence
 - Mod code: MIT licence ([LICENSE](LICENSE)). Original FFR Bestiary by Law19902; MogHub port by jesus-seijas-sp.
