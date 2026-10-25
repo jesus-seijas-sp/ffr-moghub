@@ -1,0 +1,6 @@
+tools/downloads/
+tools/*/bin/
+tools/*/obj/
+extracted/
+build/
+dist/
