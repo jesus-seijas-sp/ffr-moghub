@@ -1,4 +1,4 @@
-# FFR Bestiary (MogHub edition)
+# MogHub Bestiary
 
 A bestiary for **FINAL FANTASY RESONANCE** (Steam, PC). It adds a **Bestiary** page to the main menu: every enemy
 you have met, grouped by area, with the game's own scan (Libra) details once you have scanned it, its animated
@@ -23,7 +23,7 @@ list, per-save storage and the game's events.
 - Animated battle sprites and the battle timeline's face icons
 - Encounter locations: places you have met the enemy are named, the rest show `???`
 - Enemies with several forms or phases: Left / Right (or Q / E) steps through them
-- **Show all monsters** (a setting in Mods > FFR Bestiary): every monster listed, the unmet ones dimmed, while the
+- **Show all monsters** (a setting in Mods > MogHub Bestiary): every monster listed, the unmet ones dimmed, while the
   counts stay what you really met
 - **Libra by hand**: confirm on an enemy switches its scan data on or off, whatever your save says; **Libra on
   every monster** (a setting) shows them all
@@ -37,8 +37,8 @@ list, per-save storage and the game's events.
 
 ## Install
 1. Install [MogHub](../../README.md) (it comes with its own instructions, including the one-time UE4SS setup).
-2. Extract `FFRBestiary-<version>.zip` into the game folder (the one containing `FFRS`). It adds
-   `FFRS\Binaries\Win64\ue4ss\Mods\FFRBestiary`. Bestiary appears in the main menu above System.
+2. Extract `MogHubBestiary-<version>.zip` into the game folder (the one containing `FFRS`). It adds
+   `FFRS\Binaries\Win64\ue4ss\Mods\MogHubBestiary`. Bestiary appears in the main menu above System.
 
 Don't install the original FFR Bestiary alongside (delete its `FFRS\Content\Paks\~mods\zzz_FFRBestiary_P.*` files):
 both would add a Bestiary entry. Its progress files work with this version.
@@ -49,7 +49,7 @@ written**; Bestiary progress lives in its own files in the plugin folder (`saves
 Made for game version 1.0.1.0.
 
 ## How it works
-- A MogHub plugin (`runtime/FFRBestiary`): `moghub.lua` registers the screen and settings; `Scripts/ui.lua` builds
+- A MogHub plugin (`runtime/MogHubBestiary`): `moghub.lua` registers the screen and settings; `Scripts/ui.lua` builds
   the page in the game's Help layout with MogHub's `kit.ui` and `kit.list`, `tracker.lua` notes the enemies met in
   battle, `store.lua` keeps progress with the game's saves, `libra.lua` keeps the Libra choices made by hand, and
   `game.lua` holds what depends on the game's build.

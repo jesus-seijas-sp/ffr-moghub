@@ -20,8 +20,10 @@ Simplified and Traditional Chinese), following the game's text language and usin
 | Folder | What it is |
 |---|---|
 | [`moghub/`](moghub) | The framework: the UE4SS mod (`runtime/MogHub`), the menu pak and the tools that build it, the plugin author guide ([`docs/MODDING.md`](moghub/docs/MODDING.md)) and an example plugin |
-| [`plugins/trainer/`](plugins/trainer) | **FFR Trainer**: battle, reward and field cheats, plus the [FFR Save Editor](https://github.com/jesus-seijas-sp/ffr-save-editor)'s quick actions done to the running game |
-| [`plugins/bestiary/`](plugins/bestiary) | **FFR Bestiary**: every enemy you have met, by area, with its scan data and sprite. A fork of [Law19902's FFR Bestiary](https://github.com/Law19902/ffr-bestiary), with its history |
+| [`plugins/trainer/`](plugins/trainer) | **MogHub Trainer**: battle, reward and field cheats, plus the [FFR Save Editor](https://github.com/jesus-seijas-sp/ffr-save-editor)'s quick actions done to the running game |
+| [`plugins/bestiary/`](plugins/bestiary) | **MogHub Bestiary**: every enemy you have met, by area, with its scan data and sprite. A fork of [Law19902's FFR Bestiary](https://github.com/Law19902/ffr-bestiary), with its history |
+| [`manager/`](manager) | **MogHub Manager**: a desktop app (Windows, Linux, Steam Deck) that lists every installed mod, switches them on and off, and installs and updates the mods in the catalog |
+| [`catalog/`](catalog) | The mod list MogHub Manager offers, with each mod's source and latest version (`tools/update_catalog.js` refreshes it) |
 | [`tools/`](tools) | Development scripts for the whole repository |
 
 ## Installing (players)

@@ -1,4 +1,4 @@
-FFR Bestiary 0.2.0 - a bestiary for FINAL FANTASY RESONANCE (Steam, PC)
+MogHub Bestiary 0.2.0 - a bestiary for FINAL FANTASY RESONANCE (Steam, PC)
 =====================================================================
 
 Adds "Bestiary" to the main menu (above System): every enemy you have met, grouped by area, with the game's own
@@ -12,19 +12,19 @@ REQUIREMENT: MogHub
 
 INSTALL
   Extract this zip into your game folder (the FINAL FANTASY RESONANCE folder that contains FFRS). It adds
-    FFRS\Binaries\Win64\ue4ss\Mods\FFRBestiary\
+    FFRS\Binaries\Win64\ue4ss\Mods\MogHubBestiary\
   Start the game and open the main menu: Bestiary is above System.
   The original FFR Bestiary (0.1.x, with its own zzz_FFRBestiary_P pak) must not be installed alongside: delete its
   three FFRS\Content\Paks\~mods\zzz_FFRBestiary_P files. Its progress files work with this version.
 
 UNINSTALL
-  Delete FFRS\Binaries\Win64\ue4ss\Mods\FFRBestiary, or switch it off in the main menu > Mods.
-  Your bestiary progress is in ...\Mods\FFRBestiary\saves: copy it somewhere first if you want to keep it.
+  Delete FFRS\Binaries\Win64\ue4ss\Mods\MogHubBestiary, or switch it off in the main menu > Mods.
+  Your bestiary progress is in ...\Mods\MogHubBestiary\saves: copy it somewhere first if you want to keep it.
 
 UPDATING
   Extract the new version over the old one. Progress (the saves folder) is kept.
 
-SETTINGS (main menu > Mods > FFR Bestiary)
+SETTINGS (main menu > Mods > MogHub Bestiary)
   Show all monsters   lists every monster under all the areas it appears in, also the ones you haven't met
                       (dimmed). The Encountered and Scanned counts stay what you really met.
   Area enemy levels   each area's level range of random encounters (bosses left out), in its panel.

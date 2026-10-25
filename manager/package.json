@@ -1,0 +1,38 @@
+{
+  "name": "moghub-manager",
+  "productName": "MogHub Manager",
+  "version": "0.1.0",
+  "description": "Mod manager for FINAL FANTASY RESONANCE: MogHub, its plugins and every other mod, with Nexus Mods downloads and updates",
+  "author": "jseijas",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jesus-seijas-sp/ffr-moghub.git",
+    "directory": "manager"
+  },
+  "main": "src/main/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node test/run.js",
+    "dist": "electron-builder --win --linux --x64"
+  },
+  "build": {
+    "appId": "com.jseijas.moghubmanager",
+    "productName": "MogHub Manager",
+    "artifactName": "MogHub-Manager-${version}-${os}-${arch}.${ext}",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["src/**/*", "build/icon.png", "package.json"],
+    "win": { "target": ["portable", "zip"], "icon": "build/icon.ico" },
+    "portable": { "artifactName": "MogHub-Manager-${version}-windows-portable.exe" },
+    "linux": { "target": ["AppImage", "tar.gz"], "icon": "build/icon.png", "category": "Utility",
+               "synopsis": "Mod manager for FINAL FANTASY RESONANCE" }
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0"
+  },
+  "dependencies": {
+    "@fontsource/dotgothic16": "^5.3.1"
+  }
+}

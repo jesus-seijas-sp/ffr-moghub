@@ -1,5 +1,5 @@
 -- Main-menu screens. The kit's data pak (zzz_MogHub_P) adds scene rows to the game's main-menu table: "Mods"
--- (the kit's hub) and a few spare slots that plugins can claim for an entry of their own (FFR Bestiary does). Each
+-- (the kit's hub) and a few spare slots that plugins can claim for an entry of their own (MogHub Bestiary does). Each
 -- row opens the game's Help layout, which the screen's owner then rebuilds, so the page gets the game's own frame,
 -- header, list, scrollbar, key guide, transitions and input handling.
 --

@@ -1,7 +1,7 @@
-# FFR Trainer
+# MogHub Trainer
 
 A [MogHub](../../README.md) plugin for **FINAL FANTASY RESONANCE**: cheats and boosters, set from the game's own
-menu (main menu > Mods > FFR Trainer) or from `config.ini`.
+menu (main menu > Mods > MogHub Trainer) or from `config.ini`.
 
 ## Features
 
@@ -28,10 +28,10 @@ When FFRS-QoL is installed, the settings it also handles are left to it.
 
 ## Install
 
-Install MogHub, then extract the trainer into the game folder: it adds `FFRS\Binaries\Win64\ue4ss\Mods\FFRTrainer`.
+Install MogHub, then extract the trainer into the game folder: it adds `FFRS\Binaries\Win64\ue4ss\Mods\MogHubTrainer`.
 
 ## Development
 
-- `runtime/FFRTrainer/moghub.lua`: the settings and cheats; `Scripts/live.lua`: the **Your game** actions.
+- `runtime/MogHubTrainer/moghub.lua`: the settings and cheats; `Scripts/live.lua`: the **Your game** actions.
 - `Scripts/game_data.lua` (item, enemy and map lists) is generated from the FFR Save Editor's catalogs by
   `tools/export_data.py` (by default from an `ffr-save-editor` checkout next to this repository).

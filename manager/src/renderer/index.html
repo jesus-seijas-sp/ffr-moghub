@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'">
+  <title>MogHub Manager</title>
+  <link rel="stylesheet" href="../../node_modules/@fontsource/dotgothic16/index.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="win top">
+      <div class="brand">MogHub Manager</div>
+      <div class="game" id="game">Looking for the game…</div>
+    </header>
+
+    <nav class="win tabs" id="tabs">
+      <button class="tab-btn active" data-tab="installed">Installed</button>
+      <button class="tab-btn" data-tab="available">Available</button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </nav>
+
+    <main class="win main">
+      <section id="tab-installed" class="tab active">
+        <div class="bar">
+          <span class="hint" id="installedHint"></span>
+          <button class="cmd" id="btnRescan">Refresh</button>
+        </div>
+        <div class="list" id="installedList"></div>
+      </section>
+
+      <section id="tab-available" class="tab">
+        <div class="bar">
+          <span class="hint" id="availableHint">The mods MogHub Manager can install and keep up to date.</span>
+          <button class="cmd" id="btnReloadCatalog">Refresh</button>
+        </div>
+        <div class="list" id="availableList"><div class="empty">Loading the mod list…</div></div>
+      </section>
+
+      <section id="tab-settings" class="tab">
+        <h2>Game folder</h2>
+        <p class="path" id="gameDir">-</p>
+        <div class="bar">
+          <button class="cmd" id="btnPickGame">Change</button>
+          <button class="cmd" id="btnOpenGame">Open</button>
+        </div>
+        <h2>Mod list</h2>
+        <p class="hint">The mods on offer come from a list kept in the MogHub repository on GitHub, with where each one
+          comes from and its latest version. Mods from GitHub install with one click; mods from Nexus Mods open their
+          page for now.</p>
+      </section>
+    </main>
+
+    <footer class="win status" id="status">Ready.</footer>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

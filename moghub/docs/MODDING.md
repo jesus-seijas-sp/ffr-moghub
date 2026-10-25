@@ -5,7 +5,7 @@ title screen) and runs plugins: small Lua mods that use MogHub's API instead of 
 a settings page in the game's own style, a config file, timers, game events, reversible data-table edits and
 per-save storage without writing any of that yourself.
 
-A plugin can also have **its own main-menu entry** (FFR Bestiary does): MogHub's pak has three spare scene rows,
+A plugin can also have **its own main-menu entry** (MogHub Bestiary does): MogHub's pak has three spare scene rows,
 so plugins never ship a pak of their own and never fight over the game's menu table.
 
 ## A plugin is a folder
@@ -190,7 +190,7 @@ local screen = mod:screen{
 ```
 
 The entry opens the game's Help layout (`host`, a `WBP_HelpLayout_C`). You rebuild its content with the game's
-widgets, as FFR Bestiary does, and the game keeps its frame, header, transitions, back button and input
+widgets, as MogHub Bestiary does, and the game keeps its frame, header, transitions, back button and input
 handling. `nil` comes back when all three spare entries are taken.
 
 ### Widgets: `ui`
@@ -235,7 +235,7 @@ end)
 ```
 
 The list recycles row widgets while scrolling, so set every visible row's state on every tick. `e.title` is the
-row's text widget. The Mods screen (`kit/hub.lua`) is a short example, and FFR Bestiary (`ui.lua`) a full one: rows
+row's text widget. The Mods screen (`kit/hub.lua`) is a short example, and MogHub Bestiary (`ui.lua`) a full one: rows
 with face icons, counts and check marks beside a detail panel.
 
 ## Translations

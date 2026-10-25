@@ -26,7 +26,7 @@
       "name": "MogHub",
       "author": "jesus-seijas-sp",
       "kind": "framework",
-      "description": "The mod framework: a Mods menu in the game for every mod, and the base FFR Trainer and FFR Bestiary run on.",
+      "description": "The mod framework: a Mods menu in the game for every mod, and the base MogHub Trainer and MogHub Bestiary run on.",
       "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub",
       "version": "0.1.0",
       "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
@@ -43,8 +43,8 @@
       "versionFrom": { "file": "moghub/runtime/MogHub/Scripts/kit/core.lua", "pattern": "VERSION = \"([^\"]+)\"" }
     },
     {
-      "id": "ffr-trainer",
-      "name": "FFR Trainer",
+      "id": "moghub-trainer",
+      "name": "MogHub Trainer",
       "author": "jesus-seijas-sp",
       "kind": "plugin",
       "description": "Cheats and boosters, set from the Mods menu: god mode, turbo, auto battle, rewards, shops, abilities, and the save editor's quick actions in the running game.",
@@ -52,16 +52,16 @@
       "version": "0.4.0",
       "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
       "requires": [ "moghub" ],
-      "install": [ { "from": "plugins/trainer/runtime/FFRTrainer", "to": "FFRS/Binaries/Win64/ue4ss/Mods/FFRTrainer" } ],
+      "install": [ { "from": "plugins/trainer/runtime/MogHubTrainer", "to": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubTrainer" } ],
       "exclude": [ "lang/en.ini" ],
       "keep": [ "config.ini" ],
-      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/FFRTrainer/moghub.lua" },
-      "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/FFRTrainer/moghub.ini", "key": "Version" },
-      "versionFrom": { "ini": "plugins/trainer/runtime/FFRTrainer/moghub.ini", "key": "Version" }
+      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubTrainer/moghub.lua" },
+      "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubTrainer/moghub.ini", "key": "Version" },
+      "versionFrom": { "ini": "plugins/trainer/runtime/MogHubTrainer/moghub.ini", "key": "Version" }
     },
     {
-      "id": "ffr-bestiary",
-      "name": "FFR Bestiary",
+      "id": "moghub-bestiary",
+      "name": "MogHub Bestiary",
       "author": "Law19902 (MogHub port: jesus-seijas-sp)",
       "kind": "plugin",
       "description": "A bestiary in the main menu: every enemy you have met, by area, with its scan data, sprite, drop and steal chances, and each area's enemy levels.",
@@ -70,14 +70,14 @@
       "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
       "requires": [ "moghub" ],
       "install": [
-        { "from": "plugins/bestiary/runtime/FFRBestiary", "to": "FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary" },
-        { "from": "plugins/bestiary/data/bestiary_data.lua", "to": "FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary/Scripts/bestiary_data.lua" }
+        { "from": "plugins/bestiary/runtime/MogHubBestiary", "to": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubBestiary" },
+        { "from": "plugins/bestiary/data/bestiary_data.lua", "to": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubBestiary/Scripts/bestiary_data.lua" }
       ],
       "exclude": [ "lang/en.ini" ],
       "keep": [ "config.ini", "saves", "libra.json" ],
-      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary/moghub.lua" },
-      "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary/moghub.ini", "key": "Version" },
-      "versionFrom": { "ini": "plugins/bestiary/runtime/FFRBestiary/moghub.ini", "key": "Version" }
+      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubBestiary/moghub.lua" },
+      "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubBestiary/moghub.ini", "key": "Version" },
+      "versionFrom": { "ini": "plugins/bestiary/runtime/MogHubBestiary/moghub.ini", "key": "Version" }
     },
     {
       "id": "nexus-37",

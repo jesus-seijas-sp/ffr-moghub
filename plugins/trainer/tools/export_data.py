@@ -1,4 +1,4 @@
-"""Writes runtime/FFRTrainer/Scripts/game_data.lua from the FFR Save Editor's catalogs (its data folder): which item
+"""Writes runtime/MogHubTrainer/Scripts/game_data.lua from the FFR Save Editor's catalogs (its data folder): which item
 ids are consumables and artifacts, which unit ids are enemies, and which maps are real areas (not event stages).
 Rerun after the editor's data is updated for a game patch.  usage: python tools/export_data.py [path to ffr-save-editor/data]
 (default: an ffr-save-editor checkout next to this repository)"""
@@ -9,7 +9,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "..", "..", "..", "ffr-save-editor", "data")
-OUT = os.path.join(HERE, "..", "runtime", "FFRTrainer", "Scripts", "game_data.lua")
+OUT = os.path.join(HERE, "..", "runtime", "MogHubTrainer", "Scripts", "game_data.lua")
 ARTIFACT_SKIP = {30018}            # no English text in the game files (the editor leaves it out too)
 
 

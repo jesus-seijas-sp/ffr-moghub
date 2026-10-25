@@ -1,5 +1,5 @@
 """Each area's enemy level range, from its random encounters (what you meet walking around, bosses left out): the
-level range FFR Bestiary shows in an area's panel.
+level range MogHub Bestiary shows in an area's panel.
 
 An area's random encounters are its maps' encounter tables, DT_<map row>_<n>_Encount (rows: battle group ids), and on
 the world map DT_<region>_Wld_..._Encount for the island the region is on. Battle groups list their units
