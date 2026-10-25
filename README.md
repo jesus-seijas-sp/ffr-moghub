@@ -32,11 +32,12 @@ Simplified and Traditional Chinese), following the game's text language and usin
    [experimental-latest](https://github.com/UE4SS-RE/RE-UE4SS/releases/tag/experimental-latest), extracted into
    `FFRS\Binaries\Win64`; then in `ue4ss\UE4SS-settings.ini`, under `[EngineVersionOverride]`, set
    `MajorVersion = 5` and `MinorVersion = 6`.
-2. Extract the MogHub zip into the game folder. It adds `ue4ss\Mods\MogHub` and the menu pak
+2. Download MogHub from [Nexus Mods](https://www.nexusmods.com/finalfantasyresonance/mods/110) and extract its zip
+   into the game folder. It adds `ue4ss\Mods\MogHub` and the menu pak
    `FFRS\Content\Paks\~mods\zzz_MogHub_P.*`.
 3. Extract the plugins you want into the game folder. Each adds one folder in `ue4ss\Mods`.
 
-Made for game version 1.0.1.0 (Steam build 24250053). Release zips are not published yet.
+Made for game version 1.0.1.0 (Steam build 24250053). Release zips are built with `python tools/package.py`.
 
 ## Development
 

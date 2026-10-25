@@ -1,7 +1,7 @@
 {
   "name": "moghub-manager",
   "productName": "MogHub Manager",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Mod manager for FINAL FANTASY RESONANCE: MogHub, its plugins and every other mod, with Nexus Mods downloads and updates",
   "author": "jseijas",
   "license": "MIT",

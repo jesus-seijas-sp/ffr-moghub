@@ -1,7 +1,7 @@
 -- MogHub core: logging, the one game-thread tick, timers, events and the plugin loader.
 -- Every plugin runs in this Lua state (UE4SS gives each of its mods a separate one), so plugins call the kit
 -- directly. One timer drives everything: UE4SS callbacks running into each other break its Lua state.
-local kit = { VERSION = "0.2.0", plugins = {}, dir = nil, modsDir = nil, debug = false }
+local kit = { VERSION = "1.0.0", plugins = {}, dir = nil, modsDir = nil, debug = false }
 
 local function log(tag, fmt, ...)
     local ok, msg = pcall(string.format, fmt, ...)
