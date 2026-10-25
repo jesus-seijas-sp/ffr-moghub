@@ -118,8 +118,32 @@ function kit.cache(events)
     return c
 end
 
+-- Hotkeys are read from the game thread each tick (the raw key state, kit.game.keyDown), not with UE4SS key binds:
+-- those call Lua from UE4SS's input thread, and Lua running on two threads at once corrupts its state.
+local keys = {}            -- { key, mods = { { "LeftControl", "RightControl" }, ... }, fn, name, owner, down }
+local function held(names)
+    for _, n in ipairs(names) do if kit.game.keyDown(n) then return true end end
+    return false
+end
+local function pollKeys()
+    for _, k in ipairs(keys) do
+        local down = kit.game.keyDown(k.key)
+        if down then
+            for _, m in ipairs(k.mods) do if not held(m) then down = false; break end end
+        end
+        if down and not k.down then guarded(k.owner, k.name, k.fn) end
+        k.down = down
+    end
+end
+
+local LOADING_FALLBACK_MS = 20000
 local function tick()
     now = now + TICK_MS
+    -- the game starts behind a loading screen that began before the kit loaded: its end, or 20 s
+    if kit.loading and now >= LOADING_FALLBACK_MS and now < LOADING_FALLBACK_MS + TICK_MS and not kit.events.sawLoading then
+        kit.loading = false
+    end
+    if #keys > 0 and not kit.loading then guarded(nil, "hotkeys", pollKeys) end
     kit.emit("tick")
     local i = 1
     while i <= #timers do
@@ -177,21 +201,20 @@ function Mod:hook(path, fn)
     return ok
 end
 -- a hotkey from a spec like "CTRL+F6" (F1-F12, A-Z, 0-9 with CTRL+ / SHIFT+ / ALT+); runs on the game thread
-local MODIFIERS = { CTRL = "CONTROL", CONTROL = "CONTROL", SHIFT = "SHIFT", ALT = "ALT" }
-local DIGITS = { [0] = "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE" }
+local MODIFIERS = { CTRL = { "LeftControl", "RightControl" }, CONTROL = { "LeftControl", "RightControl" },
+                    SHIFT = { "LeftShift", "RightShift" }, ALT = { "LeftAlt", "RightAlt" } }
+local DIGITS = { [0] = "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" }
 function Mod:key(spec, fn, name)
     spec = tostring(spec or ""):upper():gsub("%s", "")
     if spec == "" or spec == "NONE" then return false end
     local mods, keyName = {}, nil
     for part in spec:gmatch("[^+]+") do
-        if MODIFIERS[part] then mods[#mods + 1] = ModifierKey[MODIFIERS[part]] else keyName = part end
+        if MODIFIERS[part] then mods[#mods + 1] = MODIFIERS[part] else keyName = part end
     end
-    if keyName and keyName:match("^%d$") then keyName = DIGITS[tonumber(keyName)] end
-    local key = keyName and Key[keyName]
-    if not key then self:log("unknown key '%s'%s", spec, name and (" for " .. name) or ""); return false end
-    local mod = self
-    local run = function() ExecuteInGameThread(function() guarded(mod, name or spec, fn) end) end
-    if #mods > 0 then RegisterKeyBind(key, mods, run) else RegisterKeyBind(key, run) end
+    if keyName and keyName:match("^%d$") then keyName = DIGITS[tonumber(keyName)]
+    elseif keyName and not (keyName:match("^F%d%d?$") or keyName:match("^%u$")) then keyName = nil end
+    if not keyName then self:log("unknown key '%s'%s", spec, name and (" for " .. name) or ""); return false end
+    keys[#keys + 1] = { key = keyName, mods = mods, fn = fn, name = name or spec, owner = self, down = false }
     return true
 end
 function Mod:path(rel) return self.dir .. "/" .. rel end
@@ -366,12 +389,16 @@ function kit.start(dir)
     kit.title.start()
     require("kit.dev").start(kit)
 
-    -- the game starts behind a loading screen that began before the kit loaded: wait for its end (or 20 s)
-    ExecuteWithDelay(20000, function() if not kit.events.sawLoading then kit.loading = false end end)
-    LoopAsync(TICK_MS, function()
-        ExecuteInGameThread(function() guarded(nil, "tick", tick) end)
-        return false
-    end)
+    -- One loop on the game thread. (Not LoopAsync + ExecuteInGameThread: that runs Lua on a second thread and hands
+    -- the game thread a new callback every tick, which corrupted the Lua state at random moments.)
+    local gameTick = function() guarded(nil, "tick", tick) end
+    if LoopInGameThreadWithDelay then
+        LoopInGameThreadWithDelay(TICK_MS, gameTick)
+        kit.log("tick on the game thread")
+    else
+        kit.log("LoopInGameThreadWithDelay missing: tick from an async loop")
+        LoopAsync(TICK_MS, function() ExecuteInGameThread(gameTick); return false end)
+    end
     kit.log("version %s, %d plugin(s)", kit.VERSION, #kit.plugins)
 end
 

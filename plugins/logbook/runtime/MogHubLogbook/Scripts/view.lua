@@ -23,7 +23,7 @@ local view, shown, polls, tot = nil, nil, 0, nil
 local function t(key, default, ...) return mod:t(key, default, ...) end
 local function text(ref) return ref and kit.game.text(ref[1], ref[2]) or nil end
 local function clean(s) return (s or ""):gsub("\r?\n", " ") end
-local CHECK, OPEN = "✔", "○"
+local CHECK, OPEN = "●", "○"           -- (the game font has no ✔)
 
 ---------------------------------------------------------------------------------------------------
 -- Names and totals
@@ -248,8 +248,20 @@ local function setBody(lines)
             if k <= half then left[#left + 1] = line else right[#right + 1] = line end
         end
     end
-    view.u.set(view.detail.body, table.concat(left, "\n"))
-    view.u.set(view.detail.body2, table.concat(right, "\n"))
+    local d = view.detail
+    view.u.set(d.body, table.concat(left, "\n"))
+    view.u.set(d.body2, table.concat(right, "\n"))
+    -- one column uses the whole width; the second shows only for a long list
+    local two = #right > 0
+    if d.two ~= two then
+        d.two = two
+        pcall(function()
+            d.left:SetWidthOverride(two and d.colW or d.fullW)
+            local vis = two and kit.game.enum.Visibility.SelfHitTestInvisible or kit.game.enum.Visibility.Collapsed
+            d.gap:SetVisibility(vis)
+            d.right:SetVisibility(vis)
+        end)
+    end
 end
 
 local function show(i)
@@ -361,12 +373,13 @@ local function build(host, u)
     detail:AddChildToVerticalBox(d.sub):SetPadding({ Left = 4, Top = 4, Right = 0, Bottom = 10 })
     local inner = u.new("VerticalBox")
     local columns = u.new("HorizontalBox")
-    local colW = math.floor((DETAIL_W - 60) / 2)
+    d.colW, d.fullW = math.floor((DETAIL_W - 60) / 2), DETAIL_W - 40
     d.body, d.body2 = u.text(""), u.text("")
     pcall(function() d.body:SetAutoWrapText(true); d.body2:SetAutoWrapText(true) end)
-    columns:AddChildToHorizontalBox(u.sized(d.body, colW))
-    columns:AddChildToHorizontalBox(u.sized(nil, 20))
-    columns:AddChildToHorizontalBox(u.sized(d.body2, colW))
+    d.left, d.gap, d.right = u.sized(d.body, d.colW), u.sized(nil, 20), u.sized(d.body2, d.colW)
+    columns:AddChildToHorizontalBox(d.left)
+    columns:AddChildToHorizontalBox(d.gap)
+    columns:AddChildToHorizontalBox(d.right)
     inner:AddChildToVerticalBox(columns)
     inner:AddChildToVerticalBox(u.spacer(18))
     d.value = u.text("", ui.GOLD)

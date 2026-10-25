@@ -86,7 +86,13 @@ local function hold(id, w, want)
     end
 end
 
+local function anyHidden()
+    for _, p in ipairs(PARTS) do if cfg[p.key] then return true end end
+    return cfg.HideHUD or next(hud.orig) ~= nil
+end
+
 local function applyHUD()
+    if not anyHidden() then return end                  -- nothing to hide or put back: leave the HUD alone
     local layout = fieldLayout()
     if not layout then return end
     for _, p in ipairs(PARTS) do hold(p.key, hud.parts[p.key], cfg[p.key]) end
@@ -188,6 +194,7 @@ local SAVE_FLAGS = { "bEnableOnSavePoint", "bIsEnableMapType", "bCheckMapSaveabl
 local saveOrig, saveState
 
 local function applySave()
+    if not cfg.SaveAnywhere and not saveOrig then return end   -- never switched on: don't touch the menu data
     local da = game.first("CPP_DA_SystemMenu")
     if not da then return end
     local state = da:GetFullName() .. "|" .. tostring(cfg.SaveAnywhere)
@@ -226,7 +233,10 @@ local function silenced(rowName)
     return false
 end
 
+local voicesTouched = false
 local function applyVoices()
+    if cfg.QuietVoices == "off" and not voicesTouched then return end    -- never changed: don't read the table
+    voicesTouched = true
     patch:apply("BTL_VOICE_DATA", tostring(cfg.QuietVoices), function(row, orig, rowName)
         local o = orig("probabilityWithinSituation")
         tables.set(row, "probabilityWithinSituation", silenced(tostring(rowName)) and 0 or o, o)
@@ -273,7 +283,7 @@ local function rewardsOf(unitId)
 end
 
 local function watchBattle()
-    if not kit.events.battle or fight.escaped then return end
+    if not cfg.EscapeRewards or not kit.events.battle or fight.escaped then return end
     local seen = {}
     for _, e in ipairs(game.battleSide(game.ENEMY)) do
         local key = e.unit:GetFullName()
@@ -340,7 +350,7 @@ mod:on("battleEnd", function()
 end)
 
 ---------------------------------------------------------------------------------------------------
--- Wiring
+-- Wiring. Each part touches the game only while its switch is on (or to put back what it changed).
 ---------------------------------------------------------------------------------------------------
 -- each step on its own, so one failing doesn't stop the others
 local function applyAll()
