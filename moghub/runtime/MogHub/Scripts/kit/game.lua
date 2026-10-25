@@ -119,6 +119,17 @@ end
 ---------------------------------------------------------------------------------------------------
 M.FRIENDLY, M.ENEMY = 1, 2   -- UCPP_UnitParameter:GetRelation()
 
+-- the game's enums that plugins compare with (values from its type mappings: ffr-dump enums <name>)
+M.enum = {
+    JoinStatus = { Join = 0, NotJoin = 1, Leave = 2, TemporalLeave = 3, Lost = 4 },          -- eUnitJoinStatus
+    RequestState = { NotProgressing = 0, Progressing = 1, Completed = 2 },                   -- ERequestState
+    RankBattleStatus = { None = 0, Locked = 1, UnLocked = 2, Clear = 3 },                    -- EColosseum_RankBattleStatus
+    VisionMastery = { Awakening = 0, Synchro = 1 },                                          -- eVisionMasteryType
+    Relation = { None = 0, Friendlies = 1, Enemies = 2, All = 3 },                           -- eRelation
+    BtlPhase = { Normal = 0, Additional = 1, Finish = 2 },                                   -- eBtlPhaseType
+    Visibility = { Visible = 0, Collapsed = 1, Hidden = 2, HitTestInvisible = 3, SelfHitTestInvisible = 4 },  -- ESlateVisibility
+}
+
 -- the battle's units (nil outside battle)
 function M.battleUnits()
     local bm = FindFirstOf("CPP_BtlManager")

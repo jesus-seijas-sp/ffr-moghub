@@ -1,4 +1,4 @@
--- Reversible data table edits. A patcher keeps each field's original value the first time it touches it, and every
+-- The game's data tables: rows(struct, fn) and index(struct, field, pick) to read them, and reversible edits. A patcher keeps each field's original value the first time it touches it, and every
 -- write is computed from those originals, so turning an option off puts the game's own values back.
 --   local patch = kit.tables.patcher()
 --   patch:apply("SKILL_DATA", tostring(noCost), function(row, orig) kit.tables.set(row, "Cost", noCost and 0 or orig("Cost")) end)
@@ -28,6 +28,26 @@ function M.collect()
 end
 
 function M.find(struct) return M.collect()[struct] or {} end
+
+-- fn(row, rowName, table) for every row of every loaded table with this row struct (read-only use: for edits that
+-- go back, use a patcher)
+function M.rows(struct, fn)
+    for _, t in ipairs(M.find(struct)) do
+        t.dt:ForEachRow(function(rowName, row) fn(row, rowName, t) end)
+    end
+end
+
+-- the rows as a Lua table by one field: out[row[field]] = pick(row), copied out of the game (the first row wins
+-- when tables repeat a key)
+--   local rewards = kit.tables.index("UNIT_PARAMETER", "ID", function(r) return { exp = r.Experience } end)
+function M.index(struct, field, pick)
+    local out = {}
+    M.rows(struct, function(row)
+        local k = row[field]
+        if k ~= nil and out[k] == nil then out[k] = pick(row) end
+    end)
+    return out
+end
 
 -- writes a number, keeping integer fields whole; skips the write when the value is already there
 function M.set(row, field, value, like)

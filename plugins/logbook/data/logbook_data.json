@@ -1,0 +1,6705 @@
+{
+ "gameBuild": 24250053,
+ "areas": [
+  {
+   "key": "field:1",
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Common/ST_UI_QuestMenu.ST_UI_QuestMenu",
+    "QuestMapWorld"
+   ],
+   "region": 1,
+   "maps": [
+    1000
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 1000,
+     "uid": 3,
+     "item": 209,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 99,
+     "item": 7,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 100,
+     "item": 1,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 102,
+     "item": 12004,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 104,
+     "item": 12002,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 105,
+     "item": 32,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 127,
+     "item": 7,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 128,
+     "item": 500,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 136,
+     "item": 31,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 137,
+     "item": 3,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 150,
+     "item": 1,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 11,
+     "item": 3,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 94,
+     "item": 12026,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 95,
+     "item": 214,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 96,
+     "item": 34,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 97,
+     "item": 1,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 98,
+     "item": 10302,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 169,
+     "item": 29,
+     "num": 5,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 1,
+     "item": 9,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 21,
+     "item": 500,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 22,
+     "item": 210,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 130,
+     "item": 3,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    }
+   ],
+   "field": true
+  },
+  {
+   "key": "name:MAP_NAME_011",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_011"
+   ],
+   "region": 1,
+   "maps": [
+    2000
+   ],
+   "chests": [
+    {
+     "map": 2000,
+     "id": 0,
+     "uid": 21,
+     "item": 3,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2000,
+     "id": 1,
+     "uid": 23,
+     "item": 4,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2000,
+     "id": 2,
+     "uid": 24,
+     "item": 500,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2000,
+     "id": 3,
+     "uid": 22,
+     "item": 4,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2000,
+     "id": 4,
+     "uid": 25,
+     "item": 3,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_012",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_012"
+   ],
+   "region": 1,
+   "maps": [
+    2010,
+    2011,
+    2013,
+    2017
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_013",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_013"
+   ],
+   "region": 1,
+   "maps": [
+    2012,
+    2014,
+    3020
+   ],
+   "chests": [
+    {
+     "map": 2012,
+     "id": 0,
+     "uid": 53,
+     "item": 11024,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2012,
+     "id": 1,
+     "uid": 63,
+     "item": 209,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2012,
+     "id": 5,
+     "uid": 60,
+     "item": 4,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2012,
+     "id": 6,
+     "uid": 61,
+     "item": 4,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2012,
+     "id": 7,
+     "uid": 62,
+     "item": 11002,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2012,
+     "id": 8,
+     "uid": 55,
+     "item": 35,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2012,
+     "id": 9,
+     "uid": 51,
+     "item": 32,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 0,
+     "uid": 53,
+     "item": 11024,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 1,
+     "uid": 7,
+     "item": 209,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 3,
+     "uid": 63,
+     "item": 7,
+     "num": 4,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 4,
+     "uid": 9,
+     "item": 209,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 5,
+     "uid": 60,
+     "item": 4,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 6,
+     "uid": 61,
+     "item": 4,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 7,
+     "uid": 62,
+     "item": 11002,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 8,
+     "uid": 55,
+     "item": 35,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3020,
+     "id": 9,
+     "uid": 51,
+     "item": 32,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_113",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_113"
+   ],
+   "region": 1,
+   "maps": [
+    2015
+   ],
+   "chests": [
+    {
+     "map": 2015,
+     "id": 3,
+     "uid": 5,
+     "item": -1,
+     "num": 1,
+     "gil": 300,
+     "trap": false
+    },
+    {
+     "map": 2015,
+     "id": 4,
+     "uid": 6,
+     "item": -1,
+     "num": 1,
+     "gil": 300,
+     "trap": false
+    },
+    {
+     "map": 2015,
+     "id": 5,
+     "uid": 12,
+     "item": 19,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2015,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_072",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_072"
+   ],
+   "region": 1,
+   "maps": [
+    2016,
+    5198
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 2016,
+     "uid": 2,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_031",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_031"
+   ],
+   "region": 1,
+   "maps": [
+    3000,
+    3001
+   ],
+   "chests": [
+    {
+     "map": 3000,
+     "id": 1,
+     "uid": 4,
+     "item": 4,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3000,
+     "id": 2,
+     "uid": 14,
+     "item": 10201,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3000,
+     "id": 3,
+     "uid": 5,
+     "item": 209,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3000,
+     "id": 4,
+     "uid": 9,
+     "item": 1,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3000,
+     "id": 5,
+     "uid": 15,
+     "item": 12022,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3000,
+     "id": 6,
+     "uid": 6,
+     "item": -1,
+     "num": 1,
+     "gil": 400,
+     "trap": false
+    },
+    {
+     "map": 3001,
+     "id": 0,
+     "uid": 23,
+     "item": 1,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3001,
+     "id": 1,
+     "uid": 24,
+     "item": 3,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_032",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_032"
+   ],
+   "region": 1,
+   "maps": [
+    3010
+   ],
+   "chests": [
+    {
+     "map": 3010,
+     "id": 0,
+     "uid": 0,
+     "item": 25002,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3010,
+     "id": 1,
+     "uid": 10,
+     "item": 10295,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3010,
+     "id": 2,
+     "uid": 5,
+     "item": 10195,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3010,
+     "id": 3,
+     "uid": 12,
+     "item": 12071,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3010,
+     "id": 4,
+     "uid": 1,
+     "item": 22,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3010,
+     "id": 5,
+     "uid": 2,
+     "item": 208,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3010,
+     "id": 6,
+     "uid": 6,
+     "item": 10419,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3010,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_075",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_075"
+   ],
+   "region": 1,
+   "maps": [
+    10001
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_014",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_014"
+   ],
+   "region": 2,
+   "maps": [
+    2020
+   ],
+   "chests": [
+    {
+     "map": 2020,
+     "id": 0,
+     "uid": 2,
+     "item": 500,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2020,
+     "id": 1,
+     "uid": 3,
+     "item": 7,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2020,
+     "uid": 5,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_015",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_015"
+   ],
+   "region": 2,
+   "maps": [
+    2030,
+    10045
+   ],
+   "chests": [
+    {
+     "map": 2030,
+     "id": 0,
+     "uid": 6,
+     "item": 24,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2030,
+     "id": 1,
+     "uid": 7,
+     "item": 213,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2030,
+     "uid": 8,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2030,
+     "uid": 9,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_109",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_109"
+   ],
+   "region": 2,
+   "maps": [
+    2031
+   ],
+   "chests": [
+    {
+     "map": 2031,
+     "id": 0,
+     "uid": 68,
+     "item": 12063,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 1,
+     "uid": 69,
+     "item": 12023,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 2,
+     "uid": 70,
+     "item": 25000,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 3,
+     "uid": 71,
+     "item": 12060,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 4,
+     "uid": 47,
+     "item": 10410,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 5,
+     "uid": 55,
+     "item": 10315,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 6,
+     "uid": 58,
+     "item": 25000,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 7,
+     "uid": 59,
+     "item": 11019,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 8,
+     "uid": 29,
+     "item": 10320,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 9,
+     "uid": 30,
+     "item": 10509,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 10,
+     "uid": 31,
+     "item": 25001,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 11,
+     "uid": 32,
+     "item": 11527,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 12,
+     "uid": 33,
+     "item": 10709,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 13,
+     "uid": 34,
+     "item": 11321,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 14,
+     "uid": 35,
+     "item": 10125,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 15,
+     "uid": 36,
+     "item": 10811,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 16,
+     "uid": 38,
+     "item": 25002,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 17,
+     "uid": 39,
+     "item": 11025,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 18,
+     "uid": 40,
+     "item": 10223,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 19,
+     "uid": 41,
+     "item": 10798,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 20,
+     "uid": 43,
+     "item": 20016,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 21,
+     "uid": 44,
+     "item": 10697,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 22,
+     "uid": 53,
+     "item": 20016,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 23,
+     "uid": 54,
+     "item": 10522,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2031,
+     "id": 24,
+     "uid": 57,
+     "item": 10196,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_033",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_033"
+   ],
+   "region": 2,
+   "maps": [
+    3030
+   ],
+   "chests": [
+    {
+     "map": 3030,
+     "id": 0,
+     "uid": 5,
+     "item": 12,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3030,
+     "id": 1,
+     "uid": 11,
+     "item": 25000,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3030,
+     "id": 2,
+     "uid": 9,
+     "item": 10202,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3030,
+     "id": 3,
+     "uid": 10,
+     "item": 12032,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3030,
+     "id": 4,
+     "uid": 16,
+     "item": 3,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3030,
+     "id": 5,
+     "uid": 17,
+     "item": 3,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3030,
+     "uid": 6,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3030,
+     "uid": 7,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3030,
+     "uid": 8,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_110",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_110"
+   ],
+   "region": 2,
+   "maps": [
+    3031
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 3031,
+     "uid": 0,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_016",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_016"
+   ],
+   "region": 3,
+   "maps": [
+    2040
+   ],
+   "chests": [
+    {
+     "map": 2040,
+     "id": 0,
+     "uid": 5,
+     "item": 500,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2040,
+     "id": 1,
+     "uid": 4,
+     "item": 24,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2040,
+     "id": 2,
+     "uid": 6,
+     "item": 13,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2040,
+     "id": 3,
+     "uid": 7,
+     "item": 210,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2040,
+     "uid": 8,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2040,
+     "uid": 9,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_034",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_034"
+   ],
+   "region": 3,
+   "maps": [
+    3040
+   ],
+   "chests": [
+    {
+     "map": 3040,
+     "id": 0,
+     "uid": 12,
+     "item": 11003,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3040,
+     "id": 1,
+     "uid": 0,
+     "item": 9,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3040,
+     "id": 2,
+     "uid": 1,
+     "item": 7,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3040,
+     "id": 3,
+     "uid": 17,
+     "item": 3,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3040,
+     "uid": 14,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3040,
+     "uid": 15,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "field:4",
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Common/ST_UI_QuestMenu.ST_UI_QuestMenu",
+    "QuestMapWorld"
+   ],
+   "region": 4,
+   "maps": [
+    1000
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 1000,
+     "uid": 4,
+     "item": 25000,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 5,
+     "item": 10401,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 7,
+     "item": 31,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 24,
+     "item": 10217,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 25,
+     "item": 4,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 26,
+     "item": 34,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 82,
+     "item": 37,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 83,
+     "item": 212,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    }
+   ],
+   "field": true
+  },
+  {
+   "key": "name:MAP_NAME_017",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_017"
+   ],
+   "region": 4,
+   "maps": [
+    2050
+   ],
+   "chests": [
+    {
+     "map": 2050,
+     "id": 0,
+     "uid": 2,
+     "item": 4,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2050,
+     "id": 1,
+     "uid": 11,
+     "item": 12035,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2050,
+     "id": 2,
+     "uid": 12,
+     "item": 10403,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2050,
+     "uid": 5,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2050,
+     "uid": 6,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_018",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_018"
+   ],
+   "region": 4,
+   "maps": [
+    2060
+   ],
+   "chests": [
+    {
+     "map": 2060,
+     "id": 0,
+     "uid": 9,
+     "item": 12034,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2060,
+     "id": 1,
+     "uid": 7,
+     "item": -1,
+     "num": 1,
+     "gil": 500,
+     "trap": false
+    },
+    {
+     "map": 2060,
+     "id": 2,
+     "uid": 8,
+     "item": -1,
+     "num": 1,
+     "gil": 500,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2060,
+     "uid": 5,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2060,
+     "uid": 6,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_019",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_019"
+   ],
+   "region": 4,
+   "maps": [
+    2061
+   ],
+   "chests": [
+    {
+     "map": 2061,
+     "id": 3,
+     "uid": 14,
+     "item": -1,
+     "num": 1,
+     "gil": 500,
+     "trap": false
+    },
+    {
+     "map": 2061,
+     "id": 4,
+     "uid": 15,
+     "item": 11018,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2061,
+     "uid": 12,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2061,
+     "uid": 13,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_035",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_035"
+   ],
+   "region": 4,
+   "maps": [
+    3050
+   ],
+   "chests": [
+    {
+     "map": 3050,
+     "id": 0,
+     "uid": 17,
+     "item": -1,
+     "num": 1,
+     "gil": 800,
+     "trap": false
+    },
+    {
+     "map": 3050,
+     "id": 1,
+     "uid": 24,
+     "item": 10118,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3050,
+     "id": 2,
+     "uid": 25,
+     "item": 12021,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3050,
+     "id": 3,
+     "uid": 26,
+     "item": 11508,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3050,
+     "uid": 21,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3050,
+     "uid": 22,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3050,
+     "uid": 23,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_036",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_036"
+   ],
+   "region": 4,
+   "maps": [
+    3060,
+    3061,
+    3062
+   ],
+   "chests": [
+    {
+     "map": 3060,
+     "id": 0,
+     "uid": 55,
+     "item": 10,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3060,
+     "id": 1,
+     "uid": 56,
+     "item": 11521,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3060,
+     "id": 2,
+     "uid": 33,
+     "item": 213,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3060,
+     "id": 3,
+     "uid": 77,
+     "item": 12010,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3060,
+     "uid": 71,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3060,
+     "uid": 78,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3060,
+     "uid": 79,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_037",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_037"
+   ],
+   "region": 4,
+   "maps": [
+    3070
+   ],
+   "chests": [
+    {
+     "map": 3070,
+     "id": 1,
+     "uid": 58,
+     "item": 32,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3070,
+     "id": 2,
+     "uid": 64,
+     "item": 10204,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3070,
+     "id": 3,
+     "uid": 63,
+     "item": 25000,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3070,
+     "id": 4,
+     "uid": 62,
+     "item": 11315,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3070,
+     "uid": 59,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3070,
+     "uid": 60,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3070,
+     "uid": 61,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_069",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_069"
+   ],
+   "region": 4,
+   "maps": [
+    3290
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "field:5",
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Common/ST_UI_QuestMenu.ST_UI_QuestMenu",
+    "QuestMapWorld"
+   ],
+   "region": 5,
+   "maps": [
+    1000
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 1000,
+     "uid": 30,
+     "item": 16,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 31,
+     "item": 211,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 32,
+     "item": 12024,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 33,
+     "item": 16,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 34,
+     "item": 28,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 35,
+     "item": 206,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 36,
+     "item": 12007,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 37,
+     "item": 10518,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 39,
+     "item": 207,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 68,
+     "item": 10718,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 143,
+     "item": 32,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 144,
+     "item": 10222,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 145,
+     "item": 35,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    }
+   ],
+   "field": true
+  },
+  {
+   "key": "name:MAP_NAME_020",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_020"
+   ],
+   "region": 5,
+   "maps": [
+    2070
+   ],
+   "chests": [
+    {
+     "map": 2070,
+     "id": 0,
+     "uid": 30,
+     "item": 10316,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2070,
+     "id": 1,
+     "uid": 32,
+     "item": 12040,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2070,
+     "id": 2,
+     "uid": 31,
+     "item": 11526,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2070,
+     "uid": 26,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2070,
+     "uid": 27,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2070,
+     "uid": 28,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2070,
+     "uid": 29,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_021",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_021"
+   ],
+   "region": 5,
+   "maps": [
+    2080,
+    2081,
+    5192
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_022",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_022"
+   ],
+   "region": 5,
+   "maps": [
+    2090
+   ],
+   "chests": [
+    {
+     "map": 2090,
+     "id": 0,
+     "uid": 9,
+     "item": 10411,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2090,
+     "id": 1,
+     "uid": 3,
+     "item": 214,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2090,
+     "id": 2,
+     "uid": 8,
+     "item": 11522,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2090,
+     "uid": 6,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2090,
+     "uid": 7,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_038",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_038"
+   ],
+   "region": 5,
+   "maps": [
+    3080
+   ],
+   "chests": [
+    {
+     "map": 3080,
+     "id": 0,
+     "uid": 32,
+     "item": 25000,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3080,
+     "id": 1,
+     "uid": 41,
+     "item": 10513,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3080,
+     "id": 2,
+     "uid": 33,
+     "item": 206,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3080,
+     "id": 3,
+     "uid": 31,
+     "item": 210,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3080,
+     "id": 4,
+     "uid": 42,
+     "item": 11023,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3080,
+     "uid": 38,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3080,
+     "uid": 39,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3080,
+     "uid": 40,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_039",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_039"
+   ],
+   "region": 5,
+   "maps": [
+    3090,
+    3091
+   ],
+   "chests": [
+    {
+     "map": 3090,
+     "id": 0,
+     "uid": 29,
+     "item": 213,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3090,
+     "id": 1,
+     "uid": 6,
+     "item": 3,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3090,
+     "id": 2,
+     "uid": 30,
+     "item": 32,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_040",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_040"
+   ],
+   "region": 5,
+   "maps": [
+    3100
+   ],
+   "chests": [
+    {
+     "map": 3100,
+     "id": 0,
+     "uid": 16,
+     "item": 11316,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3100,
+     "id": 1,
+     "uid": 10,
+     "item": 10,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3100,
+     "id": 2,
+     "uid": 9,
+     "item": 37,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3100,
+     "id": 3,
+     "uid": 15,
+     "item": 10123,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3100,
+     "id": 4,
+     "uid": 14,
+     "item": 12039,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3100,
+     "uid": 11,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3100,
+     "uid": 12,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3100,
+     "uid": 13,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_041",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_041"
+   ],
+   "region": 5,
+   "maps": [
+    3110
+   ],
+   "chests": [
+    {
+     "map": 3110,
+     "id": 0,
+     "uid": 62,
+     "item": 11320,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3110,
+     "id": 1,
+     "uid": 40,
+     "item": 25000,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3110,
+     "id": 2,
+     "uid": 61,
+     "item": 10508,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3110,
+     "id": 3,
+     "uid": 41,
+     "item": 213,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3110,
+     "id": 4,
+     "uid": 64,
+     "item": 10415,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3110,
+     "id": 5,
+     "uid": 63,
+     "item": 12049,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3110,
+     "uid": 58,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3110,
+     "uid": 59,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3110,
+     "uid": 60,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_084",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_084"
+   ],
+   "region": 5,
+   "maps": [
+    3111
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_078",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_078"
+   ],
+   "region": 5,
+   "maps": [
+    11000
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "field:6",
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Common/ST_UI_QuestMenu.ST_UI_QuestMenu",
+    "QuestMapWorld"
+   ],
+   "region": 6,
+   "maps": [
+    1000
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 1000,
+     "uid": 45,
+     "item": 12006,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 46,
+     "item": 7,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 47,
+     "item": 10219,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 48,
+     "item": 12072,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 49,
+     "item": 20,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 50,
+     "item": 19,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 51,
+     "item": 11317,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 52,
+     "item": 2,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 53,
+     "item": 29,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 54,
+     "item": 10520,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 55,
+     "item": 10417,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 56,
+     "item": 206,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 57,
+     "item": 37,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 58,
+     "item": 33,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    }
+   ],
+   "field": true
+  },
+  {
+   "key": "name:MAP_NAME_023",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_023"
+   ],
+   "region": 6,
+   "maps": [
+    2100
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 2100,
+     "uid": 2,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_079",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_079"
+   ],
+   "region": 6,
+   "maps": [
+    2101
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_093",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_093"
+   ],
+   "region": 6,
+   "maps": [
+    2102
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 2102,
+     "uid": 1,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_024",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_024"
+   ],
+   "region": 6,
+   "maps": [
+    2110
+   ],
+   "chests": [
+    {
+     "map": 2110,
+     "id": 0,
+     "uid": 10,
+     "item": 19,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_133",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_133"
+   ],
+   "region": 6,
+   "maps": [
+    2111
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 2111,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_118",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_118"
+   ],
+   "region": 6,
+   "maps": [
+    2112
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_132",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_132"
+   ],
+   "region": 6,
+   "maps": [
+    2113
+   ],
+   "chests": [
+    {
+     "map": 2113,
+     "id": 1,
+     "uid": 3,
+     "item": 37,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2113,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_120",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_120"
+   ],
+   "region": 6,
+   "maps": [
+    2114
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 2114,
+     "uid": 2,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_025",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_025"
+   ],
+   "region": 6,
+   "maps": [
+    2120
+   ],
+   "chests": [
+    {
+     "map": 2120,
+     "id": 0,
+     "uid": 8,
+     "item": 8,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2120,
+     "id": 1,
+     "uid": 9,
+     "item": 37,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2120,
+     "id": 2,
+     "uid": 12,
+     "item": 11514,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2120,
+     "uid": 10,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2120,
+     "uid": 11,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_042",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_042"
+   ],
+   "region": 6,
+   "maps": [
+    3120
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_082",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_082"
+   ],
+   "region": 6,
+   "maps": [
+    3121
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_043",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_043"
+   ],
+   "region": 6,
+   "maps": [
+    3130,
+    3131
+   ],
+   "chests": [
+    {
+     "map": 3130,
+     "id": 0,
+     "uid": 48,
+     "item": 11024,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3130,
+     "id": 1,
+     "uid": 47,
+     "item": 25001,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3130,
+     "id": 2,
+     "uid": 49,
+     "item": 26,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3130,
+     "id": 4,
+     "uid": 51,
+     "item": 213,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3130,
+     "uid": 45,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3130,
+     "uid": 46,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_044",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_044"
+   ],
+   "region": 6,
+   "maps": [
+    3140
+   ],
+   "chests": [
+    {
+     "map": 3140,
+     "id": 0,
+     "uid": 14,
+     "item": 35,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3140,
+     "id": 1,
+     "uid": 13,
+     "item": 12005,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3140,
+     "id": 2,
+     "uid": 15,
+     "item": 25000,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3140,
+     "id": 3,
+     "uid": 12,
+     "item": 32,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3140,
+     "id": 4,
+     "uid": 16,
+     "item": 3,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3140,
+     "uid": 10,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3140,
+     "uid": 11,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_045",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_045"
+   ],
+   "region": 6,
+   "maps": [
+    3150
+   ],
+   "chests": [
+    {
+     "map": 3150,
+     "id": 0,
+     "uid": 5,
+     "item": 20,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3150,
+     "id": 1,
+     "uid": 6,
+     "item": 37,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3150,
+     "id": 2,
+     "uid": 7,
+     "item": 37,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3150,
+     "id": 3,
+     "uid": 4,
+     "item": 10716,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3150,
+     "uid": 2,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3150,
+     "uid": 3,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_046",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_046"
+   ],
+   "region": 6,
+   "maps": [
+    3160,
+    5100
+   ],
+   "chests": [
+    {
+     "map": 3160,
+     "id": 0,
+     "uid": 14,
+     "item": 35,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3160,
+     "id": 1,
+     "uid": 13,
+     "item": 10224,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3160,
+     "id": 2,
+     "uid": 12,
+     "item": 10108,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3160,
+     "id": 3,
+     "uid": 15,
+     "item": 14,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3160,
+     "uid": 10,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3160,
+     "uid": 11,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_066",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_066"
+   ],
+   "region": 6,
+   "maps": [
+    10030
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_085",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_085"
+   ],
+   "region": 6,
+   "maps": [
+    10031
+   ],
+   "chests": [
+    {
+     "map": 10031,
+     "id": 0,
+     "uid": 0,
+     "item": 12098,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": []
+  },
+  {
+   "key": "field:7",
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Common/ST_UI_QuestMenu.ST_UI_QuestMenu",
+    "QuestMapWorld"
+   ],
+   "region": 7,
+   "maps": [
+    1000
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 1000,
+     "uid": 70,
+     "item": 207,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 71,
+     "item": 11025,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 84,
+     "item": 500,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 85,
+     "item": 32,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 86,
+     "item": 10519,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 87,
+     "item": 200,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 88,
+     "item": 10817,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 89,
+     "item": 12074,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 91,
+     "item": 37,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    }
+   ],
+   "field": true
+  },
+  {
+   "key": "name:MAP_NAME_026",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_026"
+   ],
+   "region": 7,
+   "maps": [
+    2130,
+    5197
+   ],
+   "chests": [
+    {
+     "map": 2130,
+     "id": 0,
+     "uid": 22,
+     "item": 19,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2130,
+     "id": 1,
+     "uid": 21,
+     "item": 10121,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2130,
+     "id": 2,
+     "uid": 23,
+     "item": 27,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2130,
+     "id": 3,
+     "uid": 19,
+     "item": 10321,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2130,
+     "id": 4,
+     "uid": 20,
+     "item": 12080,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2130,
+     "uid": 16,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2130,
+     "uid": 17,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2130,
+     "uid": 18,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_027",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_027"
+   ],
+   "region": 7,
+   "maps": [
+    2140
+   ],
+   "chests": [
+    {
+     "map": 2140,
+     "id": 0,
+     "uid": 8,
+     "item": 205,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2140,
+     "id": 1,
+     "uid": 5,
+     "item": 10802,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2140,
+     "id": 2,
+     "uid": 9,
+     "item": 207,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2140,
+     "id": 3,
+     "uid": 7,
+     "item": 37,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2140,
+     "id": 4,
+     "uid": 6,
+     "item": 11021,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2140,
+     "uid": 3,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 2140,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_048",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_048"
+   ],
+   "region": 7,
+   "maps": [
+    3180
+   ],
+   "chests": [
+    {
+     "map": 3180,
+     "id": 0,
+     "uid": 15,
+     "item": 10712,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3180,
+     "id": 1,
+     "uid": 17,
+     "item": 25001,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3180,
+     "id": 2,
+     "uid": 18,
+     "item": 19,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3180,
+     "id": 3,
+     "uid": 16,
+     "item": 10815,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3180,
+     "id": 4,
+     "uid": 23,
+     "item": 11322,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3180,
+     "uid": 13,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3180,
+     "uid": 14,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_049",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_049"
+   ],
+   "region": 7,
+   "maps": [
+    3190
+   ],
+   "chests": [
+    {
+     "map": 3190,
+     "id": 0,
+     "uid": 29,
+     "item": 26,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3190,
+     "id": 1,
+     "uid": 27,
+     "item": 10515,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3190,
+     "id": 2,
+     "uid": 7,
+     "item": 31,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3190,
+     "id": 3,
+     "uid": 30,
+     "item": 34,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3190,
+     "id": 4,
+     "uid": 28,
+     "item": 10220,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3190,
+     "uid": 25,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3190,
+     "uid": 26,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_050",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_050"
+   ],
+   "region": 7,
+   "maps": [
+    3200
+   ],
+   "chests": [
+    {
+     "map": 3200,
+     "id": 0,
+     "uid": 1,
+     "item": 11,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3200,
+     "id": 1,
+     "uid": 9,
+     "item": 25001,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3200,
+     "id": 2,
+     "uid": 10,
+     "item": 11524,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3200,
+     "id": 3,
+     "uid": 11,
+     "item": 10416,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3200,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3200,
+     "uid": 5,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3200,
+     "uid": 6,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3200,
+     "uid": 7,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_051",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_051"
+   ],
+   "region": 7,
+   "maps": [
+    3210,
+    3211,
+    3212,
+    5195
+   ],
+   "chests": [
+    {
+     "map": 3211,
+     "id": 0,
+     "uid": 5,
+     "item": 32,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3211,
+     "id": 1,
+     "uid": 2,
+     "item": 10717,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3212,
+     "id": 0,
+     "uid": 5,
+     "item": 10603,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3210,
+     "uid": 26,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3211,
+     "uid": 3,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3211,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3212,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_111",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_111"
+   ],
+   "region": 7,
+   "maps": [
+    3213
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "field:8",
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Common/ST_UI_QuestMenu.ST_UI_QuestMenu",
+    "QuestMapWorld"
+   ],
+   "region": 8,
+   "maps": [
+    1000
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 1000,
+     "uid": 154,
+     "item": 14,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 155,
+     "item": 8,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 156,
+     "item": 202,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 157,
+     "item": 32,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 158,
+     "item": 10319,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 159,
+     "item": 30,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 160,
+     "item": 12028,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 161,
+     "item": 203,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 162,
+     "item": 19,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 163,
+     "item": 10521,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 164,
+     "item": 11026,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 165,
+     "item": 36,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 166,
+     "item": 33,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 167,
+     "item": 33,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    }
+   ],
+   "field": true
+  },
+  {
+   "key": "name:MAP_NAME_028",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_028"
+   ],
+   "region": 8,
+   "maps": [
+    2150
+   ],
+   "chests": [
+    {
+     "map": 2150,
+     "id": 0,
+     "uid": 4,
+     "item": 8,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2150,
+     "id": 1,
+     "uid": 10,
+     "item": 37,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2150,
+     "id": 2,
+     "uid": 11,
+     "item": 207,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2150,
+     "uid": 9,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_029",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_029"
+   ],
+   "region": 8,
+   "maps": [
+    2160
+   ],
+   "chests": [
+    {
+     "map": 2160,
+     "id": 0,
+     "uid": 1,
+     "item": 207,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2160,
+     "id": 1,
+     "uid": 2,
+     "item": 14,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2160,
+     "uid": 3,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_052",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_052"
+   ],
+   "region": 8,
+   "maps": [
+    3220,
+    5156
+   ],
+   "chests": [
+    {
+     "map": 3220,
+     "id": 0,
+     "uid": 25,
+     "item": 204,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3220,
+     "id": 1,
+     "uid": 24,
+     "item": 35,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3220,
+     "id": 2,
+     "uid": 39,
+     "item": 11319,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3220,
+     "id": 3,
+     "uid": 38,
+     "item": 10713,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3220,
+     "id": 4,
+     "uid": 26,
+     "item": 25001,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3220,
+     "id": 5,
+     "uid": 27,
+     "item": 13,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3220,
+     "uid": 32,
+     "item": 20009,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 3220,
+     "uid": 33,
+     "item": 20010,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 3220,
+     "uid": 34,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3220,
+     "uid": 35,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3220,
+     "uid": 36,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3220,
+     "uid": 37,
+     "item": 20011,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_053",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_053"
+   ],
+   "region": 8,
+   "maps": [
+    3230
+   ],
+   "chests": [
+    {
+     "map": 3230,
+     "id": 0,
+     "uid": 1,
+     "item": 200,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3230,
+     "id": 1,
+     "uid": 9,
+     "item": 10225,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3230,
+     "id": 2,
+     "uid": 8,
+     "item": 20016,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3230,
+     "uid": 6,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3230,
+     "uid": 7,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_054",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_054"
+   ],
+   "region": 8,
+   "maps": [
+    3240
+   ],
+   "chests": [
+    {
+     "map": 3240,
+     "id": 0,
+     "uid": 7,
+     "item": 36,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3240,
+     "id": 1,
+     "uid": 13,
+     "item": 25002,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3240,
+     "id": 2,
+     "uid": 11,
+     "item": 10816,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3240,
+     "id": 3,
+     "uid": 12,
+     "item": 12014,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3240,
+     "uid": 8,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3240,
+     "uid": 9,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3240,
+     "uid": 10,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_055",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_055"
+   ],
+   "region": 8,
+   "maps": [
+    3250
+   ],
+   "chests": [
+    {
+     "map": 3250,
+     "id": 0,
+     "uid": 85,
+     "item": 10613,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3250,
+     "id": 1,
+     "uid": 86,
+     "item": 10126,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3250,
+     "uid": 82,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3250,
+     "uid": 84,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_086",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_086"
+   ],
+   "region": 8,
+   "maps": [
+    10060
+   ],
+   "chests": [],
+   "spots": []
+  },
+  {
+   "key": "field:9",
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Common/ST_UI_QuestMenu.ST_UI_QuestMenu",
+    "QuestMapWorld"
+   ],
+   "region": 9,
+   "maps": [
+    1000
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 1000,
+     "uid": 27,
+     "item": 12087,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 139,
+     "item": 207,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 148,
+     "item": 19,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 149,
+     "item": 23,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 178,
+     "item": 29,
+     "num": 3,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 179,
+     "item": 24,
+     "num": 5,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 180,
+     "item": 33,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 181,
+     "item": 36,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 182,
+     "item": 205,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 185,
+     "item": 22,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 186,
+     "item": 32,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 187,
+     "item": 22,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 188,
+     "item": 20,
+     "num": 2,
+     "gil": 0,
+     "shard": false
+    },
+    {
+     "map": 1000,
+     "uid": 189,
+     "item": 25000,
+     "num": 1,
+     "gil": 0,
+     "shard": false
+    }
+   ],
+   "field": true
+  },
+  {
+   "key": "name:MAP_NAME_030",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_030"
+   ],
+   "region": 9,
+   "maps": [
+    2170
+   ],
+   "chests": [
+    {
+     "map": 2170,
+     "id": 0,
+     "uid": 3,
+     "item": 32,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2170,
+     "id": 1,
+     "uid": 7,
+     "item": 207,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2170,
+     "id": 2,
+     "uid": 8,
+     "item": 37,
+     "num": 3,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2170,
+     "id": 3,
+     "uid": 9,
+     "item": 35,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 2170,
+     "uid": 4,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_070",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_070"
+   ],
+   "region": 9,
+   "maps": [
+    2180
+   ],
+   "chests": [],
+   "spots": [
+    {
+     "map": 2180,
+     "uid": 0,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_081",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_081"
+   ],
+   "region": 9,
+   "maps": [
+    2190
+   ],
+   "chests": [
+    {
+     "map": 2190,
+     "id": 0,
+     "uid": 0,
+     "item": 10898,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": []
+  },
+  {
+   "key": "name:MAP_NAME_056",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_056"
+   ],
+   "region": 9,
+   "maps": [
+    3260
+   ],
+   "chests": [
+    {
+     "map": 3260,
+     "id": 0,
+     "uid": 3,
+     "item": 18,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3260,
+     "id": 1,
+     "uid": 6,
+     "item": 25002,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3260,
+     "id": 2,
+     "uid": 9,
+     "item": 10419,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3260,
+     "id": 3,
+     "uid": 11,
+     "item": 27007,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3260,
+     "uid": 7,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3260,
+     "uid": 8,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_057",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_057"
+   ],
+   "region": 9,
+   "maps": [
+    3270,
+    3272,
+    5180,
+    5181
+   ],
+   "chests": [
+    {
+     "map": 3272,
+     "id": 0,
+     "uid": 3,
+     "item": 22,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3272,
+     "id": 1,
+     "uid": 2,
+     "item": 12046,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3272,
+     "uid": 0,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3272,
+     "uid": 1,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_080",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_080"
+   ],
+   "region": 9,
+   "maps": [
+    3271
+   ],
+   "chests": [
+    {
+     "map": 3271,
+     "id": 0,
+     "uid": 3,
+     "item": 23,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3271,
+     "id": 1,
+     "uid": 4,
+     "item": 208,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3271,
+     "uid": 1,
+     "item": 25004,
+     "num": 1,
+     "gil": -3,
+     "shard": true
+    },
+    {
+     "map": 3271,
+     "uid": 2,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  },
+  {
+   "key": "name:MAP_NAME_058",
+   "name": [
+    "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+    "MAP_NAME_058"
+   ],
+   "region": 10,
+   "maps": [
+    3280,
+    3281,
+    5153,
+    5154,
+    5190,
+    5191
+   ],
+   "chests": [
+    {
+     "map": 3280,
+     "id": 0,
+     "uid": 116,
+     "item": 10194,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 1,
+     "uid": 121,
+     "item": 10298,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 2,
+     "uid": 122,
+     "item": 10396,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 3,
+     "uid": 12,
+     "item": 23,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 4,
+     "uid": 123,
+     "item": 10495,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 5,
+     "uid": 1,
+     "item": 25002,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 6,
+     "uid": 117,
+     "item": 10510,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 7,
+     "uid": 118,
+     "item": 10609,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 8,
+     "uid": 119,
+     "item": 10704,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 9,
+     "uid": 120,
+     "item": 10808,
+     "num": 1,
+     "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 3280,
+     "id": 10,
+     "uid": 144,
+     "item": 208,
+     "num": 2,
+     "gil": -1,
+     "trap": false
+    }
+   ],
+   "spots": [
+    {
+     "map": 3280,
+     "uid": 124,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3280,
+     "uid": 125,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    },
+    {
+     "map": 3280,
+     "uid": 126,
+     "item": 25004,
+     "num": 1,
+     "gil": 0,
+     "shard": true
+    }
+   ]
+  }
+ ],
+ "regions": {
+  "1": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_001"
+  ],
+  "2": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_001"
+  ],
+  "3": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_001"
+  ],
+  "4": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_004"
+  ],
+  "5": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_005"
+  ],
+  "6": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_006"
+  ],
+  "7": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_007"
+  ],
+  "8": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_008"
+  ],
+  "9": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_009"
+  ],
+  "10": [
+   "/Game/Datatable/Strings/Map/ST_MAP_NAME.ST_MAP_NAME",
+   "MAP_NAME_058"
+  ]
+ },
+ "quests": [
+  {
+   "id": 0,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_001"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0002"
+   ],
+   "region": 1,
+   "accept": "{progress:0}>=7090",
+   "stages": [
+    {
+     "cond": "{progress:1}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_002"
+     ]
+    },
+    {
+     "cond": "{progress:1}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_003"
+     ]
+    },
+    {
+     "cond": "{progress:1}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_004"
+     ]
+    },
+    {
+     "cond": "{progress:1}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_005"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_006"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0072"
+   ],
+   "region": 1,
+   "accept": "{progress:6}==0&{progress:0}>=5310",
+   "stages": [
+    {
+     "cond": "{progress:6}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_029"
+     ]
+    },
+    {
+     "cond": "{progress:6}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_163"
+     ]
+    },
+    {
+     "cond": "{progress:6}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_030"
+     ]
+    },
+    {
+     "cond": "{progress:6}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_031"
+     ]
+    },
+    {
+     "cond": "{progress:6}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_032"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_032"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0022"
+   ],
+   "region": 1,
+   "accept": "{progress:31}==0&{progress:0}>=1120",
+   "stages": [
+    {
+     "cond": "{progress:31}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_053"
+     ]
+    },
+    {
+     "cond": "{progress:31}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_054"
+     ]
+    },
+    {
+     "cond": "{progress:31}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_055"
+     ]
+    },
+    {
+     "cond": "{progress:31}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_056"
+     ]
+    },
+    {
+     "cond": "{progress:31}==50",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_057"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_041"
+   ],
+   "requester": null,
+   "region": 1,
+   "accept": "{progress:0}>=5000",
+   "stages": [
+    {
+     "cond": "{progress:36}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_092"
+     ]
+    },
+    {
+     "cond": "{progress:36}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_093"
+     ]
+    },
+    {
+     "cond": "{progress:36}==21",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_157"
+     ]
+    },
+    {
+     "cond": "{progress:36}==22",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_158"
+     ]
+    },
+    {
+     "cond": "{progress:36}==23",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_159"
+     ]
+    },
+    {
+     "cond": "{progress:36}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_094"
+     ]
+    },
+    {
+     "cond": "{progress:36}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_095"
+     ]
+    },
+    {
+     "cond": "{progress:36}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_160"
+     ]
+    },
+    {
+     "cond": "{progress:36}==50",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_096"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_023"
+   ],
+   "requester": null,
+   "region": 1,
+   "accept": "{progress:0}>=7000",
+   "stages": [
+    {
+     "cond": "{progress:40}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_097"
+     ]
+    },
+    {
+     "cond": "{progress:40}==11",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_161"
+     ]
+    },
+    {
+     "cond": "{progress:40}==12",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_162"
+     ]
+    },
+    {
+     "cond": "{progress:40}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_098"
+     ]
+    },
+    {
+     "cond": "{progress:40}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_099"
+     ]
+    },
+    {
+     "cond": "{progress:40}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_100"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_031"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0167"
+   ],
+   "region": 2,
+   "accept": "{progress:0}>=1240&{progress:28}==0",
+   "stages": [
+    {
+     "cond": "{progress:28}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_050"
+     ]
+    },
+    {
+     "cond": "{progress:28}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_051"
+     ]
+    },
+    {
+     "cond": "{progress:28}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_052"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_038"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0003"
+   ],
+   "region": 2,
+   "accept": "{progress:0}>=1210",
+   "stages": [
+    {
+     "cond": "{progress:33}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_073"
+     ]
+    },
+    {
+     "cond": "{progress:33}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_074"
+     ]
+    },
+    {
+     "cond": "{progress:33}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_075"
+     ]
+    },
+    {
+     "cond": "{progress:33}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_076"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_034"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0107"
+   ],
+   "region": 3,
+   "accept": "{progress:30}==0&{progress:0}>=1180",
+   "stages": [
+    {
+     "cond": "{progress:30}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_061"
+     ]
+    },
+    {
+     "cond": "{progress:30}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_062"
+     ]
+    },
+    {
+     "cond": "{progress:30}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_063"
+     ]
+    },
+    {
+     "cond": "{progress:30}==80",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_064"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_004"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0057"
+   ],
+   "region": 4,
+   "accept": "{progress:0}>=5010",
+   "stages": [
+    {
+     "cond": "{progress:4}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_017"
+     ]
+    },
+    {
+     "cond": "{progress:4}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_018"
+     ]
+    },
+    {
+     "cond": "{progress:4}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_019"
+     ]
+    },
+    {
+     "cond": "{progress:4}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_021"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_036"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0139"
+   ],
+   "region": 4,
+   "accept": "{progress:16}==0&{progress:0}>=2120",
+   "stages": [
+    {
+     "cond": "{progress:16}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_065"
+     ]
+    },
+    {
+     "cond": "{progress:16}==10&{flag:219}",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_066"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_035"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0108"
+   ],
+   "region": 4,
+   "accept": "{progress:0}>=2120&{progress:32}==0",
+   "stages": [
+    {
+     "cond": "{progress:32}>=10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_070"
+     ]
+    },
+    {
+     "cond": "{progress:32}>=20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_071"
+     ]
+    },
+    {
+     "cond": "{progress:32}>=30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_072"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_037"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0137"
+   ],
+   "region": 4,
+   "accept": "{progress:0}>=2010",
+   "stages": [
+    {
+     "cond": "{progress:34}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_067"
+     ]
+    },
+    {
+     "cond": "{progress:34}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_068"
+     ]
+    },
+    {
+     "cond": "{progress:34}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_069"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_018"
+   ],
+   "requester": null,
+   "region": 4,
+   "accept": "{progress:0}>=5010&{progress:38}==0",
+   "stages": [
+    {
+     "cond": "{progress:38}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_085"
+     ]
+    },
+    {
+     "cond": "{progress:38}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_086"
+     ]
+    },
+    {
+     "cond": "{progress:38}==21",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_155"
+     ]
+    },
+    {
+     "cond": "{progress:38}==21",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_156"
+     ]
+    },
+    {
+     "cond": "{progress:38}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_087"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_042"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0139"
+   ],
+   "region": 4,
+   "accept": "{progress:16}==20",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_105"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_106"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_107"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_108"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_109"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_110"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_111"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_112"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_043"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0139"
+   ],
+   "region": 4,
+   "accept": "{progress:16}==70&{progress:0}>=5020",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_113"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_114"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_115"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_116"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_117"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_005"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0067"
+   ],
+   "region": 5,
+   "accept": "{progress:0}>=4999",
+   "stages": [
+    {
+     "cond": "{progress:5}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_023"
+     ]
+    },
+    {
+     "cond": "{progress:5}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_024"
+     ]
+    },
+    {
+     "cond": "{progress:5}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_025"
+     ]
+    },
+    {
+     "cond": "{progress:5}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_026"
+     ]
+    },
+    {
+     "cond": "{progress:5}==50",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_027"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_039"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0022"
+   ],
+   "region": 5,
+   "accept": "{progress:35}==0&{progress:0}>=3150",
+   "stages": [
+    {
+     "cond": "{progress:35}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_077"
+     ]
+    },
+    {
+     "cond": "{progress:35}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_078"
+     ]
+    },
+    {
+     "cond": "{progress:35}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_079"
+     ]
+    },
+    {
+     "cond": "{progress:35}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_080"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_045"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0140"
+   ],
+   "region": 5,
+   "accept": "{progress:0}>=3042&{progress:41}==0",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_118"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_119"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_120"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_121"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_007"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0074"
+   ],
+   "region": 6,
+   "accept": "{progress:0}>=4999",
+   "stages": [
+    {
+     "cond": "{progress:7}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_034"
+     ]
+    },
+    {
+     "cond": "{progress:7}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_035"
+     ]
+    },
+    {
+     "cond": "{progress:7}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_036"
+     ]
+    },
+    {
+     "cond": "{progress:7}==45",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_036"
+     ]
+    },
+    {
+     "cond": "{progress:7}==50",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_037"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_040"
+   ],
+   "requester": null,
+   "region": 6,
+   "accept": "{progress:7}>=60&{progress:37}==0",
+   "stages": [
+    {
+     "cond": "{progress:37}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_081"
+     ]
+    },
+    {
+     "cond": "{progress:37}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_082"
+     ]
+    },
+    {
+     "cond": "{progress:37}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_083"
+     ]
+    },
+    {
+     "cond": "{progress:37}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_084"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_044"
+   ],
+   "requester": null,
+   "region": 6,
+   "accept": "{progress:0}>=5000",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_122"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_122"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_122"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_123"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_124"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_132"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_133"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_134"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_135"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_125"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_126"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 31,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_048"
+   ],
+   "requester": null,
+   "region": 6,
+   "accept": "{progress:36}==60",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_127"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_128"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_129"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_130"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_131"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 37,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_053"
+   ],
+   "requester": null,
+   "region": 6,
+   "accept": "{progress:0}>=5060 & ({progress:54}>=20&{progress:54}<=30&({flag:955}|{gilgamesh}) | {progress:54}==30)",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_147"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_148"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_149"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_150"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_151"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_152"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_003"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0004"
+   ],
+   "region": 7,
+   "accept": "{progress:0}>=6000",
+   "stages": [
+    {
+     "cond": "{progress:3}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_012"
+     ]
+    },
+    {
+     "cond": "{progress:3}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_013"
+     ]
+    },
+    {
+     "cond": "{progress:3}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_014"
+     ]
+    },
+    {
+     "cond": "{progress:3}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_015"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_008"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0085"
+   ],
+   "region": 7,
+   "accept": "{progress:0}>=5999&{progress:8}==0",
+   "stages": [
+    {
+     "cond": "{progress:8}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_101"
+     ]
+    },
+    {
+     "cond": "{progress:8}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_102"
+     ]
+    },
+    {
+     "cond": "{progress:8}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_103"
+     ]
+    },
+    {
+     "cond": "{progress:8}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_104"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_020"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0110"
+   ],
+   "region": 7,
+   "accept": "{progress:0}>=5060",
+   "stages": [
+    {
+     "cond": "{progress:39}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_088"
+     ]
+    },
+    {
+     "cond": "{progress:39}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_089"
+     ]
+    },
+    {
+     "cond": "{progress:39}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_090"
+     ]
+    },
+    {
+     "cond": "{progress:39}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_091"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 34,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_047"
+   ],
+   "requester": null,
+   "region": 7,
+   "accept": "{progress:44}==0&{progress:0}>=5020",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_143"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 35,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_051"
+   ],
+   "requester": null,
+   "region": 7,
+   "accept": "{progress:44}==20",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_144"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 36,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_052"
+   ],
+   "requester": null,
+   "region": 7,
+   "accept": "{progress:44}==40",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_145"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 1,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_002"
+   ],
+   "requester": [
+    "/Game/Datatable/Strings/CharaName/ST_CharaName.ST_CharaName",
+    "CharaName0003"
+   ],
+   "region": 8,
+   "accept": "{progress:0}>=6999&{progress:2}==0",
+   "stages": [
+    {
+     "cond": "{progress:2}==10",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_007"
+     ]
+    },
+    {
+     "cond": "{progress:2}==20",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_008"
+     ]
+    },
+    {
+     "cond": "{progress:2}==30",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_009"
+     ]
+    },
+    {
+     "cond": "{progress:2}==40",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_010"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 33,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_050"
+   ],
+   "requester": null,
+   "region": 8,
+   "accept": "{progress:34}>=40&{progress:32}>=40&{progress:53}==0&{progress:0}>=6010",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_140"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_141"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_142"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 38,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_054"
+   ],
+   "requester": null,
+   "region": 8,
+   "accept": "{progress:17}==0&{progress:0}>=6070",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_153"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_154"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 32,
+   "name": [
+    "/Game/Datatable/Strings/Quest/ST_EventQuestTitle.ST_EventQuestTitle",
+    "EventQuestTitle_049"
+   ],
+   "requester": null,
+   "region": 9,
+   "accept": "{progress:0}>=7020",
+   "stages": [
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_136"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_137"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_138"
+     ]
+    },
+    {
+     "cond": "",
+     "goal": [
+      "/Game/Datatable/Strings/Progress/ST_SubProgress.ST_SubProgress",
+      "SubProgress_139"
+     ]
+    }
+   ]
+  }
+ ],
+ "shards": {
+  "item": 25004,
+  "rewards": [
+   {
+    "num": 3,
+    "cond": "{progress:43}==10",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_001"
+    ]
+   },
+   {
+    "num": 6,
+    "cond": "{progress:43}==11",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_002"
+    ]
+   },
+   {
+    "num": 9,
+    "cond": "{progress:43}==12",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_003"
+    ]
+   },
+   {
+    "num": 12,
+    "cond": "{progress:43}==13",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_004"
+    ]
+   },
+   {
+    "num": 16,
+    "cond": "{progress:43}==14",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_005"
+    ]
+   },
+   {
+    "num": 20,
+    "cond": "{progress:43}==15",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_006"
+    ]
+   },
+   {
+    "num": 24,
+    "cond": "{progress:43}==16",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_007"
+    ]
+   },
+   {
+    "num": 28,
+    "cond": "{progress:43}==17",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_008"
+    ]
+   },
+   {
+    "num": 32,
+    "cond": "{progress:43}==18",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_009"
+    ]
+   },
+   {
+    "num": 36,
+    "cond": "{progress:43}==19",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_010"
+    ]
+   },
+   {
+    "num": 40,
+    "cond": "{progress:43}==20",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_011"
+    ]
+   },
+   {
+    "num": 44,
+    "cond": "{progress:43}==21",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_012"
+    ]
+   },
+   {
+    "num": 48,
+    "cond": "{progress:43}==22",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_013"
+    ]
+   },
+   {
+    "num": 52,
+    "cond": "{progress:43}==23",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_014"
+    ]
+   },
+   {
+    "num": 56,
+    "cond": "{progress:43}==24",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_015"
+    ]
+   },
+   {
+    "num": 60,
+    "cond": "{progress:43}==25",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_016"
+    ]
+   },
+   {
+    "num": 64,
+    "cond": "{progress:43}==26",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_017"
+    ]
+   },
+   {
+    "num": 68,
+    "cond": "{progress:43}==27",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_018"
+    ]
+   },
+   {
+    "num": 72,
+    "cond": "{progress:43}==28",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_019"
+    ]
+   },
+   {
+    "num": 76,
+    "cond": "{progress:43}==29",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_020"
+    ]
+   },
+   {
+    "num": 80,
+    "cond": "{progress:43}==30",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_021"
+    ]
+   },
+   {
+    "num": 84,
+    "cond": "{progress:43}==31",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_022"
+    ]
+   },
+   {
+    "num": 89,
+    "cond": "{progress:43}==32",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_023"
+    ]
+   },
+   {
+    "num": 94,
+    "cond": "{progress:43}==33",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_024"
+    ]
+   },
+   {
+    "num": 99,
+    "cond": "{progress:43}==34",
+    "room": [
+     "/Game/Datatable/Strings/Event/SubEvent/SubEv_Chapter01/ST_SubEv_C01_Collection_treasure.ST_SubEv_C01_Collection_treasure",
+     "SubEv_C01_Collection_treasure_025"
+    ]
+   }
+  ]
+ },
+ "colosseum": [
+  {
+   "id": 0,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Beginner1"
+   ],
+   "rank": "Beginner",
+   "level": 25,
+   "cond": "",
+   "locked": null
+  },
+  {
+   "id": 1,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Beginner2"
+   ],
+   "rank": "Beginner",
+   "level": 27,
+   "cond": "{colosseum:0}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Beginner2"
+   ]
+  },
+  {
+   "id": 2,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Beginner3"
+   ],
+   "rank": "Beginner",
+   "level": 29,
+   "cond": "{colosseum:1}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Beginner3"
+   ]
+  },
+  {
+   "id": 3,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Beginner4"
+   ],
+   "rank": "Beginner",
+   "level": 31,
+   "cond": "{colosseum:2}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Beginner4"
+   ]
+  },
+  {
+   "id": 4,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Beginner5"
+   ],
+   "rank": "Beginner",
+   "level": 32,
+   "cond": "{colosseum:3}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Beginner5"
+   ]
+  },
+  {
+   "id": 5,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Intermediate1"
+   ],
+   "rank": "Intermediate",
+   "level": 40,
+   "cond": "{colosseum:4}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Intermediate1"
+   ]
+  },
+  {
+   "id": 6,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Intermediate2"
+   ],
+   "rank": "Intermediate",
+   "level": 41,
+   "cond": "{colosseum:5}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Intermediate2"
+   ]
+  },
+  {
+   "id": 7,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Intermediate3"
+   ],
+   "rank": "Intermediate",
+   "level": 43,
+   "cond": "{colosseum:6}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Intermediate3"
+   ]
+  },
+  {
+   "id": 8,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Intermediate4"
+   ],
+   "rank": "Intermediate",
+   "level": 45,
+   "cond": "{colosseum:7}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Intermediate4"
+   ]
+  },
+  {
+   "id": 9,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Intermediate5"
+   ],
+   "rank": "Intermediate",
+   "level": 48,
+   "cond": "{colosseum:8}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Intermediate5"
+   ]
+  },
+  {
+   "id": 10,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Advanced1"
+   ],
+   "rank": "Advanced",
+   "level": 55,
+   "cond": "{colosseum:9}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Advanced1"
+   ]
+  },
+  {
+   "id": 11,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Advanced2"
+   ],
+   "rank": "Advanced",
+   "level": 58,
+   "cond": "{colosseum:10}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Advanced2"
+   ]
+  },
+  {
+   "id": 12,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Advanced3"
+   ],
+   "rank": "Advanced",
+   "level": 62,
+   "cond": "{colosseum:11}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Advanced3"
+   ]
+  },
+  {
+   "id": 13,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Advanced4"
+   ],
+   "rank": "Advanced",
+   "level": 66,
+   "cond": "{colosseum:12}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Advanced4"
+   ]
+  },
+  {
+   "id": 14,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Advanced5"
+   ],
+   "rank": "Advanced",
+   "level": 70,
+   "cond": "{colosseum:13}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Advanced5"
+   ]
+  },
+  {
+   "id": 15,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Superlative1"
+   ],
+   "rank": "SuperAdvanced",
+   "level": 75,
+   "cond": "{colosseum:14}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Superlative1"
+   ]
+  },
+  {
+   "id": 16,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Superlative2"
+   ],
+   "rank": "SuperAdvanced",
+   "level": 80,
+   "cond": "{colosseum:15}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Superlative2"
+   ]
+  },
+  {
+   "id": 17,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Superlative3"
+   ],
+   "rank": "SuperAdvanced",
+   "level": 90,
+   "cond": "{colosseum:16}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Superlative3"
+   ]
+  },
+  {
+   "id": 18,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Superlative4"
+   ],
+   "rank": "SuperAdvanced",
+   "level": 95,
+   "cond": "{colosseum:17}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Superlative4"
+   ]
+  },
+  {
+   "id": 19,
+   "name": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Colosseum_Rankbattle_Superlative5"
+   ],
+   "rank": "SuperAdvanced",
+   "level": 99,
+   "cond": "{colosseum:18}==3",
+   "locked": [
+    "/Game/Datatable/Strings/UI/UI_Shop/ST_UI_Shop_Word.ST_UI_Shop_Word",
+    "Release_Conditions_Superlative5"
+   ]
+  }
+ ],
+ "chapters": {
+  "1": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_001"
+  ],
+  "2": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_002"
+  ],
+  "3": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_003"
+  ],
+  "4": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_004"
+  ],
+  "5": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_005"
+  ],
+  "6": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_006"
+  ],
+  "7": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_007"
+  ],
+  "8": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_008"
+  ],
+  "9": [
+   "/Game/Datatable/Strings/ChapterTitle/ST_ChapterTitle.ST_ChapterTitle",
+   "ChapterTitle_009"
+  ]
+ }
+}

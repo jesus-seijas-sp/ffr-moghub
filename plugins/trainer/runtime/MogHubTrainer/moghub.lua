@@ -7,14 +7,8 @@ local game, tables = kit.game, kit.tables
 local live = require("live")
 live.init(kit)
 
--- a quick action from live.lua: its result, or why it couldn't run, on screen
-local function act(fn, ...)
-    local args = { ... }
-    return function()
-        local msg, err = fn(table.unpack(args))
-        if msg then mod:notice(msg, "on", 2500) else mod:notice(mod:t("cantDo", "Can't do that: {1}", err), "warn", 2500) end
-    end
-end
+-- a quick action from live.lua (with a game loaded): its result, or why it couldn't run, on screen
+local function act(fn) return mod:action(fn, { game = true }) end
 local valid = kit.valid
 
 local x = "x%g"
@@ -52,7 +46,12 @@ cfg = mod:settings{
     { key = "HealAfterBattle", label = "Heal after battle", type = "toggle", default = false,
       help = "The party's HP and MP are refilled when a battle ends." },
     { key = "AutoBattle", label = "Auto battle", type = "toggle", default = false,
-      help = "Characters use their basic attack on their own. Attack once by hand first. Hotkey: Ctrl+F2." },
+      help = "Characters act on their own (see Auto battle mode). Attack once by hand first. Hotkey: Ctrl+F2." },
+    { key = "AutoBattleMode", label = "Auto battle mode", type = "choice", default = "attack",
+      choices = { { "attack", "Attack" }, { "repeat", "Repeat last command" } },
+      help = "Attack: every character uses their basic attack. Repeat last command: each character repeats the last "
+          .. "command you chose for them (skills and magic, not items); heals and buffs go to the ally with the least "
+          .. "HP, and a fallen target is replaced. A command that can't be used (not enough MP) becomes an attack." },
     { key = "AutoConfirmResults", label = "Auto-confirm results", type = "toggle", default = false,
       help = "With auto battle on, the result screens are confirmed for you." },
 
@@ -89,6 +88,9 @@ cfg = mod:settings{
       format = "%g%%", help = "What shops pay for your items, in percent of normal." },
     { key = "UnlimitedStock", label = "Unlimited stock", type = "toggle", default = false,
       help = "Items that shops only sell a few of can be bought without limit." },
+    { key = "ShopAllItems", label = "Item shops sell everything", type = "toggle", default = false,
+      help = "Every item shop also sells every consumable the game has a price for. Switched off, the added items "
+          .. "show as sold out until the game is started again." },
 
     { header = "Field" },
     { key = "Encounters", label = "Random encounters", type = "toggle", default = true, help = "Hotkey: Ctrl+F3." },
@@ -103,13 +105,13 @@ cfg = mod:settings{
     { key = "LevelTarget", label = "Level to raise to", type = "number", min = 2, max = 99, step = 1, default = 99,
       keep = true, help = "For \"Raise every character\"." },
     { label = "Raise every character", type = "action", button = "Raise",
-      run = function() act(live.raiseLevels, cfg.LevelTarget)() end,
+      run = act(function() return live.raiseLevels(cfg.LevelTarget) end),
       help = "Every character below the level above gets the EXP for it, through the game's own function for "
           .. "setting EXP. Characters already higher stay as they are." },
     { key = "ItemCount", label = "Consumables count", type = "number", min = 1, max = 99, step = 1, default = 99,
       keep = true, help = "For \"Stock every consumable\"." },
     { label = "Stock every consumable", type = "action", button = "Stock",
-      run = function() act(live.stockConsumables, cfg.ItemCount)() end,
+      run = act(function() return live.stockConsumables(cfg.ItemCount) end),
       help = "Every consumable (potions, ethers, ...) set to the count above, also the ones you don't have yet." },
     { label = "Get every artifact", type = "action", button = "Get", run = act(live.allArtifacts),
       help = "Adds every finished artifact you don't own yet (the unfinished ones in the game files are left out)." },
@@ -279,21 +281,59 @@ end
 -- struct elements of an array, so their originals are kept here. Numbers only: the items' Condition (a story lock)
 -- is a string, and the version that rewrote it crashed the game at start-up (strings inside struct arrays are a weak
 -- spot of UE4SS 3.0.1).
-local shopOrig = {}
+--
+-- "Item shops sell everything": item shops (shops whose list holds consumables only) get every consumable with a
+-- buying price added to the end of their list (numbers only: item id, unlimited stock, price ratio 1). The game's
+-- array can't be shortened from Lua, so switching it off marks the added items sold out (MaxOrderNum 0) until the
+-- tables are loaded again at the next start.
+local shopOrig, shopAdded = {}, {}       -- originals by array element; ids added per shop row
+local function sellable()
+    local out, order = {}, {}
+    tables.rows("CONSUMABLES_ITEM_DATA", function(row)
+        if (row.buyingPrice or 0) > 0 and not out[row.ID] then out[row.ID] = true; order[#order + 1] = row.ID end
+    end)
+    table.sort(order)
+    return out, order
+end
 local function applyShops()
-    local buy, unlimited = cfg.BuyPricePercent, cfg.UnlimitedStock
-    patch:apply("SHOP_ShopList1", buy .. "|" .. tostring(unlimited), function(row, _, rowName, t)
+    local buy, unlimited, all = cfg.BuyPricePercent, cfg.UnlimitedStock, cfg.ShopAllItems
+    local consumable, order
+    patch:apply("SHOP_ShopList1", buy .. "|" .. tostring(unlimited) .. "|" .. tostring(all), function(row, _, rowName, t)
+        local key = t.path .. "|" .. rowName
+        local added = shopAdded[key] or {}
+        shopAdded[key] = added
+        if all then
+            if not consumable then consumable, order = sellable() end
+            local have, onlyItems, n = {}, true, 0
+            row.ItemList:ForEach(function(_, e)
+                local id = e:get().ItemId
+                n = n + 1
+                have[id] = true
+                if id >= 0 and not consumable[id] then onlyItems = false end
+            end)
+            if onlyItems and n > 0 then
+                for _, id in ipairs(order) do
+                    if not have[id] then
+                        n = n + 1
+                        row.ItemList[n] = { ItemId = id, MaxOrderNum = -1, PriceRatio = 1.0 }
+                        added[id] = true
+                    end
+                end
+            end
+        end
         row.ItemList:ForEach(function(i, e)
             local s = e:get()
-            local k = t.path .. "|" .. rowName .. "|" .. i
+            local k = key .. "|" .. i
             local o = shopOrig[k]
             if not o then
-                o = { price = s.PriceRatio, max = s.MaxOrderNum }
+                o = { price = s.PriceRatio, max = s.MaxOrderNum, added = added[s.ItemId] }
+                if o.added then o.price, o.max = 1.0, -1 end
                 shopOrig[k] = o
             end
             local price = o.price * buy / 100
             if math.abs(s.PriceRatio - price) > 1e-6 then s.PriceRatio = price end
             local max = unlimited and -1 or o.max
+            if o.added and not all then max = 0 end      -- switched off: sold out until the next start
             if s.MaxOrderNum ~= max then s.MaxOrderNum = max end
         end)
     end)
@@ -319,11 +359,9 @@ local RARE = { [38] = true, [2092] = true, [297] = true, [293] = true, [294] = t
 local rareGroups
 local function findRareGroups()
     local out = {}
-    for _, t in ipairs(tables.find("BATTLE_GROUP_DATA")) do
-        t.dt:ForEachRow(function(_, row)
-            row.UnitIdList:ForEach(function(_, e) if RARE[e:get()] then out[row.ID] = true end end)
-        end)
-    end
+    tables.rows("BATTLE_GROUP_DATA", function(row)
+        for _, id in ipairs(kit.ue.values(row.UnitIdList)) do if RARE[id] then out[row.ID] = true end end
+    end)
     return next(out) and out or nil
 end
 local function applyRareEnemies()
@@ -359,8 +397,7 @@ local function applyTables()
                             maps = applyMaps, ["battle speed"] = applyBattleSpeed, skills = applySkills,
                             ["encounter distance"] = applyPlayerThreshold, shops = applyShops,
                             ["selling prices"] = applySellPrices, ["rare enemies"] = applyRareEnemies }) do
-        local ok, err = pcall(fn)
-        if not ok then kit.logOnce(mod.tag, name, err) end
+        mod:guard(name, fn)
     end
 end
 
@@ -374,7 +411,7 @@ local function refillParty()
     if not (unitLib and battleLib) then return end
     local maxLB = lb and unitLib:GetLimitBurstPointMaxGauge() or 0
     for _, u in ipairs(game.battleSide(game.FRIENDLY)) do
-        local ok, err = pcall(function()
+        mod:guard("refill", function()
             local p, id = u.param, u.id
             local cur = p:GetHitPoint()
             if cur <= 0 then return end                      -- knocked out: left to the game
@@ -382,7 +419,6 @@ local function refillParty()
             if mp and p:GetMagicPoint() < p:GetMaxMagicPoint() then unitLib:SetPlayableUnitMagicPoint(id, p:GetMaxMagicPoint()) end
             if lb and maxLB > 0 and p:GetLimitBurstPoint() < maxLB then battleLib:SetBattleUnitLimitBurstPoint(id, maxLB) end
         end)
-        if not ok then kit.logOnce(mod.tag, "refill", err) end
     end
 end
 
@@ -397,7 +433,7 @@ local function limitBurst()
     local max = unitLib:GetLimitBurstPointMaxGauge()
     local restoring = keep and os.clock() < lbRestoreUntil
     for _, u in ipairs(game.battleSide(game.FRIENDLY)) do
-        local ok, err = pcall(function()
+        mod:guard("limit burst", function()
             local id = u.id
             local cur = u.param:GetLimitBurstPoint()
             if restoring and lbKept[id] and cur < lbKept[id] then
@@ -412,7 +448,6 @@ local function limitBurst()
             lbLast[id] = cur
             if keep and not restoring then lbKept[id] = cur end
         end)
-        if not ok then kit.logOnce(mod.tag, "limit burst", err) end
     end
 end
 
@@ -437,11 +472,11 @@ mod:on("battleEnd", function()
         if not unitLib then return end
         local n = 0
         for id, m in pairs(list) do
-            local ok, err = pcall(function()
+            local ok = mod:guard("heal", function()
                 unitLib:SetPlayableUnitHitPoint(id, m.hp)
                 unitLib:SetPlayableUnitMagicPoint(id, m.mp)
             end)
-            if ok then n = n + 1 else kit.logOnce(mod.tag, "heal", err) end
+            if ok then n = n + 1 end
         end
         if n > 0 then say(mod:t("partyHealed", "Party healed"), "on") end
     end, "heal after battle")
@@ -471,11 +506,13 @@ local function applyFieldSpeed()
 end
 
 ---------------------------------------------------------------------------------------------------
--- Auto battle: when a character's command menu opens, its basic attack is sent through the game's own "command
--- decided" event, as if chosen by hand. The command layout is copied from a basic attack the player made, so the
--- game always receives a shape it produced itself.
+-- Auto battle: when a character's command menu opens, a command is sent through the game's own "command decided"
+-- event, as if chosen by hand: the basic attack, or (mode "repeat") the last command the player chose for that
+-- character. Commands are copied from ones the player made, so the game always receives a shape it produced itself.
 ---------------------------------------------------------------------------------------------------
-local auto = { menuOpen = false, menuSerial = 0, templates = {}, generic = nil, hinted = false }
+local auto = { menuOpen = false, menuSerial = 0, templates = {}, generic = nil, hinted = false, last = {} }
+local FRIENDLY_REL = game.enum.Relation.Friendlies
+local values = kit.ue.values
 
 local function fightSkill(battleLib, unitId)
     local u = battleLib:GetBattleUnitByUniqueId(unitId, true)
@@ -486,22 +523,30 @@ local function fightSkill(battleLib, unitId)
     return (skill and skill > 0) and skill or nil
 end
 
-local function ints(arr)
-    local t = {}
-    arr:ForEach(function(_, e) t[#t + 1] = e:get() end)
-    return t
-end
-
--- remembers basic attacks (one action, not an item, from the attack entry rather than a skill menu)
+-- remembers each character's last command (for "repeat"), and basic attacks (one action, not an item, from the
+-- attack entry rather than a skill menu) as the template for attacking
 local function recordDecision(v)
-    if v.CmdType ~= 0 or v.CommandId ~= -1 then return end
+    if v.CmdType ~= 0 then return end
     local items = {}
     v.cmdDecideDataList:ForEach(function(_, e)
         local d = e:get()
         items[#items + 1] = { actionId = d.actionId, unit = d.actionUnitUniqueId, isUseItem = d.isUseItem,
-                              IsAll = d.IsAll, params = ints(d.ParameterList),
+                              IsAll = d.IsAll, params = values(d.ParameterList), targets = values(d.targetUnitUniqueIdList),
                               pCat = d.ParentActionKey.Category, pId = d.ParentActionKey.ID }
     end)
+    if #items == 0 then return end
+    local keysAll = {}
+    v.actionKeys:ForEach(function(_, e)
+        local k = e:get()
+        keysAll[#keysAll + 1] = { Category = k.Category, ID = k.ID }
+    end)
+    local battleLib0 = game.lib("CPP_BFL_Battle")
+    local unitId = battleLib0 and battleLib0:GetUnitIdByUniqueId(items[1].unit)
+    if unitId and unitId > 0 then
+        auto.last[unitId] = { CmdType = v.CmdType, CommandId = v.CommandId, isNotConsume = v.isNotConsume,
+                              doCalcOrder = v.doCalcOrder, items = items, keys = keysAll }
+    end
+    if v.CommandId ~= -1 then return end
     if #items ~= 1 or items[1].isUseItem or items[1].IsAll then return end
     local battleLib = game.lib("CPP_BFL_Battle")
     if not battleLib or fightSkill(battleLib, items[1].unit) ~= items[1].actionId then return end
@@ -520,7 +565,7 @@ local function autoAttack()
     if not ui then return end
     local actor, phase = ui.CurrentActionUnitUniqueId, ui.BtlPhaseType
     if actor == nil or actor < 0 then return end
-    if phase ~= 0 then say(mod:t("autoChoose", "Auto battle: choose this action yourself"), "warn", 2000); return end
+    if phase ~= game.enum.BtlPhase.Normal then say(mod:t("autoChoose", "Auto battle: choose this action yourself"), "warn", 2000); return end
     local tpl = auto.templates[actor] or auto.generic
     if not tpl then
         if not auto.hinted then
@@ -563,6 +608,92 @@ local function autoAttack()
     dispatcher:ExecuteEvent({ TagName = FName("Delegate.Battle.Cmd.Decide") }, v)
 end
 
+-- the ally a support skill helps most: the living one with the smallest share of HP among the skill's targets
+local function weakestAlly(battleLib, actor, skill)
+    local list = {}
+    pcall(function() battleLib:GetSkillTargetUnitUniqueIdList(list, actor, skill, FRIENDLY_REL, true) end)
+    local best, bestRatio
+    for _, uid in ipairs(values(list)) do
+        pcall(function()
+            local p = battleLib:GetBattleUnitParameter(uid, true)
+            local ratio = p:GetHitPoint() / math.max(1, p:GetMaxHitPoint())
+            if not bestRatio or ratio < bestRatio then best, bestRatio = uid, ratio end
+        end)
+    end
+    return best
+end
+
+-- the character's last command again; false when there is none or it can't be used (then they attack instead)
+local function repeatLast(actor)
+    local battleLib = game.lib("CPP_BFL_Battle")
+    if not battleLib then return false end
+    local rec = auto.last[battleLib:GetUnitIdByUniqueId(actor)]
+    if not rec then return false end
+    local plan = {}
+    for _, it in ipairs(rec.items) do
+        if it.isUseItem then return false end                   -- items are never spent on their own
+        if battleLib:IsEnableCommand(actor, it.actionId) == false then return false end
+        local targets = {}
+        if it.IsAll then
+            for _, t in ipairs(it.targets) do if not battleLib:IsUnitDead(t) then targets[#targets + 1] = t end end
+        else
+            local t, ally = it.targets[1], false
+            if t then pcall(function() ally = battleLib:GetBattleUnitParameter(t, false):GetRelation() == FRIENDLY_REL end) end
+            if ally then
+                t = weakestAlly(battleLib, actor, it.actionId) or t
+            elseif not t or battleLib:IsUnitDead(t) then
+                t = battleLib:GetDefaultSkillTargetUnitUniqueId(actor, it.actionId)
+            end
+            if t and t >= 0 then targets[1] = t end
+        end
+        if #targets == 0 then return false end
+        plan[#plan + 1] = { it = it, targets = targets }
+    end
+
+    local class = StaticFindObject("/Script/mucha.CPP_BtlCmdDecideDelegateVal")
+    local dispatcher = FindFirstOf("CPP_MuchaEventDispatcher")
+    if not (valid(class) and valid(dispatcher)) then return false end
+    local v = StaticConstructObject(class, dispatcher)
+    v.CmdType = rec.CmdType
+    v.isNotConsume = rec.isNotConsume
+    v.doCalcOrder = rec.doCalcOrder
+    v.CommandId = rec.CommandId
+    for n, step in ipairs(plan) do
+        local it = step.it
+        v.cmdDecideDataList[n] = { actionId = it.actionId, actionUnitUniqueId = actor }
+        local d = v.cmdDecideDataList[n]
+        d.actionId = it.actionId
+        d.actionUnitUniqueId = actor
+        d.isUseItem = false
+        d.IsAll = it.IsAll
+        d.ParentActionKey.Category = it.pCat
+        d.ParentActionKey.ID = it.pId
+        for j, t in ipairs(step.targets) do d.targetUnitUniqueIdList[j] = t end
+        for j, prm in ipairs(it.params) do d.ParameterList[j] = prm end
+    end
+    for i, k in ipairs(rec.keys) do
+        v.actionKeys[i] = { Category = k.Category, ID = k.ID }
+        v.actionKeys[i].Category = k.Category
+        v.actionKeys[i].ID = k.ID
+    end
+    dispatcher:ExecuteEvent({ TagName = FName("Delegate.Battle.Cmd.Decide") }, v)
+    return true
+end
+
+-- the active character's turn: their last command (mode "repeat") or the basic attack
+local function autoAct()
+    if cfg.AutoBattleMode == "repeat" then
+        local ui = game.first("CPP_UI_BattleSubsystem")
+        local actor = ui and ui.CurrentActionUnitUniqueId
+        if ui and ui.BtlPhaseType == game.enum.BtlPhase.Normal and actor and actor >= 0 then
+            local ok, done = pcall(repeatLast, actor)
+            if not ok then kit.logOnce(mod.tag, "repeat last command", done) end
+            if ok and done then return end
+        end
+    end
+    autoAttack()
+end
+
 mod:hook("/Script/mucha.CPP_BtlDelEventCmd:OnExecuteDecideCommand", function(_, value) recordDecision(value:get()) end)
 mod:on("gameEvent", function(name)
     if name == "Delegate.Battle.Cmd.List.Begin" then
@@ -571,7 +702,7 @@ mod:on("gameEvent", function(name)
         if cfg.AutoBattle then
             local mine = auto.menuSerial
             mod:after(400, function()
-                if cfg.AutoBattle and auto.menuOpen and auto.menuSerial == mine then autoAttack() end
+                if cfg.AutoBattle and auto.menuOpen and auto.menuSerial == mine then autoAct() end
             end, "auto battle")
         end
     elseif name == "Delegate.Battle.Cmd.List.End" then
@@ -597,13 +728,11 @@ end
 ---------------------------------------------------------------------------------------------------
 -- Menu buttons and hotkeys
 ---------------------------------------------------------------------------------------------------
-function actions.addGil()
-    local lib = game.lib("CPP_BFL_SaveDataPlayer")
-    if not lib or not game.saveData() then say(mod:t("addGilNoGame", "Add Gil: load a game first"), "warn"); return end
+actions.addGil = mod:action(function()
     local amount = math.floor(cfg.GilAmount)
-    lib:AddCurrentMoney(amount, false)
-    say(mod:t("gilAdded", "{1} Gil added", amount), "on")
-end
+    game.lib("CPP_BFL_SaveDataPlayer"):AddCurrentMoney(amount, false)
+    return mod:t("gilAdded", "{1} Gil added", amount)
+end, { game = true, notify = function(...) say(...) end })
 
 function actions.reset()
     cfg:reset()
@@ -612,10 +741,7 @@ function actions.reset()
     say(mod:t("resetDone", "MogHub Trainer: everything back to normal"), "on")
 end
 
-local function toggle(key, label)
-    cfg:set(key, not cfg[key])
-    say(mod:t("toggled", "{1}: {2}", cfg:text(cfg:item(key), "label") or label, cfg:display(cfg:item(key))), cfg[key] and "on" or "off")
-end
+local function toggle(key) return cfg:toggle(key, say) end
 
 -- the next of a comma list of steps above the current value, wrapping to the first
 local function nextStep(list, current, fallback)
@@ -626,15 +752,15 @@ local function nextStep(list, current, fallback)
     return steps[1]
 end
 
-mod:key(cfg.GodModeKey, function() toggle("GodMode", "God mode") end, "GodModeKey")
-mod:key(cfg.OneHitKillKey, function() toggle("OneHitKill", "One-hit kills") end, "OneHitKillKey")
+mod:key(cfg.GodModeKey, function() toggle("GodMode") end, "GodModeKey")
+mod:key(cfg.OneHitKillKey, function() toggle("OneHitKill") end, "OneHitKillKey")
 mod:key(cfg.AutoBattleKey, function()
-    toggle("AutoBattle", "Auto battle")
-    if cfg.AutoBattle and auto.menuOpen then autoAttack() end
+    toggle("AutoBattle")
+    if cfg.AutoBattle and auto.menuOpen then autoAct() end
 end, "AutoBattleKey")
 mod:key(cfg.EncountersKey, function()
     if not owned("Encounters") then say(mod:t("qolEncounters", "Encounters are handled by FFRS-QoL"), "warn"); return end
-    toggle("Encounters", "Random encounters")
+    toggle("Encounters")
 end, "EncountersKey")
 mod:key(cfg.FieldSpeedKey, function()
     cfg:set("FieldSpeedMultiplier", nextStep(cfg.FieldSpeedSteps, cfg.FieldSpeedMultiplier, { 1, 1.5, 2, 3 }))

@@ -11,6 +11,7 @@
 --   }
 --   if s.GodMode then ... end
 --   s:onChange(function(key, value, old) ... end)
+--   s:toggle("GodMode")                                            -- flips it, with an on-screen "God mode: On"
 -- Texts are translated through the plugin's lang/<culture>.ini (kit/i18n.lua), by item: <key>.label, <key>.help,
 -- <key>.button, <key>.done and <key>.choice.<value>, where <key> is the item's key (or its `id`, or for items without
 -- one its English label); headers are header.<English header>.
@@ -145,6 +146,17 @@ function methods.set(s, key, v)
     kit.config.write(p.path, key, serialize(v), item.section or "General")
     p.text = kit.readFile(p.path)
     methods.fire(s, key, v, old)
+end
+
+-- flips a toggle and says so ("God mode: On", in the player's language); notify(msg, color) replaces mod:notice
+-- (for a plugin with its own notice switch). Returns the new value.
+function methods.toggle(s, key, notify)
+    local item = s._.byKey[key]
+    methods.set(s, key, not s._.values[key])
+    local v = s._.values[key]
+    local msg = kit.t("toggled", "{1}: {2}", methods.text(s, item, "label") or key, methods.display(s, item))
+    if notify then notify(msg, v and "on" or "off") else s._.mod:notice(msg, v and "on" or "off") end
+    return v
 end
 
 function methods.get(s, key) return s._.values[key] end

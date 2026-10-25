@@ -1,7 +1,7 @@
 -- MogHub core: logging, the one game-thread tick, timers, events and the plugin loader.
 -- Every plugin runs in this Lua state (UE4SS gives each of its mods a separate one), so plugins call the kit
 -- directly. One timer drives everything: UE4SS callbacks running into each other break its Lua state.
-local kit = { VERSION = "0.1.0", plugins = {}, dir = nil, modsDir = nil, debug = false }
+local kit = { VERSION = "0.2.0", plugins = {}, dir = nil, modsDir = nil, debug = false }
 
 local function log(tag, fmt, ...)
     local ok, msg = pcall(string.format, fmt, ...)
@@ -92,6 +92,32 @@ local function addHandler(owner, event, fn)
     table.insert(handlers[event], { fn = fn, owner = owner })
 end
 
+-- Results kept until cleared, for reads that are costly or asked for many times in a row (a screen asking the game
+-- for every row it draws):
+--   local cache = kit.cache({ "saveLoaded" })            -- also cleared on these events
+--   local n = cache:get("party", function() return #kit.game.saveData().unitParameterList end)
+-- A read that fails or gives nil is kept as false, so callers write `cache:get(...) or fallback`.
+local Cache = {}
+Cache.__index = Cache
+function Cache:get(key, fn)
+    local v = self.values[key]
+    if v == nil then
+        local ok, res = pcall(fn)
+        if not ok then kit.trace("cache %s: %s", tostring(key), tostring(res)) end
+        v = ok and res
+        if v == nil then v = false end
+        self.values[key] = v
+    end
+    return v
+end
+function Cache:clear() self.values = {} end
+
+function kit.cache(events)
+    local c = setmetatable({ values = {} }, Cache)
+    for _, e in ipairs(events or {}) do addHandler(nil, e, function() c:clear() end) end
+    return c
+end
+
 local function tick()
     now = now + TICK_MS
     kit.emit("tick")
@@ -123,6 +149,26 @@ function Mod:every(ms, fn, name, opts) return addTimer(self, ms, fn, name, true,
 function Mod:after(ms, fn, name, opts) return addTimer(self, ms, fn, name, false, opts) end
 function Mod:cancel(t) if t then t.cancelled = true end end
 function Mod:on(event, fn) addHandler(self, event, fn) end
+-- runs fn(...) now, its error logged once under `name` (timers, events, hooks and keys are guarded already: this is
+-- for calls of its own, e.g. several independent steps where one failing shouldn't stop the others)
+function Mod:guard(name, fn, ...) return guarded(self, name, fn, ...) end
+-- a menu action or hotkey that reports on screen: fn returns a message (shown) or nil and the reason (shown as
+-- "Can't do that: ..."). opts.game: only with a game loaded; opts.notify(msg, color, ms) replaces mod:notice.
+--   { label = "Heal party", type = "action", run = mod:action(live.healParty, { game = true }) }
+function Mod:action(fn, opts)
+    opts = opts or {}
+    local mod = self
+    local notify = opts.notify or function(msg, color, ms) mod:notice(msg, color, ms) end
+    return function(...)
+        if opts.game and not kit.game.saveData() then
+            notify(kit.t("cantDo", "Can't do that: {1}", kit.t("noGame", "load a game first")), "warn", 2500)
+            return
+        end
+        local msg, err = fn(...)
+        if msg then notify(msg, "on", 2500)
+        elseif err then notify(kit.t("cantDo", "Can't do that: {1}", err), "warn", 2500) end
+    end
+end
 -- a hook that can't take the game down: errors are logged with the plugin's name
 function Mod:hook(path, fn)
     local mod = self
@@ -283,6 +329,7 @@ function kit.start(dir)
     kit.config.init(kit)
     kit.debug = kit.config.kitBool("Debug", false)
     kit.json = require("kit.json")
+    kit.ue = require("kit.ue")
     kit.game = require("kit.game")
     kit.game.init(kit)
     kit.i18n = require("kit.i18n")

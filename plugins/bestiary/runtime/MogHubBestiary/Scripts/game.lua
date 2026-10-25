@@ -14,11 +14,7 @@ M.itemName = kit.game.itemName
 -- enemies)
 function M.records(sd)
     local out = {}
-    local list = sd.unitList
-    for i = 1, #list do
-        local r = list[i]
-        out[r.SaveId] = r
-    end
+    kit.ue.each(sd.unitList, function(r) out[r.SaveId] = r end)
     return out
 end
 

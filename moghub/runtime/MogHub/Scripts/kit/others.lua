@@ -17,17 +17,45 @@ M.list = {}                -- { kind = "ue4ss" | "pak", name, on, path, where, f
 
 function M.init(k) kit = k end
 
-local function win(path) return (path:gsub("/", "\\")) end
+-- Folder listings come from UE4SS's IterateGameDirectories (in the game's process): io.popen("dir") starts a
+-- cmd.exe, which froze the game for seconds and crashed it when the Mods screen opened. Folders are named by their
+-- path under the game's FFRS folder, e.g. { "Content", "Paks", "~mods" }.
+local function folder(path)
+    local ok, d = pcall(function()
+        local d = IterateGameDirectories().Game
+        for _, part in ipairs(path) do
+            d = d and d[part]
+        end
+        return d
+    end)
+    return ok and type(d) == "table" and d or nil
+end
 
--- names in a folder: folders (dirs = true) or files
-local function names(dir, dirs)
+-- names in a folder: its folders (dirs = true) or its files
+local function names(path, dirs)
     local out = {}
-    local p = io.popen('dir /b ' .. (dirs and "/ad" or "/a-d") .. ' "' .. win(dir) .. '" 2>nul')
-    if p then
-        for n in p:lines() do out[#out + 1] = n end
-        p:close()
+    local d = folder(path)
+    if d then
+        if dirs then
+            for k, v in pairs(d) do
+                if type(k) == "string" and k:sub(1, 2) ~= "__" and type(v) == "table" then out[#out + 1] = k end
+            end
+        else
+            for _, f in ipairs(d.__files or {}) do
+                local n = f.__name
+                if type(n) == "string" then out[#out + 1] = n end
+            end
+        end
     end
     table.sort(out, function(a, b) return a:lower() < b:lower() end)
+    return out
+end
+
+local MODS = { "Binaries", "Win64", "ue4ss", "Mods" }
+local PAKS = { "Content", "Paks" }
+local function sub(path, ...)
+    local out = { table.unpack(path) }
+    for _, p in ipairs({ ... }) do out[#out + 1] = p end
     return out
 end
 
@@ -50,7 +78,7 @@ end
 
 local function scanUE4SS(out)
     local listed = modsTxt()
-    for _, folder in ipairs(names(kit.modsDir, true)) do
+    for _, folder in ipairs(names(MODS, true)) do
         local dir = kit.modsDir .. "/" .. folder
         if folder ~= "MogHub" and not NOT_MODS[folder] and not kit.exists(dir .. "/moghub.lua")
             and (kit.exists(dir .. "/Scripts/main.lua") or kit.exists(dir .. "/enabled.txt") or listed[folder] ~= nil
@@ -61,8 +89,8 @@ local function scanUE4SS(out)
     end
 end
 
-local function scanPaks(out, dir, where)
-    local files = names(dir)
+local function scanPaks(out, path, dir, where)
+    local files = names(path)
     local present = {}
     for _, f in ipairs(files) do present[f:lower()] = true end
     for _, f in ipairs(files) do
@@ -80,18 +108,24 @@ local function scanPaks(out, dir, where)
 end
 
 function M.scan()
+    local started = os.clock()
     local out = {}
     pcall(scanUE4SS, out)
     local paks = paksDir()
-    pcall(scanPaks, out, paks .. "/~mods", "Content\\Paks\\~mods")
-    for _, sub in ipairs(names(paks .. "/~mods", true)) do
-        pcall(scanPaks, out, paks .. "/~mods/" .. sub, "Content\\Paks\\~mods\\" .. sub)
+    pcall(scanPaks, out, sub(PAKS, "~mods"), paks .. "/~mods", "Content\\Paks\\~mods")
+    for _, name in ipairs(names(sub(PAKS, "~mods"), true)) do
+        pcall(scanPaks, out, sub(PAKS, "~mods", name), paks .. "/~mods/" .. name, "Content\\Paks\\~mods\\" .. name)
     end
-    pcall(scanPaks, out, paks, "Content\\Paks")
-    -- keep what was switched this session (it shows until the next start)
+    pcall(scanPaks, out, PAKS, paks, "Content\\Paks")
+    -- what was switched this session shows as switched until the next start (the listing may predate the switch)
     local changed = {}
-    for _, m in ipairs(M.list) do if m.changed then changed[m.kind .. "|" .. m.path] = true end end
-    for _, m in ipairs(out) do m.changed = changed[m.kind .. "|" .. m.path] end
+    for _, m in ipairs(M.list) do if m.changed then changed[m.kind .. "|" .. m.path] = m end end
+    for _, m in ipairs(out) do
+        local was = changed[m.kind .. "|" .. m.path]
+        if was then m.changed, m.on = true, was.on end
+    end
+    kit.trace("others: %d mod(s), %.0f ms (game folder %s)", #out, (os.clock() - started) * 1000,
+        tostring(folder({}) and folder({}).__absolute_path))
     M.list = out
     return out
 end

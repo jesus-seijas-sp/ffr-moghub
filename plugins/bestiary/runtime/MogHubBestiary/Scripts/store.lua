@@ -44,13 +44,12 @@ local function seedFromSave(sd, records)
     for _, r in pairs(records) do if any then break end; pcall(function() any = r.IsAnalyzed or (r.defeatNum or 0) > 0 end) end
     if not any then return end
     local ok, err = pcall(function()
-        sd.Map.perMapSaveDataMap:ForEach(function(key, value)
-            if value:get().bIsVisited then
-                local a = data.mapArea[tostring(key:get())]
-                visit(a)
-                if a and data.areaRegion[a] then visit(data.islandArea[tostring(data.areaRegion[a])]) end
-            end
-        end)
+        local maps = kit.ue.map(sd.Map.perMapSaveDataMap, function(v) return v.bIsVisited or nil end)
+        for id in pairs(maps) do
+            local a = data.mapArea[tostring(id)]
+            visit(a)
+            if a and data.areaRegion[a] then visit(data.islandArea[tostring(data.areaRegion[a])]) end
+        end
     end)
     if not ok then mod:log("visited maps: %s", tostring(err)) end
     mod:log("from the game save: %d enemies, %d visited areas", n, v)

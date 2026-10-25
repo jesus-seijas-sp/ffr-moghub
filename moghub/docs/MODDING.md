@@ -97,6 +97,15 @@ if cfg.GodMode then ... end
 cfg:set("Exp", 2)
 cfg:onChange(function(key, value, old) apply() end)
 cfg:reset()                      -- every menu setting back to its default
+cfg:toggle("GodMode")            -- flips a toggle and shows "God mode: On" (translated); for hotkeys
+```
+
+An action that reports its result: `mod:action(fn, opts)` makes a `run` function that shows what `fn` returns (a
+message), or "Can't do that: <reason>" when it returns `nil, reason`. With `opts.game = true` it only runs with a
+game loaded and says so otherwise; `opts.notify(msg, color, ms)` replaces `mod:notice`.
+
+```lua
+{ label = "Heal party", type = "action", button = "Heal", run = mod:action(healParty, { game = true }) },
 ```
 
 Values live in `MyPlugin/config.ini`. It is written when missing, edits by hand are picked up within a second, and
@@ -112,10 +121,15 @@ mod:hook("/Script/mucha.CPP_BtlDelEventCmd:OnExecuteDecideCommand", function(ctx
 mod:key("CTRL+F6", fn, "TurboKey")   -- F1-F12, A-Z, 0-9 with CTRL+ / SHIFT+ / ALT+
 mod:notice("Turbo: x2", "on")        -- "on" green, "off" white, "warn" amber; optional duration in ms
 mod:log("value %d", n)               -- [MyPlugin] value 3 in UE4SS.log
+mod:guard("hud", applyHUD)           -- runs it now; an error is logged once under "hud" and doesn't propagate
 ```
 
 Everything runs on the game thread from one 50 ms tick. Timers wait while a loading screen is up, because objects
 are being torn down; pass `{ loading = true }` as the last argument to keep one running anyway.
+
+Timers, events, hooks and keys catch their own errors: a failure is logged once (with the plugin and the name you
+gave) and the rest keeps running, so there's no need to wrap them in `pcall`. Give independent jobs timers of their
+own, or call each one through `mod:guard` inside a shared function, so one failing doesn't stop the others.
 
 Events:
 
@@ -144,7 +158,35 @@ kit.game.itemName(id)
 kit.game.load(path) / kit.game.class(path)   -- assets and Blueprint classes, loaded if needed
 kit.game.keyDown("Gamepad_DPad_Left")   -- raw key state
 kit.game.isPaused()
+kit.game.enum.JoinStatus.Join           -- the game's enums as numbers: JoinStatus, RequestState, RankBattleStatus,
+                                        -- VisionMastery, Relation, BtlPhase, Visibility
 ```
+
+### Reading the game's containers: `kit.ue`
+
+Arrays and maps from the game, and the values in them, the way that works with UE4SS 3.0.1:
+
+```lua
+kit.ue.each(sd.unitList, function(unit, i) ... end)            -- a TArray of structs, each element in place
+local ids = kit.ue.values(row.UnitIdList)                       -- a TArray of numbers or objects -> Lua list
+local states = kit.ue.map(sd.request.DataMap, function(v, id) return v.State end)   -- a TMap -> Lua table
+kit.ue.plain(v)                                                 -- unwrapped; FString / FName -> Lua string
+kit.ue.enum(v, { [0] = "Join", "NotJoin" })                     -- a number, from a number or "eType::Name"
+```
+
+Copy out the fields you need inside the callback rather than keeping the elements: structs handed back by game
+functions can point into memory that is freed afterwards. Don't write strings into structs inside arrays (it
+crashed the game).
+
+### Reads worth keeping: `kit.cache`
+
+```lua
+local cache = kit.cache({ "saveLoaded" })             -- cleared on these events, and by cache:clear()
+local party = cache:get("party", function() return #kit.game.saveData().unitParameterList end)
+```
+
+A read that fails or gives `nil` is kept as `false`, so write `cache:get(...) or fallback`. A screen clears it when
+it opens and every few seconds while open.
 
 ## Data tables: `kit.tables`
 
@@ -163,6 +205,13 @@ mod:every(2000, apply)   -- the game reloads some tables on map changes; apply()
 
 The first argument is the row struct's name. The second is a state string: rows are only rewritten when it changes
 or when the table is reloaded. `kit.tables.find(struct)` lists the tables with that row struct.
+
+To read tables without changing them:
+
+```lua
+kit.tables.rows("CONSUMABLES_ITEM_DATA", function(row, rowName) ... end)
+local rewards = kit.tables.index("UNIT_PARAMETER", "ID", function(row) return { exp = row.Experience } end)
+```
 
 ## Per-save storage: `mod:store(name)`
 

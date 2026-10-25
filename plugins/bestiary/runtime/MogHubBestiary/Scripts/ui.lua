@@ -289,20 +289,7 @@ local function entryName(e)
 end
 
 -- UE4SS hands TMap / TArray out-params back as Lua tables; values may be numbers, enum names or wrapped params
-local function plain(v)
-    if type(v) == "userdata" then
-        local ok, x = pcall(function() return v:get() end)
-        if ok and x ~= nil then v = x end
-        if type(v) == "userdata" and v.ToString then return v:ToString() end
-    end
-    return v
-end
-local function enumIndex(v, names)
-    v = plain(v)
-    if type(v) == "number" then return v end
-    local name = tostring(v):match("::(%w+)$") or tostring(v)
-    for i, n in pairs(names) do if n == name then return i end end
-end
+local plain, enumIndex = kit.ue.plain, kit.ue.enum
 
 local ELEMENT_NAMES = { [1] = "Fire", "Ice", "Wind", "Earth", "Thunder", "Water", "Light", "Dark" }
 local RESIST_NAMES = { [1] = "Weakness", "Halved", "Invalid", "Absorb", "Reflect" }

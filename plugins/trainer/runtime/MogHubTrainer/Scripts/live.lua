@@ -6,21 +6,15 @@ local data = require("game_data")
 local M = {}
 local kit, game
 
-local SYNCHRO, AWAKENING = 1, 0          -- eVisionMasteryType
+local SYNCHRO, AWAKENING, each
 
-function M.init(k) kit, game = k, k.game end
-
--- the loaded game's save object, or nil (with the reason) on the title screen
-local function save()
-    local sd = game.saveData()
-    if not sd then return nil, mod:t("noGame", "load a game first") end
-    return sd
+function M.init(k)
+    kit, game = k, k.game
+    SYNCHRO, AWAKENING = game.enum.VisionMastery.Synchro, game.enum.VisionMastery.Awakening
+    each = kit.ue.each
 end
 
--- each element of a TArray of structs
-local function each(arr, fn)
-    for i = 1, #arr do fn(arr[i], i) end
-end
+-- Each action runs with a game loaded (the Trainer wraps them in mod:action{ game = true }) and returns its message.
 
 -- the playable characters' unit ids
 local function characters(sd)
@@ -31,8 +25,7 @@ end
 
 -- every character's HP and MP to full, knocked-out ones included (their maximums from the game's own parameters)
 function M.healParty()
-    local sd, err = save()
-    if not sd then return nil, err end
+    local sd = game.saveData()
     local unit = game.lib("CPP_BFL_Unit")
     local n = 0
     for _, id in ipairs(characters(sd)) do
@@ -47,7 +40,6 @@ function M.healParty()
 end
 
 function M.maxGil()
-    if not save() then return nil, mod:t("noGame", "load a game first") end
     local lib = game.lib("CPP_BFL_SaveDataPlayer")
     local max = lib:GetMaxNumMoney()
     lib:SetCurrentMoney(max, true, false)
@@ -56,8 +48,7 @@ end
 
 -- every character to at least `level` (the EXP that level needs, through the game's own level-up)
 function M.raiseLevels(level)
-    local sd, err = save()
-    if not sd then return nil, err end
+    local sd = game.saveData()
     local unit, saved = game.lib("CPP_BFL_Unit"), game.lib("CPP_BFL_SaveDataUnit")
     level = math.min(level, unit:GetMaxLevel())
     local n = 0
@@ -73,7 +64,6 @@ end
 
 -- every consumable to `count` (also the ones not owned yet), within each item's own maximum
 function M.stockConsumables(count)
-    if not save() then return nil, mod:t("noGame", "load a game first") end
     local inv, item = game.lib("CPP_BFL_SaveDataInventory"), game.lib("CPP_BFL_Item")
     local n = 0
     for _, id in ipairs(data.consumables) do
@@ -84,7 +74,6 @@ function M.stockConsumables(count)
 end
 
 function M.allArtifacts()
-    if not save() then return nil, mod:t("noGame", "load a game first") end
     local inv = game.lib("CPP_BFL_SaveDataInventory")
     local n = 0
     for _, id in ipairs(data.artifacts) do
@@ -95,8 +84,7 @@ end
 
 -- Mastery Rank (each character's synchro with each vision) to the maximum
 function M.maxMastery()
-    local sd, err = save()
-    if not sd then return nil, err end
+    local sd = game.saveData()
     local vision = game.lib("CPP_BFL_Vision")
     local units, n = characters(sd), 0
     each(sd.visionList, function(v)
@@ -113,8 +101,7 @@ function M.maxMastery()
 end
 
 function M.maxAwakening()
-    local sd, err = save()
-    if not sd then return nil, err end
+    local sd = game.saveData()
     local vision = game.lib("CPP_BFL_Vision")
     local n = 0
     each(sd.visionList, function(v)
@@ -127,8 +114,7 @@ end
 
 -- every enemy the game has a record of (met at least once), weaknesses included
 function M.libraAll()
-    local sd, err = save()
-    if not sd then return nil, err end
+    local sd = game.saveData()
     local unit = game.lib("CPP_BFL_SaveDataUnit")
     local enemy = {}
     for _, id in ipairs(data.enemies) do enemy[id] = true end
@@ -144,8 +130,7 @@ end
 
 -- the limited stock of every shop back to full
 function M.restockShops()
-    local sd, err = save()
-    if not sd then return nil, err end
+    local sd = game.saveData()
     local n = 0
     each(sd.shop, function(s)
         if s.CurrentBuyNum > 0 then s.CurrentBuyNum = 0; n = n + 1 end
@@ -155,7 +140,6 @@ end
 
 -- every area on the map screen (event stages left out)
 function M.revealMaps()
-    if not save() then return nil, mod:t("noGame", "load a game first") end
     local maps = game.lib("CPP_BFL_SaveData_PerMap")
     local n = 0
     for _, id in ipairs(data.maps) do

@@ -28,7 +28,7 @@
       "kind": "framework",
       "description": "The mod framework: a Mods menu in the game for every mod, and the base MogHub Trainer and MogHub Bestiary run on.",
       "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
       "requires": [ "ue4ss" ],
       "install": [
@@ -78,6 +78,43 @@
       "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubBestiary/moghub.lua" },
       "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubBestiary/moghub.ini", "key": "Version" },
       "versionFrom": { "ini": "plugins/bestiary/runtime/MogHubBestiary/moghub.ini", "key": "Version" }
+    },
+    {
+      "id": "moghub-fieldkit",
+      "name": "MogHub Field Kit",
+      "author": "jesus-seijas-sp",
+      "kind": "plugin",
+      "description": "Field and HUD comforts, each a switch: hide the minimap, quest tracker or key guide (or the whole HUD), an encounter meter, save anywhere, quieter battle voices, escape rewards, skip the intro logos.",
+      "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub/tree/main/plugins/fieldkit",
+      "version": "0.1.0",
+      "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
+      "requires": [ "moghub" ],
+      "install": [ { "from": "plugins/fieldkit/runtime/MogHubFieldKit", "to": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubFieldKit" } ],
+      "exclude": [ "lang/en.ini" ],
+      "keep": [ "config.ini" ],
+      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubFieldKit/moghub.lua" },
+      "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubFieldKit/moghub.ini", "key": "Version" },
+      "versionFrom": { "ini": "plugins/fieldkit/runtime/MogHubFieldKit/moghub.ini", "key": "Version" }
+    },
+    {
+      "id": "moghub-logbook",
+      "name": "MogHub Logbook",
+      "author": "jesus-seijas-sp",
+      "kind": "plugin",
+      "description": "Your progress in its own main-menu entry: treasure chests and item spots per area, side quests with their current goal, Colosseum battles, and where every tablet shard is.",
+      "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub/tree/main/plugins/logbook",
+      "version": "0.2.0",
+      "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
+      "requires": [ "moghub" ],
+      "install": [
+        { "from": "plugins/logbook/runtime/MogHubLogbook", "to": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubLogbook" },
+        { "from": "plugins/logbook/data/logbook_data.lua", "to": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubLogbook/Scripts/logbook_data.lua" }
+      ],
+      "exclude": [ "lang/en.ini" ],
+      "keep": [ "config.ini" ],
+      "detect": { "path": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubLogbook/moghub.lua" },
+      "localVersion": { "ini": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubLogbook/moghub.ini", "key": "Version" },
+      "versionFrom": { "ini": "plugins/logbook/runtime/MogHubLogbook/moghub.ini", "key": "Version" }
     },
     {
       "id": "nexus-37",
