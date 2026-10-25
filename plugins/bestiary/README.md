@@ -25,7 +25,12 @@ list, per-save storage and the game's events.
 - Enemies with several forms or phases: Left / Right (or Q / E) steps through them
 - **Show all monsters** (a setting in Mods > FFR Bestiary): every monster listed, the unmet ones dimmed, while the
   counts stay what you really met
-- **Libra by hand**: confirm on an enemy switches its scan data on or off, whatever your save says
+- **Libra by hand**: confirm on an enemy switches its scan data on or off, whatever your save says; **Libra on
+  every monster** (a setting) shows them all
+- **Libra+**: the numbers the game's scan leaves out: how much an enemy resists each status, and the chance of each
+  drop and of a steal working
+- **Area enemy levels**: each area's level range of random encounters, in its panel
+- In the game's eight languages
 - Installing part-way through the game picks up what your save already records (enemies defeated or scanned, areas
   visited)
 - Works with controller and keyboard; uses the game's own fonts, panels and icons

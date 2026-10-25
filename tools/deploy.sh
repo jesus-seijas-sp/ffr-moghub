@@ -11,6 +11,7 @@ PAKS="$GAME/FFRS/Content/Paks/~mods"
 mkdir -p "$MODS/MogHub/Scripts/kit" "$PAKS"
 cp moghub/runtime/MogHub/Scripts/main.lua "$MODS/MogHub/Scripts/"
 cp moghub/runtime/MogHub/Scripts/kit/*.lua "$MODS/MogHub/Scripts/kit/"
+mkdir -p "$MODS/MogHub/lang" && cp moghub/runtime/MogHub/lang/*.ini "$MODS/MogHub/lang/"
 [ -f "$MODS/MogHub/config.ini" ] || sed 's/^Debug = 0/Debug = 1/' moghub/runtime/MogHub/config.ini > "$MODS/MogHub/config.ini"
 touch "$MODS/MogHub/enabled.txt"
 for f in moghub/build/out/zzz_MogHub_P.*; do          # only when changed: the running game locks it
@@ -24,6 +25,7 @@ for dir in plugins/*/runtime/*/; do
     name=$(basename "$dir")
     mkdir -p "$MODS/$name/Scripts"
     cp "$dir"moghub.* "$MODS/$name/"
+    if [ -d "$dir"lang ]; then mkdir -p "$MODS/$name/lang"; cp "$dir"lang/*.ini "$MODS/$name/lang/"; fi
     for f in "$dir"Scripts/*.lua "$dir"../../data/*.lua; do
         [ -f "$f" ] && cp "$f" "$MODS/$name/Scripts/"
     done

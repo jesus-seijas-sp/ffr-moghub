@@ -5,7 +5,7 @@ menu (main menu > Mods > FFR Trainer) or from `config.ini`.
 
 ## Features
 
-- **Battle:** god mode, infinite HP / MP, full Limit Break, no MP cost, one-hit kills, damage and enemy multipliers,
+- **Battle:** god mode, infinite HP / MP, full Limit Burst, no MP cost, one-hit kills, damage and enemy multipliers,
   always escape, heal after battle, auto battle (with auto-confirmed results), battle speed and turbo.
 - **Rewards:** EXP, Gil, MRP, AP and drop rate multipliers; always drop rare items; steals that always work and
   give the rare item; add Gil.

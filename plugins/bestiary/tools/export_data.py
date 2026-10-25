@@ -11,12 +11,17 @@ Writes data/bestiary_data.json:
               named area instead when there are several)
   areaRegion  area key -> region (island number); an island counts as visited once any area of its region is
   stats       unit id -> scan data: name / traits as [string table, key], lv, hp, race, el {element: resistance},
-              st {status: resistance}, drop [normal, rare, steal, rare steal] (enum numbers from the class dump)
+              st {status: resistance}, drop [normal, rare, steal, rare steal] (enum numbers from the class dump),
+              rate [drop, rare drop, steal] (divisors: the chance is 1 in rate, 0 never)
   spriteBox   sprite path -> [x0, x1, y0, y1]: outline in sprite pixels from the canvas centre, y down, measured
   faces       unit id -> face icon texture path (battle timeline icon, by FaceIconId)
   spriteSize  sprite path -> {w, h, cy}: rough idle-pose size and body centre (tools/sprite_bounds.py), for scaling
+  areaLevel   area key -> [min, max] level of its random encounters, bosses left out (tools/area_levels.py)
 """
 import collections, contextlib, io, json, os, re, runpy
+
+from area_levels import area_levels
+from lua_table import lua, unit_extras
 
 with contextlib.redirect_stdout(io.StringIO()):
     g = runpy.run_path(os.path.join(os.path.dirname(__file__), 'build_locations.py'))
@@ -92,6 +97,7 @@ def scan_data(v):
         'st': {str(ev('eUnitStatusCondition', x['Key'])): x['Value']
                for x in v['StatusConditionResistanceList'] if x['Value']},
         'drop': [v['DropNormalItem'], v['DropRareItem'], v['StealNormalItem'], v['StealRareItem']],
+        **unit_extras(v),
     }
 stats = {str(u): scan_data(units[u]) for e in entries for u in e['units']}
 
@@ -127,24 +133,11 @@ out = {
     'stageArea': {a[4:]: sorted(v) for a, v in sorted(g['stage_alias'].items()) if v},
     'entries': entries,
 }
+out['areaLevel'] = area_levels(g['DT'], out['mapArea'])
 os.makedirs('data', exist_ok=True)
 json.dump(out, open('data/bestiary_data.json', 'w', encoding='utf8'), indent=1)
 print('entries', len(entries), 'areas', len(all_areas), 'units in entries', sum(len(e['units']) for e in entries),
       'unplaced names', len(groups) - len(entries))
-
-
-def lua(v, ind=''):
-    """the same data as a Lua table, for the UE4SS mod (require 'bestiary_data')"""
-    if isinstance(v, dict):
-        items = [('[%s]' % k if isinstance(k, int) else '[%s]' % json.dumps(k)) + ' = ' + lua(x, ind + ' ') for k, x in v.items()]
-        return '{' + ', '.join(items) + '}'
-    if isinstance(v, list):
-        return '{' + ', '.join(lua(x, ind) for x in v) + '}'
-    if v is None:
-        return 'nil'
-    if isinstance(v, bool):
-        return 'true' if v else 'false'
-    return json.dumps(v)
 
 
 with open('data/bestiary_data.lua', 'w', encoding='utf8') as f:

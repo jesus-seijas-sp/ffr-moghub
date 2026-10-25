@@ -10,6 +10,7 @@ M=$D/FFRS/Binaries/Win64/ue4ss/Mods/FFRBestiary
 rm -rf dist && mkdir -p $M/Scripts
 cp runtime/FFRBestiary/moghub.ini runtime/FFRBestiary/moghub.lua $M/
 cp runtime/FFRBestiary/Scripts/*.lua data/bestiary_data.lua $M/Scripts/
+mkdir -p $M/lang && cp runtime/FFRBestiary/lang/*.ini $M/lang/ && rm -f $M/lang/en.ini   # en.ini: a template, never read
 cp release/README.txt $M/README.txt
 # a MogHub plugin: UE4SS itself must not load it (that is MogHub's job)
 if [ -e $M/enabled.txt ] || [ -e $M/Scripts/main.lua ]; then echo "ERROR: enabled.txt / main.lua in $M" >&2; exit 1; fi

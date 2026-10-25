@@ -17,6 +17,7 @@ ue4ss/Mods/
     moghub.ini        name, version, author, description, order
     moghub.lua        the plugin's code; MogHub runs it
     Scripts/*.lua     optional modules: require("name") finds them
+    lang/*.ini        optional translations (see Translations)
     config.ini        written by MogHub from your settings
 ```
 
@@ -236,6 +237,43 @@ end)
 The list recycles row widgets while scrolling, so set every visible row's state on every tick. `e.title` is the
 row's text widget. The Mods screen (`kit/hub.lua`) is a short example, and FFR Bestiary (`ui.lua`) a full one: rows
 with face icons, counts and check marks beside a detail panel.
+
+## Translations
+
+MogHub follows the game's text language (the player can force one with `Language` in `MogHub/config.ini`). Write
+your texts in English in the code; translations are optional files next to your plugin, one per language:
+`lang/fr.ini`, `de.ini`, `es.ini`, `ja.ini`, `ko.ini`, `zh-Hans.ini`, `zh-Hant.ini` (the game's official languages).
+
+```ini
+; lang/ja.ini
+plugin.name = 私のプラグイン
+GodMode.label = ゴッドモード
+GodMode.help = パーティがダメージを受けなくなります。
+header.Battle = バトル
+partyHealed = パーティを回復しました
+gilAdded = {1}ギルを入手
+```
+
+- **Settings** need nothing in the code: each item is looked up as `<key>.label`, `<key>.help`, `<key>.button`,
+  `<key>.done` and `<key>.choice.<value>`, where `<key>` is its `key` (or `id`; for an action without either, its
+  English label). Headers are `header.<English header>`.
+- **Your name and entry:** `plugin.name`, `plugin.description`, and `screen.title` for a main-menu entry.
+- **Other texts:** `mod:t("partyHealed", "Party healed")`. `{1}`, `{2}`... take the extra arguments:
+  `mod:t("gilAdded", "{1} Gil added", amount)`. A missing translation falls back to your English.
+- **The game's own words** come out right in every language: `kit.game.text(table, key)` reads the game's string
+  tables (the Bestiary takes enemy names, Libra labels and element words from there).
+- `kit.i18n.lang` is the current language; the `languageChanged` event fires when the player changes it. A screen
+  that builds its texts once should build them again then (the Bestiary does).
+
+Tools (from the repository root):
+- `python moghub/tools/i18n_template.py` writes `lang/en.ini` for MogHub and every plugin: all their English texts,
+  the template translators copy. It is never read by MogHub.
+- `python moghub/tools/i18n_check.py` checks every translation against it: missing or unknown keys, placeholders and
+  line breaks.
+- [`docs/GLOSSARY.md`](GLOSSARY.md) lists the game's official terms in the eight languages (Libra is *Acuité* in
+  French and *Analyse* in German; Gil is *guiles* in Spanish): use them, so your plugin speaks like the game.
+
+The game's own fonts cover every language, as long as your texts use the game's text style (`ui.text` does).
 
 ## Development
 

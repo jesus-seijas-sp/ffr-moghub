@@ -37,7 +37,7 @@ local function addEntry(layout, types)
     if #rebuilt ~= #types + 1 then return end
     local mine = rebuilt[#rebuilt]
     state.entry, state.layout = mine:GetFName():ToString(), layout
-    pcall(function() mine.CommonTextBlock_47:SetText(FText("Mods")) end)
+    pcall(function() mine.CommonTextBlock_47:SetText(FText(kit.t("hub.title", "Mods"))) end)
 end
 
 -- The Help layout, pushed the way the game pushes its layouts; the one that turns up activated outside the main
@@ -53,7 +53,7 @@ local function openHub()
             if not ok and kit.debug then kit.log("PushLayoutWidget(%s): %s", tag, tostring(err)) end
         end
     end
-    if not pushed then kit.notice.show("Mods: open it from the main menu once a game is loaded", "warn", 3000); return end
+    if not pushed then kit.notice.show(kit.t("title.unavailable", "Mods: open it from the main menu once a game is loaded"), "warn", 3000); return end
     local tries, timer = 0, nil
     timer = kit.every(100, function()
         tries = tries + 1

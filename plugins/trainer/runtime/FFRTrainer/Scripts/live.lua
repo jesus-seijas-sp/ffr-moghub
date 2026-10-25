@@ -13,7 +13,7 @@ function M.init(k) kit, game = k, k.game end
 -- the loaded game's save object, or nil (with the reason) on the title screen
 local function save()
     local sd = game.saveData()
-    if not sd then return nil, "load a game first" end
+    if not sd then return nil, mod:t("noGame", "load a game first") end
     return sd
 end
 
@@ -30,11 +30,11 @@ local function characters(sd)
 end
 
 function M.maxGil()
-    if not save() then return nil, "load a game first" end
+    if not save() then return nil, mod:t("noGame", "load a game first") end
     local lib = game.lib("CPP_BFL_SaveDataPlayer")
     local max = lib:GetMaxNumMoney()
     lib:SetCurrentMoney(max, true, false)
-    return string.format("Gil: %d", max)
+    return mod:t("maxGilDone", "Gil: {1}", max)
 end
 
 -- every character to at least `level` (the EXP that level needs, through the game's own level-up)
@@ -51,29 +51,29 @@ function M.raiseLevels(level)
             n = n + 1
         end
     end
-    return string.format("%d characters raised to Lv %d", n, level)
+    return mod:t("raiseDone", "{1} characters raised to Lv {2}", n, level)
 end
 
 -- every consumable to `count` (also the ones not owned yet), within each item's own maximum
 function M.stockConsumables(count)
-    if not save() then return nil, "load a game first" end
+    if not save() then return nil, mod:t("noGame", "load a game first") end
     local inv, item = game.lib("CPP_BFL_SaveDataInventory"), game.lib("CPP_BFL_Item")
     local n = 0
     for _, id in ipairs(data.consumables) do
         local want = math.min(count, item:GetMaxItemNumById(id))
         if want > 0 and inv:FindInventory(id) ~= want then inv:SetInventoryItem(id, want); n = n + 1 end
     end
-    return string.format("%d consumables set to %d", n, count)
+    return mod:t("stockDone", "{1} consumables set to {2}", n, count)
 end
 
 function M.allArtifacts()
-    if not save() then return nil, "load a game first" end
+    if not save() then return nil, mod:t("noGame", "load a game first") end
     local inv = game.lib("CPP_BFL_SaveDataInventory")
     local n = 0
     for _, id in ipairs(data.artifacts) do
         if inv:FindInventory(id) < 1 then inv:AddInventory(id, 1); n = n + 1 end
     end
-    return string.format("%d artifacts added", n)
+    return mod:t("artifactsDone", "{1} artifacts added", n)
 end
 
 -- Mastery Rank (each character's synchro with each vision) to the maximum
@@ -92,7 +92,7 @@ function M.maxMastery()
             end
         end
     end)
-    return string.format("%d vision / character pairs at max rank", n)
+    return mod:t("masteryDone", "{1} vision / character pairs at max rank", n)
 end
 
 function M.maxAwakening()
@@ -105,7 +105,7 @@ function M.maxAwakening()
         local max = vision:GetMaxMasteryPoint(id, AWAKENING)
         if max > 0 and vision:GetAwakeningMasteryPoint(id) < max then vision:SetAwakeningMasteryPoint(id, max); n = n + 1 end
     end)
-    return string.format("%d visions fully awakened", n)
+    return mod:t("awakeningDone", "{1} visions fully awakened", n)
 end
 
 -- every enemy the game has a record of (met at least once), weaknesses included
@@ -122,7 +122,7 @@ function M.libraAll()
         if not unit:IsAnalyzed(id) then unit:SetAnalyze(id, true); n = n + 1 end
         pcall(function() r.analyzedElments:ForEach(function(_, v) if not v:get() then v:set(true) end end) end)
     end)
-    return string.format("%d enemies scanned with Libra", n)
+    return mod:t("libraDone", "{1} enemies scanned with Libra", n)
 end
 
 -- the limited stock of every shop back to full
@@ -133,18 +133,18 @@ function M.restockShops()
     each(sd.shop, function(s)
         if s.CurrentBuyNum > 0 then s.CurrentBuyNum = 0; n = n + 1 end
     end)
-    return string.format("%d shop items restocked", n)
+    return mod:t("restockDone", "{1} shop items restocked", n)
 end
 
 -- every area on the map screen (event stages left out)
 function M.revealMaps()
-    if not save() then return nil, "load a game first" end
+    if not save() then return nil, mod:t("noGame", "load a game first") end
     local maps = game.lib("CPP_BFL_SaveData_PerMap")
     local n = 0
     for _, id in ipairs(data.maps) do
         if not maps:IsKnown(id) then maps:AddKnownMap(id); n = n + 1 end
     end
-    return string.format("%d maps revealed", n)
+    return mod:t("mapsDone", "{1} maps revealed", n)
 end
 
 return M

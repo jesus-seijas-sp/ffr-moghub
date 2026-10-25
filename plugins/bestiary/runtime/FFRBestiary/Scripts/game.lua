@@ -41,7 +41,8 @@ function M.unitParam(id)
     local function str(ref) return ref and M.text(ref[1], ref[2]) end
     local p = { Name = str(d.name), Level = d.lv, MaxHitPoint = d.hp, Race = d.race, Traits = {},
                 ElementResistanceList = {}, StatusConditionResistanceList = {},
-                DropNormalItem = d.drop[1], DropRareItem = d.drop[2], StealNormalItem = d.drop[3], StealRareItem = d.drop[4] }
+                DropNormalItem = d.drop[1], DropRareItem = d.drop[2], StealNormalItem = d.drop[3], StealRareItem = d.drop[4],
+                Rates = d.rate }                          -- drop / rare drop / steal divisors (1 in rate)
     for _, ref in ipairs(d.traits) do p.Traits[#p.Traits + 1] = str(ref) end
     for k, v in pairs(d.el) do p.ElementResistanceList[tonumber(k)] = v end
     for k, v in pairs(d.st) do p.StatusConditionResistanceList[tonumber(k)] = v end

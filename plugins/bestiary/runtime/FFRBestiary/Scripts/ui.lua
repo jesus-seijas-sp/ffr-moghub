@@ -10,7 +10,9 @@ local libra = require("libra")
 
 local M = {}
 M.showAll = false                  -- every enemy counts as seen, everywhere (the "Show all monsters" setting)
-M.libraAll = false                 -- DEVELOPMENT: every enemy counts as scanned (F7 toggles both)
+M.libraAll = false                 -- every enemy counts as scanned (the "Libra on every monster" setting)
+M.libraPlus = true                 -- Libra+: exact status resistances and drop / steal chances (setting)
+M.areaLevels = true                -- each area's enemy level range (setting)
 
 local valid = game.valid
 local function log(s) mod:log("%s", s) end
@@ -41,11 +43,20 @@ local FACE = 40                    -- face icon before an enemy's name in the li
 local TOP_PAD = 26                 -- the window's title was collapsed; keep content clear of the frame
 local GREY, DIM, WHITE = kit.ui.GREY, kit.ui.DIM, kit.ui.WHITE
 local UNKNOWN = "???"
-local ENCOUNTERED, SCANNED = "Encountered", "Scanned"   -- the game has no strings for these
+-- the game has no strings for these: from the plugin's lang files (built into the screen, which is built again when
+-- the language changes)
+local function ENCOUNTERED() return mod:t("encountered", "Encountered") end
+local function SCANNED() return mod:t("scanned", "Scanned") end
 
 -- widget helpers: MogHub's kit.ui bound to the open screen, with the Bestiary's sizes ----------------------------------
 local host, ui, u, L               -- open host widget, the widgets built into it, kit.ui bound to it, its list
 local rowWidgets
+
+-- a row another list takes over: undo the dimming of a not-yet-met monster (kit.list hides our row widgets itself)
+local function releaseRow(e)
+    if e.dim and e.title then pcall(kit.ui.paint, e.title, WHITE) end
+    e.dim = nil
+end
 
 local function new(kind, outer) return u.new(kind, outer) end
 local function text(value, color) return u.text(value, color) end
@@ -63,7 +74,8 @@ local function widgetRow(parent, key, labelW) return u.widgetRow(parent, game.li
 -- build (once per host widget; the game pools it) ---------------------------------------------------------------
 local function build()
     -- kit.list sizes the window and list and collapses Help's own title (the page header already says BESTIARY)
-    L = kit.list.attach(host, u, { window = { WINDOW_W, WINDOW_H }, list = { LIST_W, LIST_H }, lead = FACE, row = rowWidgets })
+    L = kit.list.attach(host, u, { window = { WINDOW_W, WINDOW_H }, list = { LIST_W, LIST_H }, lead = FACE,
+                                   row = rowWidgets, release = releaseRow })
     ui = {}
 
     local body = new("HorizontalBox")
@@ -73,11 +85,11 @@ local function build()
     local summary = new("HorizontalBox")
     ui.summary = text("", GREY)
     ui.summaryScanned = text("", GREY)
-    summary:AddChildToHorizontalBox(text(ENCOUNTERED .. "  ", GREY))
+    summary:AddChildToHorizontalBox(text(ENCOUNTERED() .. "  ", GREY))
     summary:AddChildToHorizontalBox(ui.summary)
     summary:AddChildToHorizontalBox(sized(nil, 30, nil))
     summary:AddChildToHorizontalBox(u.check(26)):SetVerticalAlignment(2)
-    summary:AddChildToHorizontalBox(text(" " .. SCANNED .. "  ", GREY))
+    summary:AddChildToHorizontalBox(text(" " .. SCANNED() .. "  ", GREY))
     summary:AddChildToHorizontalBox(ui.summaryScanned)
     column:AddChildToVerticalBox(sized(summary, LIST_W, nil)):SetPadding({ Left = 14, Top = TOP_PAD, Right = 0, Bottom = 8 })
     L:takeList(column)
@@ -107,8 +119,9 @@ local function build()
     detail:AddChildToVerticalBox(ui.forms):SetPadding({ Left = 4, Top = 2, Right = 0, Bottom = 0 })
     detail:AddChildToVerticalBox(spacer(6))
     local areaInfo = new("VerticalBox")                   -- shown for area headers
-    ui.areaEnc = row(areaInfo, ENCOUNTERED)
-    ui.areaScan = row(areaInfo, SCANNED)
+    ui.areaEnc = row(areaInfo, ENCOUNTERED())
+    ui.areaScan = row(areaInfo, SCANNED())
+    ui.areaLevel = row(areaInfo, mod:t("enemyLevel", "Enemy level"))
     ui.areaInfo = panel(areaInfo)
     detail:AddChildToVerticalBox(sized(ui.areaInfo, DETAIL_W / 2, nil))
 
@@ -153,6 +166,21 @@ local function build()
         if not w then break end
         ui.conditionWrap:AddChildToWrapBox(w); ui.conditions[i] = w
     end
+    -- Libra+: the statuses it only partly resists, each with its icon and percentage (the scan shows immunities only)
+    ui.partial, ui.partialBox = widgetRow(info, mod:t("statusResist", "Status resistance"))
+    ui.partialWrap = new("WrapBox")
+    ui.partialBox:AddChildToHorizontalBox(sized(ui.partialWrap, VALUE_W, nil))
+    ui.partials = {}
+    for i = 1, MAX_CONDITIONS do
+        local w = create(game.CONDITION_ICONS)
+        if not w then break end
+        local pair = new("HorizontalBox")
+        pair:AddChildToHorizontalBox(w):SetVerticalAlignment(2)
+        local pct = text("", GREY)
+        pair:AddChildToHorizontalBox(pct):SetPadding({ Left = 2, Top = 0, Right = 14, Bottom = 0 })
+        ui.partialWrap:AddChildToWrapBox(pair)
+        ui.partials[i] = { box = pair, icon = w, text = pct }
+    end
     info:AddChildToVerticalBox(spacer(6))
     ui.traits = { row(info, "UI_Libra_1"), row(info, "UI_Libra_2"), row(info, "UI_Libra_3"), row(info, "UI_Libra_4") }
 
@@ -162,19 +190,21 @@ local function build()
     scan:AddChildToHorizontalBox(sized(left, DETAIL_W / 2 - PANEL_PAD, nil))
     scan:AddChildToHorizontalBox(sized(right, DETAIL_W / 2 - PANEL_PAD, nil))
     ui.items = {}
-    for _, f in ipairs({ { left, "UI_Libra_NormalDrop", "DropNormalItem" }, { left, "UI_Libra_RareDrop", "DropRareItem" },
-                         { right, "UI_Libra_NormalSteal", "StealNormalItem" }, { right, "UI_Libra_RareSteal", "StealRareItem" } }) do
+    for _, f in ipairs({ { left, "UI_Libra_NormalDrop", "DropNormalItem", 1 }, { left, "UI_Libra_RareDrop", "DropRareItem", 2 },
+                         { right, "UI_Libra_NormalSteal", "StealNormalItem", 3 }, { right, "UI_Libra_RareSteal", "StealRareItem" } }) do
         local t, box = widgetRow(f[1], f[2], DROP_LABEL_W)   -- narrower label: long item names fit their column
         local w = create(game.ITEM_ENTRY)
         if w then box:AddChildToHorizontalBox(w) end
-        ui.items[#ui.items + 1] = { text = t, box = box, widget = w, field = f[3] }
+        local pct = text("", GREY)                        -- Libra+: the chance (rare steal has none of its own)
+        box:AddChildToHorizontalBox(pct):SetPadding({ Left = 8, Top = 0, Right = 0, Bottom = 0 })
+        ui.items[#ui.items + 1] = { text = t, box = box, widget = w, field = f[3], rate = f[4], pct = pct }
     end
     ui.scan = panel(scan)
     detail:AddChildToVerticalBox(ui.scan)
 
     detail:AddChildToVerticalBox(spacer(6))
     local where = new("VerticalBox")
-    where:AddChildToVerticalBox(heading("Locations"))     -- the game has no string for this
+    where:AddChildToVerticalBox(heading(mod:t("locations", "Locations")))   -- the game has no string for this
     ui.areasScroll = new("ScrollBox")
     where:AddChildToVerticalBox(sized(ui.areasScroll, nil, AREAS_H))
     ui.areas = new("VerticalBox")
@@ -236,12 +266,14 @@ local function gameScanned(e)
     return false
 end
 
--- scan data shown: as the game says, unless the player switched Libra on or off for this enemy
+-- scan data shown without a choice by hand: every enemy with "Libra on every monster", else as the game says
+local function defaultScanned(e) return M.libraAll or gameScanned(e) end
+
+-- scan data shown: a choice made by hand for this enemy wins, otherwise the default above
 local function isScanned(e)
-    if M.libraAll then return true end
     local chosen = libra.get(e.units[1])
     if chosen ~= nil then return chosen end
-    return gameScanned(e)
+    return defaultScanned(e)
 end
 
 local function entryName(e)
@@ -368,11 +400,14 @@ end
 -- every value field: texts set, the game's icon widgets hidden (text-only state: ??? or blank)
 local function fields(value, color)
     ui.forms:SetVisibility(1)
-    for _, t in ipairs({ ui.affinity, ui.hp, ui.race, ui.resist, ui.traits[1], ui.traits[2], ui.traits[3], ui.traits[4] }) do
+    for _, t in ipairs({ ui.affinity, ui.hp, ui.race, ui.resist, ui.partial, ui.traits[1], ui.traits[2], ui.traits[3], ui.traits[4] }) do
         set(t, value, color); t:SetVisibility(4)
     end
-    ui.affinityBox:SetVisibility(1); ui.resistBox:SetVisibility(1)
-    for _, it in ipairs(ui.items) do set(it.text, value, color); it.text:SetVisibility(4); it.box:SetVisibility(1) end
+    ui.affinityBox:SetVisibility(1); ui.resistBox:SetVisibility(1); ui.partialBox:SetVisibility(1)
+    pcall(function() ui.partial:GetParent():SetVisibility(M.libraPlus and 4 or 1) end)   -- the whole Libra+ line
+    for _, it in ipairs(ui.items) do
+        set(it.text, value, color); it.text:SetVisibility(4); it.box:SetVisibility(1); set(it.pct, "")
+    end
     set(ui.level, "")
 end
 
@@ -380,6 +415,10 @@ local function blocks(visible)
     ui.top:SetVisibility(visible and 4 or 1); ui.scan:SetVisibility(visible and 4 or 1)
     ui.areaInfo:SetVisibility(visible and 1 or 4)
 end
+
+-- the level range of an area's random encounters, bosses left out: { min, max }, or nil (towns, and caves whose
+-- enemies are placed on the map). From the data file (tools/area_levels.py).
+local function levelRange(area) return data.areaLevel and data.areaLevel[area] end
 
 local function showHeader(r)
     setSprite(nil)
@@ -390,6 +429,9 @@ local function showHeader(r)
     ui.name:SetTitle(FText(areaName(r.header)))
     set(ui.areaEnc, r.seen .. " / " .. r.total)
     set(ui.areaScan, r.scanned .. " / " .. r.total)
+    local lv = levelRange(r.header)
+    set(ui.areaLevel, lv and (lv[1] == lv[2] and tostring(lv[1]) or (lv[1] .. " - " .. lv[2])) or "-")
+    pcall(function() ui.areaLevel:GetParent():SetVisibility(M.areaLevels and 4 or 1) end)
     ui.areasHead:SetVisibility(1)
     ui.areas:ClearChildren()
 end
@@ -454,6 +496,30 @@ end
 
 -- statuses the unit is immune to (StatusConditionResistanceList value 100). APPROXIMATION: the scan panel's own
 -- rule lives in C++; "Resistances" is keyed UI_Libra_Condition_Invalid, so immune-only is assumed. Check in battle.
+-- statuses resisted in part (StatusConditionResistanceList 1..99): { { status, percent }, ... } by status
+local function partialResistances(p)
+    local out = {}
+    pcall(function()
+        for k, v in pairs(p.StatusConditionResistanceList or {}) do
+            local key, val = k, v
+            if type(v) == "table" then key, val = v.Key, v.Value end
+            local n = tonumber(plain(val)) or 0
+            if n > 0 and n < 100 then out[#out + 1] = { tonumber(plain(key)) or plain(key), n } end
+        end
+    end)
+    table.sort(out, function(x, y) return tostring(x[1]) < tostring(y[1]) end)
+    return out
+end
+
+-- a drop / steal chance from DT_UnitParameter's divisor (1 in `rate`; 0: never) as "8.3%"
+local function chance(rate)
+    rate = tonumber(rate)
+    if not rate or rate <= 0 then return "" end
+    local pct = 100 / rate
+    if pct == math.floor(pct) then return string.format("%d%%", pct) end
+    return string.format("%.1f%%", pct)
+end
+
 local function immunities(p)
     local out = {}
     pcall(function()
@@ -481,9 +547,10 @@ local function showEntry(e, met)
     ui.check:SetVisibility(scanned and 4 or 1)
     set(ui.level, (game.libra("UI_Libra_Level") or "Lv.") .. " " .. tostring(p.Level or "?"))
     -- confirm switches Libra for this enemy; Left / Right (or Q / E) page through its forms / phases
-    local hint = (met and "" or "Not met yet        ") .. "Libra: " .. (scanned and "On" or "Off")
-    if libra.get(e.units[1]) ~= nil then hint = hint .. " (set by you)" end
-    if #e.units > 1 then hint = hint .. string.format("        Form %d / %d  (Left / Right)", form, #e.units) end
+    local hint = (met and "" or (mod:t("notMet", "Not met yet") .. "        "))
+        .. (scanned and mod:t("libraOn", "Libra: On") or mod:t("libraOff", "Libra: Off"))
+    if libra.get(e.units[1]) ~= nil then hint = hint .. " " .. mod:t("setByYou", "(set by you)") end
+    if #e.units > 1 then hint = hint .. "        " .. mod:t("forms", "Form {1} / {2}  (Left / Right)", form, #e.units) end
     ui.forms:SetVisibility(4)
     set(ui.formsText, hint, GREY)
 
@@ -522,6 +589,22 @@ local function showEntry(e, met)
     else
         set(ui.resist, none)                              -- an empty icon list draws only its underline
     end
+    if M.libraPlus then
+        local part = partialResistances(p)
+        if #ui.partials > 0 and #part > 0 then
+            ui.partial:SetVisibility(1); ui.partialBox:SetVisibility(4)
+            for i, slot in ipairs(ui.partials) do
+                local st = part[i]
+                slot.box:SetVisibility(st and 4 or 1)
+                if st then
+                    pcall(function() slot.icon:SetConditionList({ st[1] }) end)
+                    set(slot.text, st[2] .. "%", GREY)
+                end
+            end
+        else
+            set(ui.partial, none)
+        end
+    end
     for k = 2, 4 do set(ui.traits[k], tr[k] or none) end
     for _, it in ipairs(ui.items) do
         if it.widget then
@@ -530,6 +613,8 @@ local function showEntry(e, met)
         else
             set(it.text, game.itemName(p[it.field]) or none)
         end
+        local has = (tonumber(plain(p[it.field])) or -1) >= 0
+        set(it.pct, (M.libraPlus and has and it.rate) and chance(p.Rates and p.Rates[it.rate]) or "", GREY)
     end
     showLocations(e, id)
 end
@@ -687,7 +772,7 @@ local function confirmed(row)
         pendingRefresh = row or true                      -- next tick, after the click has been handled
     elseif r and r.entry and r.known then                -- Libra on / off for this enemy
         local e = r.entry
-        libra.set(e.units[1], not isScanned(e), gameScanned(e))
+        libra.set(e.units[1], not isScanned(e), defaultScanned(e))
         pendingRefresh = row or true                      -- the counts change too
     end
 end
@@ -706,7 +791,9 @@ function M.open(h, uu)
     host, u = h, uu
     local addr = h:GetFullName()                          -- unique per object, unlike its address
     local ok, err = pcall(function()
-        if builtFor ~= addr or not (ui and valid(ui.name)) then build(); builtFor = addr end
+        -- built again for a new widget, or when the language changed (texts are built in)
+        local key = addr .. "|" .. kit.i18n.lang
+        if builtFor ~= key or not (ui and valid(ui.name)) then build(); builtFor = key end
         pendingForm, pendingConfirm, pendingRefresh = nil, nil, nil   -- input from before it was open
         local here = tracker.currentArea()
         if here then expanded[here] = true end           -- open on the area the player is in

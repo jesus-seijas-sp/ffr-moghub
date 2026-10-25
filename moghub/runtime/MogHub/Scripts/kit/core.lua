@@ -158,6 +158,11 @@ function Mod:screen(def)
     return self.ownScreen
 end
 function Mod:notice(msg, color, ms) kit.notice.show(msg, color, ms) end
+-- a text in the player's language from the plugin's lang/<culture>.ini, else `default` (see kit/i18n.lua)
+function Mod:t(key, default, ...) return kit.i18n.text(self.dir, key, default, ...) end
+-- the plugin's name and description in the player's language (plugin.name / plugin.description in its lang files)
+function Mod:displayName() return self:t("plugin.name", self.name) end
+function Mod:displayDescription() return self:t("plugin.description", self.description) end
 -- fn(on) when the plugin is switched on or off in the Mods menu. While it is off nothing it registered runs and its
 -- settings read as their defaults, so a plugin undoes its changes by applying its settings again.
 function Mod:onToggle(fn) self.toggles[#self.toggles + 1] = fn end
@@ -278,6 +283,8 @@ function kit.start(dir)
     kit.json = require("kit.json")
     kit.game = require("kit.game")
     kit.game.init(kit)
+    kit.i18n = require("kit.i18n")
+    kit.i18n.init(kit)
     kit.tables = require("kit.tables")
     kit.notice = require("kit.notice")
     kit.notice.init(kit)
@@ -296,6 +303,7 @@ function kit.start(dir)
     kit.title = require("kit.title")
     kit.title.init(kit)
 
+    kit.i18n.start()                                      -- the language first: plugins name things as they load
     kit.hub.start()                                       -- the Mods screen first: plugins take the spare slots
     for _, folder in ipairs(pluginFolders()) do kit.loadPlugin(folder) end
     table.sort(kit.plugins, function(a, b)

@@ -15,18 +15,19 @@ function M.init(k) kit, valid = k, k.valid end
 
 local List = {}
 List.__index = List
+local extras = {}          -- entry widget address -> its extras (see List:extra)
 
 -- finds the Help layout's parts; `layout` sizes: { window = {w, h}, list = {w, h} }
 function M.attach(host, u, layout)
     local root = host.WidgetTree.RootWidget
     local find = u.find
-    local L = setmetatable({ host = host, u = u, extras = {}, n = 0, textures = {}, queued = {}, queue = {} }, List)
+    local L = setmetatable({ host = host, u = u, n = 0, textures = {}, queued = {}, queue = {} }, List)
     L.box, L.title, L.gap = find(root, "CPP_CommonSizeBox_0"), find(root, "Text_Title"), find(root, "Spacer_101")
     L.slot, L.listBox, L.view = find(root, "NamedSlot_93"), find(root, "SizeBox_0"), find(root, "CmnListView")
     L.helpList = find(root, "WBP_HelpList")
     assert(L.box and L.slot and L.listBox and L.view and L.helpList, "the Help layout changed: cannot build the screen")
     layout = layout or {}
-    L.leadSize, L.rowBuilt = layout.lead, layout.row
+    L.leadSize, L.rowBuilt, L.release = layout.lead, layout.row, layout.release
     if layout.window then L.box:SetWidthOverride(layout.window[1]); L.box:SetHeightOverride(layout.window[2]) end
     if layout.list then L.listBox:SetWidthOverride(layout.list[1]); L.listBox:SetHeightOverride(layout.list[2]) end
     if L.title then L.title:SetVisibility(1) end         -- the page header already names the screen
@@ -92,7 +93,7 @@ function List:setRows(n, label)
     self.n = n
     if self.view:GetNumItems() ~= #items then pcall(function() self.view:SetListItems(items) end) end
     pcall(function() self.view:RequestRefresh() end)
-    for _, e in pairs(self.extras) do e.shown = nil end  -- every row redraws its text
+    for _, e in pairs(extras) do if e.owner == self then e.shown = nil end end   -- every row redraws its text
 end
 
 function List:refresh() pcall(function() self.view:RequestRefresh() end) end
@@ -122,47 +123,81 @@ function List:rowOf(w)
     if valid(item) then return item.ItemIndex + 1 end
 end
 
--- extras added once to each (recycled) entry widget: a right-aligned box with a value text, an indent for nested
--- rows, and (layout.lead) an image before the title
-function List:extra(w)
-    local key = w:GetAddress()
-    local e = self.extras[key]
-    if e and valid(e.value) then return e end
-    local u = self.u
+-- Extras on each entry widget, kept per widget, not per list: the game pools the widgets, so the same row widget comes
+-- back when a screen is built again (the Mods screen on every visit) and can serve another screen's list. The list
+-- using a row owns it; a list taking a row over clears what the previous one left there (its value, indent, lead,
+-- its own widgets, through layout.release).
+
+local function base(u, w)
     local button = w.WidgetTree.RootWidget              -- WBP_LeftLineButton_C
     local overlay = valid(button) and u.find(button.WidgetTree.RootWidget, "Overlay_0")
     if not overlay then return nil end
     local tree = button.WidgetTree
     -- the indent pads the button's own content (bar, background, text): the list resets the entry's outer padding
     -- whenever it reuses a row while scrolling
-    e = { right = u.new("HorizontalBox", tree), value = u.text("", nil, tree), indentSlot = overlay.Slot }
+    local e = { right = u.new("HorizontalBox", tree), value = u.text("", nil, tree), indentSlot = overlay.Slot,
+                tree = tree, built = {}, custom = {} }
     pcall(function() e.value:SetJustification(2) end)    -- right
     e.right:AddChildToHorizontalBox(e.value):SetVerticalAlignment(2)
     local s = overlay:AddChildToOverlay(e.right)
     s:SetHorizontalAlignment(3); s:SetVerticalAlignment(2)
     s:SetPadding({ Left = 0, Top = 0, Right = 24, Bottom = 0 })
-    local inner = button.WidgetTree.RootWidget
-    e.title = u.find(inner, "Text_Title")
-    -- [lead][title] in the title's ScaleBox. Every row stays one height (the list assumes it): the lead box is
-    -- `lead` tall on every row, and 0 wide on rows without a lead
-    local scale = self.leadSize and u.find(inner, "ScaleBox_0")
-    if scale and e.title then
-        local line = u.new("HorizontalBox", w.WidgetTree)
-        local slot = scale:SetContent(line)
-        pcall(function() slot:SetHorizontalAlignment(1) end)
-        local size = self.leadSize
-        e.lead = u.image(nil, size, w.WidgetTree)
-        e.leadBox = u.sized(e.lead, 0, size, w.WidgetTree)
-        e.leadSlot = line:AddChildToHorizontalBox(e.leadBox)
-        e.leadSlot:SetVerticalAlignment(2)
-        line:AddChildToHorizontalBox(e.title):SetVerticalAlignment(2)
-        e.leadSize = size
+    e.inner = button.WidgetTree.RootWidget
+    e.title = u.find(e.inner, "Text_Title")
+    return e
+end
+
+-- [lead][title] in the title's ScaleBox. Every row stays one height (the list assumes it): the lead box is `size`
+-- tall on every row, and 0 wide on rows without a lead
+local function addLead(u, w, e, size)
+    local scale = u.find(e.inner, "ScaleBox_0")
+    if not (scale and e.title) then return end
+    local line = u.new("HorizontalBox", w.WidgetTree)
+    local slot = scale:SetContent(line)
+    pcall(function() slot:SetHorizontalAlignment(1) end)
+    e.lead = u.image(nil, size, w.WidgetTree)
+    e.leadBox = u.sized(e.lead, 0, size, w.WidgetTree)
+    e.leadSlot = line:AddChildToHorizontalBox(e.leadBox)
+    e.leadSlot:SetVerticalAlignment(2)
+    line:AddChildToHorizontalBox(e.title):SetVerticalAlignment(2)
+    e.leadSize = size
+end
+
+function List:extra(w)
+    local key = w:GetAddress()
+    local e = extras[key]
+    if not (e and valid(e.value)) then
+        e = base(self.u, w)
+        if not e then return nil end
+        extras[key] = e
     end
+    if e.owner == self then return e end
+    -- taking the row over
+    local prev = e.owner
+    if prev and prev.release then pcall(prev.release, e) end
+    for _, x in ipairs(e.custom) do pcall(function() x:SetVisibility(1) end) end
+    e.owner, e.shown, e.row = self, nil, nil
+    M.indent(e, 0)
+    M.setValue(e, "", nil)
+    if self.leadSize and not e.lead then addLead(self.u, w, e, self.leadSize) end
+    if e.lead then M.lead(e, false) end
     if self.rowBuilt then
-        local ok, err = pcall(self.rowBuilt, e, u, tree)
-        if not ok then kit.logOnce("MogHub", "list row", err) end
+        local mine = e.built[self.rowBuilt]
+        if not mine then
+            -- the widgets the screen adds to e.right are remembered, to hide them when another list takes the row
+            local before = e.right:GetChildrenCount()
+            local ok, err = pcall(self.rowBuilt, e, self.u, e.tree)
+            if not ok then kit.logOnce("MogHub", "list row", err) end
+            mine = {}
+            for i = before, e.right:GetChildrenCount() - 1 do
+                local x = e.right:GetChildAt(i)
+                mine[#mine + 1] = x
+                e.custom[#e.custom + 1] = x
+            end
+            e.built[self.rowBuilt] = mine
+        end
+        for _, x in ipairs(mine) do pcall(function() x:SetVisibility(4) end) end
     end
-    self.extras[key] = e
     return e
 end
 

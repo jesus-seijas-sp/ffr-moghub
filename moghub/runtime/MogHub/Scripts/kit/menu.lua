@@ -65,6 +65,13 @@ function M.register(owner, def, tag)
     return screen
 end
 
+-- a screen's entry text in the player's language: screen.title from its plugin's lang files (hub.title for the hub)
+function M.title(screen)
+    if not screen then return "" end
+    if screen.owner then return screen.owner:t("screen.title", screen.title) end
+    return kit.t("hub.title", screen.title)
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Menu entries
 ---------------------------------------------------------------------------------------------------
@@ -72,7 +79,7 @@ end
 local named = {}         -- tag -> title already written into its row
 local function nameRows()
     local todo = false
-    for tag, s in pairs(M.screens) do if named[tag] ~= s.title then todo = true end end
+    for tag, s in pairs(M.screens) do if named[tag] ~= M.title(s) then todo = true end end
     if not todo then return end
     local dt = StaticFindObject(MENU_TABLE)
     if not valid(dt) then return end
@@ -80,11 +87,11 @@ local function nameRows()
         dt:ForEachRow(function(_, row)
             local tag = row.SceneTag.TagName:ToString()
             local s = M.screens[tag]
-            if s and named[tag] ~= s.title then
-                named[tag] = s.title
+            if s and named[tag] ~= M.title(s) then
+                named[tag] = M.title(s)
                 local ok, err = pcall(function()
-                    row.SceneTitle = FText(s.title)
-                    row.EntryName = FText(s.title)
+                    row.SceneTitle = FText(M.title(s))
+                    row.EntryName = FText(M.title(s))
                 end)
                 if not ok then kit.logOnce("MogHub", "menu row names", err) end
             end
@@ -143,8 +150,8 @@ local function labelEntries()
         pcall(function()
             local tag = e.VM_MainMenuRootEntry.SceneTag.TagName:ToString()
             local s = M.screens[tag]
-            if s and e.CommonTextBlock_82:GetText():ToString() ~= s.title then
-                e.CommonTextBlock_82:SetText(FText(s.title))
+            if s and e.CommonTextBlock_82:GetText():ToString() ~= M.title(s) then
+                e.CommonTextBlock_82:SetText(FText(M.title(s)))
             end
         end)
     end

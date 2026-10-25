@@ -12,7 +12,7 @@ local function act(fn, ...)
     local args = { ... }
     return function()
         local msg, err = fn(table.unpack(args))
-        if msg then mod:notice(msg, "on", 2500) else mod:notice("Can't do that: " .. tostring(err), "warn", 2500) end
+        if msg then mod:notice(msg, "on", 2500) else mod:notice(mod:t("cantDo", "Can't do that: {1}", err), "warn", 2500) end
     end
 end
 local valid = kit.valid
@@ -30,7 +30,7 @@ cfg = mod:settings{
       help = "Party HP and MP stay full and the damage they take is 0. Hotkey: Ctrl+F1." },
     { key = "InfiniteHP", label = "Infinite HP", type = "toggle", default = false, help = "The party's HP is refilled during battle." },
     { key = "InfiniteMP", label = "Infinite MP", type = "toggle", default = false, help = "The party's MP is refilled during battle." },
-    { key = "FullLimitBreak", label = "Full Limit Break", type = "toggle", default = false, help = "The Limit Break gauge stays full." },
+    { key = "FullLimitBreak", label = "Full Limit Burst", type = "toggle", default = false, help = "The Limit Burst gauge stays full." },
     { key = "NoMPCost", label = "No MP cost", type = "toggle", default = false, help = "Skills cost no MP." },
     { key = "OneHitKill", label = "One-hit kills", type = "toggle", default = false, help = "Enemies go down in one hit. Hotkey: Ctrl+F5." },
     mult("DamageDealtMultiplier", "Damage dealt", 0, 10, 0.5),
@@ -136,7 +136,7 @@ local function owned(setting) return not (QOL and QOL_SETTINGS[setting]) end
 if QOL then
     for key in pairs(QOL_SETTINGS) do
         local item = cfg:item(key)
-        if item then item.help = (item.help and (item.help .. " ") or "") .. "(Handled by FFRS-QoL, which is installed: this setting does nothing.)" end
+        if item then item.note = mod:t("qolNote", "(Handled by FFRS-QoL, which is installed: this setting does nothing.)") end
     end
 end
 
@@ -262,7 +262,7 @@ local function applyTables()
 end
 
 ---------------------------------------------------------------------------------------------------
--- Battle: HP / MP / Limit Break refills through the game's own setters, and healing after battle
+-- Battle: HP / MP / Limit Burst refills through the game's own setters, and healing after battle
 ---------------------------------------------------------------------------------------------------
 local function refillParty()
     local hp, mp, lb = cfg.GodMode or cfg.InfiniteHP, cfg.GodMode or cfg.InfiniteMP, cfg.FullLimitBreak
@@ -307,7 +307,7 @@ mod:on("battleEnd", function()
             end)
             if ok then n = n + 1 else kit.logOnce(mod.tag, "heal", err) end
         end
-        if n > 0 then say("Party healed", "on") end
+        if n > 0 then say(mod:t("partyHealed", "Party healed"), "on") end
     end, "heal after battle")
 end)
 
@@ -384,12 +384,12 @@ local function autoAttack()
     if not ui then return end
     local actor, phase = ui.CurrentActionUnitUniqueId, ui.BtlPhaseType
     if actor == nil or actor < 0 then return end
-    if phase ~= 0 then say("Auto battle: choose this action yourself", "warn", 2000); return end
+    if phase ~= 0 then say(mod:t("autoChoose", "Auto battle: choose this action yourself"), "warn", 2000); return end
     local tpl = auto.templates[actor] or auto.generic
     if not tpl then
         if not auto.hinted then
             auto.hinted = true
-            say("Auto battle: attack once by hand, then it takes over", "warn", 3500)
+            say(mod:t("autoLearn", "Auto battle: attack once by hand, then it takes over"), "warn", 3500)
         end
         return
     end
@@ -463,22 +463,22 @@ end
 ---------------------------------------------------------------------------------------------------
 function actions.addGil()
     local lib = game.lib("CPP_BFL_SaveDataPlayer")
-    if not lib or not game.saveData() then say("Add Gil: load a game first", "warn"); return end
+    if not lib or not game.saveData() then say(mod:t("addGilNoGame", "Add Gil: load a game first"), "warn"); return end
     local amount = math.floor(cfg.GilAmount)
     lib:AddCurrentMoney(amount, false)
-    say(string.format("%d Gil added", amount), "on")
+    say(mod:t("gilAdded", "{1} Gil added", amount), "on")
 end
 
 function actions.reset()
     cfg:reset()
     patch:invalidate()
     applyTables()
-    say("FFR Trainer: everything back to normal", "on")
+    say(mod:t("resetDone", "FFR Trainer: everything back to normal"), "on")
 end
 
 local function toggle(key, label)
     cfg:set(key, not cfg[key])
-    say(label .. (cfg[key] and ": ON" or ": OFF"), cfg[key] and "on" or "off")
+    say(mod:t("toggled", "{1}: {2}", cfg:text(cfg:item(key), "label") or label, cfg:display(cfg:item(key))), cfg[key] and "on" or "off")
 end
 
 -- the next of a comma list of steps above the current value, wrapping to the first
@@ -497,18 +497,18 @@ mod:key(cfg.AutoBattleKey, function()
     if cfg.AutoBattle and auto.menuOpen then autoAttack() end
 end, "AutoBattleKey")
 mod:key(cfg.EncountersKey, function()
-    if not owned("Encounters") then say("Encounters are handled by FFRS-QoL", "warn"); return end
+    if not owned("Encounters") then say(mod:t("qolEncounters", "Encounters are handled by FFRS-QoL"), "warn"); return end
     toggle("Encounters", "Random encounters")
 end, "EncountersKey")
 mod:key(cfg.FieldSpeedKey, function()
     cfg:set("FieldSpeedMultiplier", nextStep(cfg.FieldSpeedSteps, cfg.FieldSpeedMultiplier, { 1, 1.5, 2, 3 }))
     applyFieldSpeed()
-    say(string.format("Walking speed: x%g", cfg.FieldSpeedMultiplier), cfg.FieldSpeedMultiplier == 1 and "off" or "on")
+    say(mod:t("walkSpeed", "Walking speed: x{1}", string.format("%g", cfg.FieldSpeedMultiplier)), cfg.FieldSpeedMultiplier == 1 and "off" or "on")
 end, "FieldSpeedKey")
 mod:key(cfg.TurboKey, function()
     cfg:set("TurboMultiplier", nextStep(cfg.TurboSteps, cfg.TurboMultiplier, { 1, 2, 4 }))
     applyTurbo()
-    say(string.format("Turbo: x%g", cfg.TurboMultiplier), cfg.TurboMultiplier == 1 and "off" or "on")
+    say(mod:t("turbo", "Turbo: x{1}", string.format("%g", cfg.TurboMultiplier)), cfg.TurboMultiplier == 1 and "off" or "on")
 end, "TurboKey")
 
 ---------------------------------------------------------------------------------------------------

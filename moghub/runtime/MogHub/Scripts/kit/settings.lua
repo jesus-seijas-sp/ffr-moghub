@@ -11,6 +11,9 @@
 --   }
 --   if s.GodMode then ... end
 --   s:onChange(function(key, value, old) ... end)
+-- Texts are translated through the plugin's lang/<culture>.ini (kit/i18n.lua), by item: <key>.label, <key>.help,
+-- <key>.button, <key>.done and <key>.choice.<value>, where <key> is the item's key (or its `id`, or for items without
+-- one its English label); headers are header.<English header>.
 local M = {}
 local kit
 
@@ -158,16 +161,29 @@ function methods.reset(s)
     end
 end
 
+-- an item's label, help, button or done text in the player's language (the English in the definition by default)
+local function base(item)
+    if item.type == "header" then return "header." .. item.label end
+    return item.key or item.id or item.label or "?"
+end
+function methods.text(s, item, field)
+    if item[field] == nil then return nil end
+    if item.type == "header" then return kit.i18n.text(s._.mod.dir, base(item), item[field]) end
+    return kit.i18n.text(s._.mod.dir, base(item) .. "." .. field, item[field])
+end
+
 -- the text the menu shows for an item's value
 function methods.display(s, item) return methods.format(s, item, s._.values[item.key]) end
-function methods.format(_, item, v)
-    if item.type == "toggle" then return v and "On" or "Off" end
+function methods.format(s, item, v)
+    if item.type == "toggle" then return v and kit.t("on", "On") or kit.t("off", "Off") end
     if item.type == "number" then return string.format(item.format or "%g", v) end
     if item.type == "choice" then
-        for _, c in ipairs(item.choices) do if c[1] == v then return c[2] or tostring(c[1]) end end
+        for _, c in ipairs(item.choices) do
+            if c[1] == v then return kit.i18n.text(s._.mod.dir, base(item) .. ".choice." .. tostring(c[1]), c[2] or tostring(c[1])) end
+        end
         return tostring(v)
     end
-    if item.type == "action" then return item.button or "" end
+    if item.type == "action" then return methods.text(s, item, "button") or "" end
     return ""
 end
 

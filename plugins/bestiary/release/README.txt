@@ -27,6 +27,10 @@ UPDATING
 SETTINGS (main menu > Mods > FFR Bestiary)
   Show all monsters   lists every monster under all the areas it appears in, also the ones you haven't met
                       (dimmed). The Encountered and Scanned counts stay what you really met.
+  Area enemy levels   each area's level range of random encounters (bosses left out), in its panel.
+  Libra+              the exact numbers the scan leaves out: status resistances (%), drop and steal chances.
+  Libra on every      shows every monster's scan data, as if scanned, without changing your save. A monster
+  monster             you switched off by hand stays off.
   Forget all          forgets every Libra choice made by hand (see below).
 
 CONTROLS IN THE BESTIARY

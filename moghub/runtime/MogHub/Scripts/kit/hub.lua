@@ -27,10 +27,15 @@ end
 ---------------------------------------------------------------------------------------------------
 -- Rows
 ---------------------------------------------------------------------------------------------------
+local t = function(...) return kit.t(...) end
+local function onOff(on) return on and t("on", "On") or t("off", "Off") end
+-- a header's text in the plugin's language (items keep the English header name in item.section)
+local function section(mod, name) return kit.i18n.text(mod.dir, "header." .. name, name) end
+
 local function pluginStatus(mod)
-    if not mod.enabled then return "<  Off  >", kit.ui.DIM end
-    if mod.error then return "Error", kit.ui.GOLD end
-    return "<  On  >", kit.ui.WHITE
+    if not mod.enabled then return "<  " .. onOff(false) .. "  >", kit.ui.DIM end
+    if mod.error then return t("hub.error", "Error"), kit.ui.GOLD end
+    return "<  " .. onOff(true) .. "  >", kit.ui.WHITE
 end
 
 local function buildRows()
@@ -57,23 +62,23 @@ end
 local function label(i)
     local r = rows[i]
     if not r then return "" end
-    if r.kind == "plugin" then return r.mod.name end
-    if r.kind == "switch" then return "Switched on" end
-    if r.kind == "info" then return "Menu entry" end
-    if r.kind == "section" then return "- " .. r.item.label .. " -" end
-    if r.kind == "item" then return r.item.label end
-    return "No plugins installed"
+    if r.kind == "plugin" then return r.mod:displayName() end
+    if r.kind == "switch" then return t("hub.switch", "Switched on") end
+    if r.kind == "info" then return t("hub.menuEntry", "Menu entry") end
+    if r.kind == "section" then return "- " .. r.mod.config:text(r.item, "label") .. " -" end
+    if r.kind == "item" then return r.mod.config:text(r.item, "label") end
+    return t("hub.noPlugins", "No plugins installed")
 end
 
 local function value(r)
     if r.kind == "plugin" then return pluginStatus(r.mod) end
-    if r.kind == "switch" then return r.mod.enabled and "On" or "Off", r.mod.enabled and kit.ui.WHITE or kit.ui.DIM end
-    if r.kind == "info" then return r.mod.ownScreen.title, kit.ui.GREY end
+    if r.kind == "switch" then return onOff(r.mod.enabled), r.mod.enabled and kit.ui.WHITE or kit.ui.DIM end
+    if r.kind == "info" then return kit.menu.title(r.mod.ownScreen), kit.ui.GREY end
     if r.kind == "item" then
-        local t = r.item.type
-        if t == "action" then return r.item.button or "", kit.ui.BLUE end
+        local kind = r.item.type
+        if kind == "action" then return r.mod.config:text(r.item, "button") or "", kit.ui.BLUE end
         local text = r.mod.config:display(r.item)
-        if t == "number" or t == "choice" then text = "<  " .. text .. "  >" end
+        if kind == "number" or kind == "choice" then text = "<  " .. text .. "  >" end
         return text, kit.ui.WHITE
     end
     return "", kit.ui.GREY
@@ -90,44 +95,44 @@ local function show(i)
     local name, sub, body, val = "", "", "", ""
     if r.kind == "plugin" or r.kind == "switch" or r.kind == "info" then
         local mod = r.mod
-        name = mod.name
+        name = mod:displayName()
         local parts = {}
-        if mod.version ~= "" then parts[#parts + 1] = "Version " .. mod.version end
-        if mod.author ~= "" then parts[#parts + 1] = "by " .. mod.author end
+        if mod.version ~= "" then parts[#parts + 1] = t("hub.version", "Version {1}", mod.version) end
+        if mod.author ~= "" then parts[#parts + 1] = t("hub.author", "by {1}", mod.author) end
         sub = table.concat(parts, "   ")
-        body = mod.description
-        if mod.error then body = body .. "\n\nIt could not start: " .. mod.error end
-        local onOff = (mod.enabled and "On" or "Off") .. "      (Left / Right: switch on / off)"
+        body = mod:displayDescription()
+        if mod.error then body = body .. "\n\n" .. t("hub.failed", "It could not start: {1}", mod.error) end
+        local state = onOff(mod.enabled) .. "      " .. t("hub.hintSwitchLR", "(Left / Right: switch on / off)")
         if r.kind == "plugin" then
-            val = onOff .. "\n" .. (expanded[mod.id] and "Confirm: close" or "Confirm: show its settings")
+            val = state .. "\n" .. (expanded[mod.id] and t("hub.hintClose", "Confirm: close") or t("hub.hintOpen", "Confirm: show its settings"))
         elseif r.kind == "switch" then
-            body = "While " .. mod.name .. " is off it does nothing and its changes to the game are undone. "
-                .. "It stays off the next time the game starts, until you switch it on again."
-            if mod.ownScreen then body = body .. " Its main-menu entry goes away the next time the menu opens." end
-            val = (mod.enabled and "On" or "Off") .. "      (Confirm: switch)"
+            body = t("hub.switchHelp", "While {1} is off it does nothing and its changes to the game are undone. "
+                .. "It stays off the next time the game starts, until you switch it on again.", name)
+            if mod.ownScreen then body = body .. " " .. t("hub.switchEntry", "Its main-menu entry goes away the next time the menu opens.") end
+            val = onOff(mod.enabled) .. "      " .. t("hub.hintSwitch", "(Confirm: switch)")
         else
-            body = mod.name .. " has an entry of its own in the main menu: " .. mod.ownScreen.title .. "."
+            body = t("hub.entryHelp", "{1} has an entry of its own in the main menu: {2}.", name, kit.menu.title(mod.ownScreen))
         end
     elseif r.kind == "section" then
-        name, sub = r.item.label, r.mod.name
+        name, sub = r.mod.config:text(r.item, "label"), r.mod:displayName()
     elseif r.kind == "item" then
-        local item = r.item
-        name, sub = item.label, r.mod.name .. (item.section and ("  /  " .. item.section) or "")
-        body = item.help or ""
+        local item, cfg = r.item, r.mod.config
+        name = cfg:text(item, "label")
+        sub = r.mod:displayName() .. (item.section and ("  /  " .. section(r.mod, item.section)) or "")
+        body = (cfg:text(item, "help") or "") .. (item.note and ("\n" .. item.note) or "")
         if item.type == "action" then
-            val = "Confirm: run"
+            val = t("hub.hintRun", "Confirm: run")
         elseif item.type == "toggle" then
-            val = r.mod.config:display(item) .. "      (Confirm: switch)"
+            val = cfg:display(item) .. "      " .. t("hub.hintSwitch", "(Confirm: switch)")
         else
-            local cfg = r.mod.config
-            val = "<  " .. cfg:display(item) .. "  >      (Left / Right: change)"
+            val = "<  " .. cfg:display(item) .. "  >      " .. t("hub.hintChange", "(Left / Right: change)")
             if item.default ~= nil and cfg:get(item.key) ~= item.default then
-                val = val .. "\nDefault: " .. cfg:format(item, item.default)
+                val = val .. "\n" .. t("hub.default", "Default: {1}", cfg:format(item, item.default))
             end
         end
     else
-        name = "No plugins installed"
-        body = "Plugins are folders in ue4ss\\Mods with a moghub.lua file. See the MogHub page on Nexus Mods."
+        name = t("hub.noPlugins", "No plugins installed")
+        body = t("hub.noPluginsHelp", "Plugins are folders in ue4ss\\Mods with a moghub.lua file. See the MogHub page on Nexus Mods.")
     end
     d.name:SetTitle(FText(name))
     u.set(d.sub, sub)
@@ -178,7 +183,8 @@ local function change(i, dir, isConfirm)
     if (r.kind == "plugin" and not isConfirm) or r.kind == "switch" then
         local mod = r.mod
         kit.setEnabled(mod, not mod.enabled)
-        kit.notice.show(mod.name .. (mod.enabled and " on" or " off"), mod.enabled and "on" or "off")
+        kit.notice.show(mod.enabled and t("hub.noticeOn", "{1} on", mod:displayName()) or t("hub.noticeOff", "{1} off", mod:displayName()),
+            mod.enabled and "on" or "off")
         refresh(i)                                        -- its settings come and go with it
     elseif r.kind == "plugin" then
         expanded[r.mod.id] = not expanded[r.mod.id] or nil
@@ -188,7 +194,7 @@ local function change(i, dir, isConfirm)
         if item.type == "action" then
             if isConfirm and item.run then
                 local ok = kit.guarded(r.mod, "action " .. item.label, item.run)
-                if ok and item.done then kit.notice.show(item.done, "on") end
+                if ok and item.done then kit.notice.show(cfg:text(item, "done"), "on") end
             end
         elseif item.type == "toggle" or item.type == "number" or item.type == "choice" then
             cfg:step(item, dir, isConfirm)
@@ -201,7 +207,7 @@ end
 -- Screen
 ---------------------------------------------------------------------------------------------------
 local screen = {
-    title = "Mods",
+    title = "Mods",                                       -- hub.title in MogHub's lang files
     opened = function(host, u)
         view, shown = nil, nil
         if #kit.plugins == 1 then expanded[kit.plugins[1].id] = true end
@@ -210,7 +216,7 @@ local screen = {
         if kit.menu.open and kit.menu.open.name == kit.menu.titleHost and view.L.title then
             pcall(function()
                 view.L.title:SetVisibility(4)
-                view.L.title:SetText(FText("MODS"))
+                view.L.title:SetText(FText(t("hub.heading", "MODS")))
             end)
         end
         refresh(1)
