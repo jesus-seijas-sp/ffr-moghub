@@ -28,7 +28,7 @@ local SPRITE_FILL_MEASURED = 0.97  -- ...nearly all of it when its outline was m
 local MEASURE_SCALE = 0.5          -- dev measure mode: canvas drawn at half its fitted size, so nothing is clipped
 local SPRITE_MAX_PX = 3.0          -- ...but small ones are drawn no bigger than 3 screen pixels per sprite pixel
 local LABEL_W = 230
-local DROP_LABEL_W = 190           -- "Items Dropped" / "Stealable Items" (left room for "Lightning Scroll I" etc.)
+local DROP_LABEL_W = 190           -- "Items Dropped" / "Stealable Items"
 local PANEL_PAD = 16               -- inside a framed panel (the game's WBP_Cmn_Window), each side
 local VALUE_W = DETAIL_W - SPRITE - 24 - LABEL_W - 10 - 2 * PANEL_PAD   -- detail width - sprite - gap - label - panel
 local AREAS_H = 110                -- locations list height; scrolls beyond that
@@ -190,14 +190,12 @@ local function build()
     ui.traits = { row(info, "UI_Libra_1"), row(info, "UI_Libra_2"), row(info, "UI_Libra_3"), row(info, "UI_Libra_4") }
 
     detail:AddChildToVerticalBox(spacer(6))
-    local scan = new("HorizontalBox")
-    local left, right = new("VerticalBox"), new("VerticalBox")
-    scan:AddChildToHorizontalBox(sized(left, DETAIL_W / 2 - PANEL_PAD, nil))
-    scan:AddChildToHorizontalBox(sized(right, DETAIL_W / 2 - PANEL_PAD, nil))
+    -- one row each, the panel's full width: side by side, a long item name and its chance ran into the next column
+    local scan = new("VerticalBox")
     ui.items = {}
-    for _, f in ipairs({ { left, "UI_Libra_NormalDrop", "DropNormalItem", 1 }, { left, "UI_Libra_RareDrop", "DropRareItem", 2 },
-                         { right, "UI_Libra_NormalSteal", "StealNormalItem", 3 }, { right, "UI_Libra_RareSteal", "StealRareItem" } }) do
-        local t, box = widgetRow(f[1], f[2], DROP_LABEL_W)   -- narrower label: long item names fit their column
+    for _, f in ipairs({ { scan, "UI_Libra_NormalDrop", "DropNormalItem", 1 }, { scan, "UI_Libra_RareDrop", "DropRareItem", 2 },
+                         { scan, "UI_Libra_NormalSteal", "StealNormalItem", 3 }, { scan, "UI_Libra_RareSteal", "StealRareItem" } }) do
+        local t, box = widgetRow(f[1], f[2], DROP_LABEL_W)
         local w = create(game.ITEM_ENTRY)
         if w then box:AddChildToHorizontalBox(w) end
         local pct = text("", GREY)                        -- Libra+: the chance (rare steal has none of its own)

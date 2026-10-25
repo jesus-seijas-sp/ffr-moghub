@@ -128,7 +128,7 @@ local function meterWidget()
     slot:SetAutoSize(true)
     slot:SetAnchors({ Minimum = { X = 1, Y = 0 }, Maximum = { X = 1, Y = 0 } })
     slot:SetAlignment({ X = 1, Y = 0 })
-    slot:SetPosition({ X = -70, Y = 345 })
+    slot:SetPosition({ X = -70, Y = 390 })                -- just below the minimap frame
     local column = make("VerticalBox", tree, base .. "_Column")
     box:SetContent(column)
     local text = make("TextBlock", tree, base .. "_Text")
