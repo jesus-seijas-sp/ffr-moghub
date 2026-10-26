@@ -111,11 +111,19 @@ def placements(name):
 
 
 chest_uid = {}                                          # (map, table id) -> unique id
+loose = collections.defaultdict(list)                  # chests with their contents on the placement, no table row
+                                                        # (Grandshelt Castle's upper floor holds its chests this way)
 for r in placements('chestactors.jsonl'):
     p, t = r['obj']['Properties'], r['obj']['Properties'].get('m_TreasureBoxData')
     if p.get('m_IsOpen') and not t:
         continue                                        # chests placed already open: scenery
-    chest_uid[(t['mapId'], t['ID']) if t else (map_of(r['package']), p.get('m_Id', 0))] = p.get('m_UniqueId', 0)
+    if t:
+        chest_uid[(t['mapId'], t['ID'])] = p.get('m_UniqueId', 0)
+        continue
+    mid = map_of(r['package'])
+    if mid and mid != WORLD_MAP and not r['package'].split('.')[0].endswith('_EV'):   # (event scenes' props left out)
+        loose[mid].append({'map': mid, 'id': p.get('m_Id', 0), 'uid': p.get('m_UniqueId', 0), 'item': p.get('m_ItemId', 0),
+                           'num': p.get('m_ItemNum', 1), 'gil': p.get('m_Money', 0), 'trap': bool(p.get('m_IsTrap'))})
 
 spots = collections.defaultdict(list)                   # map (or ('field', region)) -> item spots
 for r in placements('fielditems.jsonl'):
@@ -138,6 +146,9 @@ for f in sorted(glob.glob(DT + '/Map/Gimmick/TreasureBox/DT_*.json')):
             continue                                    # rows no level places (the save never records them)
         chests[v['mapId']].append({'map': v['mapId'], 'id': v['ID'], 'uid': chest_uid[(v['mapId'], v['ID'])],
                                    'item': v['ItemId'], 'num': v['ItemNum'], 'gil': v['Money'], 'trap': v['IsTrap']})
+for mid, l in loose.items():
+    have = {c['uid'] for c in chests[mid]}
+    chests[mid] += [c for c in l if c['uid'] not in have]
 
 areas = {}
 for mid, m in maps.items():

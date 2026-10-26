@@ -49,7 +49,7 @@
       "kind": "plugin",
       "description": "Cheats and boosters, set from the Mods menu: god mode, turbo, auto battle, rewards, shops, abilities, and the save editor's quick actions in the running game.",
       "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub/tree/main/plugins/trainer",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
       "requires": [ "moghub" ],
       "install": [ { "from": "plugins/trainer/runtime/MogHubTrainer", "to": "FFRS/Binaries/Win64/ue4ss/Mods/MogHubTrainer" } ],
@@ -103,7 +103,7 @@
       "kind": "plugin",
       "description": "Your progress in its own main-menu entry: treasure chests and item spots per area, side quests with their current goal, Colosseum battles, and where every tablet shard is.",
       "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub/tree/main/plugins/logbook",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
       "requires": [ "moghub" ],
       "install": [

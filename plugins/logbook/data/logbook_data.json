@@ -264,7 +264,44 @@
     2013,
     2017
    ],
-   "chests": [],
+   "chests": [
+    {
+     "map": 2010,
+     "id": 0,
+     "uid": 4,
+     "item": 3,
+     "num": 1,
+     "gil": 0,
+     "trap": false
+    },
+    {
+     "map": 2010,
+     "id": 2,
+     "uid": 8,
+     "item": 0,
+     "num": 1,
+     "gil": 400,
+     "trap": false
+    },
+    {
+     "map": 2011,
+     "id": 0,
+     "uid": 4,
+     "item": 3,
+     "num": 1,
+     "gil": 0,
+     "trap": false
+    },
+    {
+     "map": 2011,
+     "id": 2,
+     "uid": 8,
+     "item": 0,
+     "num": 1,
+     "gil": 400,
+     "trap": false
+    }
+   ],
    "spots": []
   },
   {
@@ -341,6 +378,51 @@
      "item": 32,
      "num": 2,
      "gil": -1,
+     "trap": false
+    },
+    {
+     "map": 2014,
+     "id": 0,
+     "uid": 1,
+     "item": 1,
+     "num": 1,
+     "gil": 800,
+     "trap": false
+    },
+    {
+     "map": 2014,
+     "id": 1,
+     "uid": 2,
+     "item": 1,
+     "num": 1,
+     "gil": 500,
+     "trap": false
+    },
+    {
+     "map": 2014,
+     "id": 3,
+     "uid": 4,
+     "item": 4,
+     "num": 1,
+     "gil": 0,
+     "trap": false
+    },
+    {
+     "map": 2014,
+     "id": 4,
+     "uid": 6,
+     "item": 1,
+     "num": 1,
+     "gil": 1000,
+     "trap": false
+    },
+    {
+     "map": 2014,
+     "id": 5,
+     "uid": 22,
+     "item": 30005,
+     "num": 1,
+     "gil": 0,
      "trap": false
     },
     {

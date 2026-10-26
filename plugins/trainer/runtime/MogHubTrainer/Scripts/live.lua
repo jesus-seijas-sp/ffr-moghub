@@ -174,20 +174,69 @@ function M.maxAwakening()
     return mod:t("awakeningDone", "{1} visions fully awakened", n)
 end
 
+-- every vision the game has (its VISION_ITEM_DATA table: visions are items), through the game's own inventory
+-- function, which files them in the vision list as finding one does
+function M.allVisions()
+    local inv = game.lib("CPP_BFL_SaveDataInventory")
+    local owned = function()
+        local have, n = {}, 0
+        each(game.saveData().visionList, function(v) have[v.ID] = true; n = n + 1 end)
+        return have, n
+    end
+    local have, before = owned()
+    kit.tables.rows("VISION_ITEM_DATA", function(row)
+        local id = row.ID
+        if id and id > 0 and not have[id] then inv:AddInventory(id, 1); have[id] = true end
+    end)
+    local _, after = owned()
+    return mod:t("visionsDone", "{1} visions added", after - before)
+end
+
+-- Tablet Shards (one item) up to 99, the number the princess's last chest asks for
+local TABLET_SHARD, SHARDS_ALL = 25004, 99
+function M.tabletShards()
+    local inv = game.lib("CPP_BFL_SaveDataInventory")
+    local have = inv:FindInventory(TABLET_SHARD)
+    if have < SHARDS_ALL then inv:SetInventoryItem(TABLET_SHARD, SHARDS_ALL) end
+    return mod:t("shardsDone", "Tablet Shards: {1}", math.max(have, SHARDS_ALL))
+end
+
+-- Libra on these enemies (unit ids): the save's scan flag and every element reaction, as a scan in battle does.
+-- Returns how many weren't scanned yet.
+function M.scan(ids)
+    local sd = game.saveData()
+    if not sd then return 0 end
+    local unit = game.lib("CPP_BFL_SaveDataUnit")
+    local want, n = {}, 0
+    for _, id in ipairs(ids) do want[id] = true end
+    for id in pairs(want) do
+        if not unit:IsAnalyzed(id) then unit:SetAnalyze(id, true); n = n + 1 end
+    end
+    each(sd.unitList, function(r)
+        if want[r.SaveId] then
+            pcall(function() r.analyzedElments:ForEach(function(_, v) if not v:get() then v:set(true) end end) end)
+        end
+    end)
+    return n
+end
+
 -- every enemy the game has a record of (met at least once), weaknesses included
 function M.libraAll()
     local sd = game.saveData()
-    local unit = game.lib("CPP_BFL_SaveDataUnit")
+    local known = {}
+    each(sd.unitList, function(r) known[#known + 1] = r.SaveId end)
     local enemy = {}
     for _, id in ipairs(data.enemies) do enemy[id] = true end
-    local n = 0
-    each(sd.unitList, function(r)
-        local id = r.SaveId
-        if not enemy[id] then return end
-        if not unit:IsAnalyzed(id) then unit:SetAnalyze(id, true); n = n + 1 end
-        pcall(function() r.analyzedElments:ForEach(function(_, v) if not v:get() then v:set(true) end end) end)
-    end)
-    return mod:t("libraDone", "{1} enemies scanned with Libra", n)
+    local ids = {}
+    for _, id in ipairs(known) do if enemy[id] then ids[#ids + 1] = id end end
+    return mod:t("libraDone", "{1} enemies scanned with Libra", M.scan(ids))
+end
+
+-- consumable item ids, as a set
+function M.consumables()
+    local set = {}
+    for _, id in ipairs(data.consumables) do set[id] = true end
+    return set
 end
 
 -- the limited stock of every shop back to full

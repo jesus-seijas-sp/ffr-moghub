@@ -208,6 +208,15 @@ function M.visions()
     return cached("visions", function() return game.lib("CPP_BFL_Vision"):GetOwnedVisionNum() end)
 end
 
+-- the save's battle records (SaveData_Player): the whole party's counts, which some skills scale with
+function M.records()
+    return cached("records|player", function()
+        local p = game.saveData().Player
+        return { wins = p.WinNum, escapes = p.EscapeNum, steals = p.StealSuccessNum, breaks = p.breakCount,
+                 finishers = p.finishblowCount }
+    end)
+end
+
 function M.encounters()
     return cached("encounters", function() return game.lib("CPP_BFL_SaveDataMap"):GetEncountCount() end)
 end

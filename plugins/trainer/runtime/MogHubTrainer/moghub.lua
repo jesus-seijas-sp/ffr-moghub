@@ -29,6 +29,10 @@ cfg = mod:settings{
     { key = "GodMode", label = "God mode", type = "toggle", default = false,
       help = "Party HP and MP stay full and the damage they take is 0. Hotkey: Ctrl+F1." },
     { key = "InfiniteHP", label = "Infinite HP", type = "toggle", default = false, help = "The party's HP is refilled during battle." },
+    { key = "InfiniteItems", label = "Unlimited items", type = "toggle", default = false,
+      help = "Potions, ethers and other consumables used in battle or from the main menu are not used up. Selling them in shops works as usual." },
+    { key = "AutoLibra", label = "Auto Libra", type = "toggle", default = false,
+      help = "Every enemy you fight is scanned with Libra as the battle starts, weaknesses included. Like a real scan, it stays in your save." },
     { key = "InfiniteMP", label = "Infinite MP", type = "toggle", default = false, help = "The party's MP is refilled during battle." },
     { key = "FullLimitBreak", label = "Full Limit Burst", type = "toggle", default = false, help = "The Limit Burst gauge stays full." },
     mult("LBGainMultiplier", "Limit Burst gain", 0, 5, 0.5, "How fast the Limit Burst gauge fills."),
@@ -49,6 +53,8 @@ cfg = mod:settings{
     mult("EnemyBreakMultiplier", "Enemy break gauge", 0.1, 5, 0.1, "How much break gauge enemies have."),
     { key = "AlwaysEscape", label = "Always escape", type = "toggle", default = false,
       help = "Running away always works, except in battles that can't be escaped." },
+    { key = "EnemiesNeverFlee", label = "Enemies never flee", type = "toggle", default = false,
+      help = "Enemies that run away, like Cactuars, stay in the battle: their Flee does nothing." },
     { key = "HealAfterBattle", label = "Heal after battle", type = "toggle", default = false,
       help = "The party's HP and MP are refilled when a battle ends." },
     { key = "AutoBattle", label = "Auto battle", type = "toggle", default = false,
@@ -123,6 +129,10 @@ cfg = mod:settings{
       help = "Every consumable (potions, ethers, ...) set to the count above, also the ones you don't have yet." },
     { label = "Get every artifact", type = "action", button = "Get", run = act(live.allArtifacts),
       help = "Adds every finished artifact you don't own yet (the unfinished ones in the game files are left out)." },
+    { label = "Get every vision", type = "action", button = "Get", run = act(live.allVisions),
+      help = "Adds every vision you don't own yet, as if you had found it." },
+    { label = "Tablet Shards", type = "action", button = "Get", run = act(live.tabletShards),
+      help = "Raises your Tablet Shards to 99, enough to open every chest they unlock." },
     { label = "Max Mastery Rank", type = "action", button = "Max", run = act(live.maxMastery),
       help = "Every character's Mastery Rank with every vision you own, at the maximum, with each rank's rewards (AP, stats, master skills) as if earned in battle." },
     { label = "Max awakening", type = "action", button = "Max", run = act(live.maxAwakening),
@@ -272,11 +282,45 @@ local function percent(v, pct)
     if pct <= 0 then return 0 end
     return math.ceil(v * pct / 100)
 end
+-- The same Cost field holds Limit Burst points, items and Gil for the skill kinds that don't cost MP (the game's
+-- SKILL_ATTRIBUTE_DETAIL_DATA says which): those are left alone. Scaling them broke the Limit Burst gauge.
+local NOT_MP = { [5] = true, [6] = true, [11] = true, [12] = true }  -- LimitBurst, Item, Throw, ThrowMoney
+local mpKinds
+local function costsMP(attr)
+    if not mpKinds then
+        local read = {}
+        tables.rows("SKILL_ATTRIBUTE_DETAIL_DATA", function(row)
+            read[kit.ue.enum(row.skillAttrType)] = kit.ue.enum(row.costType) == 0      -- eSkillCostType::MP
+        end)
+        if next(read) then mpKinds = read end
+    end
+    attr = kit.ue.enum(attr)
+    if mpKinds and mpKinds[attr] ~= nil then return mpKinds[attr] end
+    return not NOT_MP[attr]
+end
+-- "Enemies never flee": the enemies' Flee is an ability whose effect is the escape effect (the party's Flee has
+-- its own skill kind, Escape, and Smoke Bomb another effect): that effect is taken off the enemies' skill, which
+-- still runs, to no effect. Its original is kept here (an element of a struct array, like the shop items).
+local ABILITY, ESCAPE_EFFECT = 3, 1039                 -- eSkillAttributeType::Ability; SKILL_EFFECT_DATA "Escape"
+local fleeOrig = {}
+local function setFlee(row, noFlee, key)
+    if kit.ue.enum(row.skillAttrType) ~= ABILITY then return end
+    row.effectBundleList:ForEach(function(i, e)
+        local s, k = e:get(), key .. "|flee|" .. i
+        local o = fleeOrig[k]
+        if o == nil then o = s.effectId; fleeOrig[k] = o end
+        if o == ESCAPE_EFFECT then
+            local want = noFlee and -1 or o
+            if s.effectId ~= want then s.effectId = want end
+        end
+    end)
+end
 local function applySkills()
-    local mp, ap = cfg.MPCostPercent, cfg.APCostPercent
-    patch:apply("SKILL_DATA", mp .. "|" .. ap, function(row, orig)
-        set(row, "Cost", percent(orig("Cost"), mp), orig("Cost"))
+    local mp, ap, noFlee = cfg.MPCostPercent, cfg.APCostPercent, cfg.EnemiesNeverFlee
+    patch:apply("SKILL_DATA", mp .. "|" .. ap .. "|" .. tostring(noFlee), function(row, orig, rowName, t)
+        set(row, "Cost", costsMP(row.skillAttrType) and percent(orig("Cost"), mp) or orig("Cost"), orig("Cost"))
         set(row, "equipCost", percent(orig("equipCost"), ap), orig("equipCost"))
+        setFlee(row, noFlee, t.path .. "|" .. rowName)
     end)
     for _, struct in ipairs({ "PASSIVE_SKILL_DATA", "MASTER_SKILL_DATA" }) do
         patch:apply(struct, tostring(ap), function(row, orig)
@@ -501,6 +545,52 @@ local function applyTurbo()
     if math.abs(ws.TimeDilation - m) > 0.001 then ws.TimeDilation = m end
     turboSet = m ~= 1
 end
+
+-- Auto Libra: the enemies of the battle scanned (live.scan: the game's own scan flag and element reactions); each
+-- enemy once per battle
+local libraDone = {}
+local function autoLibra()
+    if not cfg.AutoLibra or not kit.events.battle then return end
+    local ids = {}
+    for _, e in ipairs(game.battleSide(game.ENEMY)) do
+        if e.id and not libraDone[e.id] then ids[#ids + 1] = e.id; libraDone[e.id] = true end
+    end
+    if #ids > 0 then live.scan(ids) end
+end
+mod:on("battleStart", function() libraDone = {} end)
+
+-- Unlimited items: consumables put back when their count drops while the player can use them (in battle, or with
+-- the main menu open); elsewhere (shops: selling) counts are only followed
+local CONSUMABLE = live.consumables()
+local itemLast
+local function itemCounts(sd)
+    local out = {}
+    kit.ue.each(sd.inventory, function(e) if CONSUMABLE[e.ItemId] then out[e.ItemId] = e.Num end end)
+    return out
+end
+local function usingItems()
+    if kit.events.battle then return true end
+    for _, class in ipairs({ "WBP_MainMenuLayout_C", "WBP_MainMenuRootLayout_C" }) do
+        for _, w in ipairs(game.all(class)) do
+            local ok, shown = pcall(function() return w:IsVisible() and w:IsInViewport() end)
+            if ok and shown then return true end
+        end
+    end
+    return false
+end
+local function keepItems()
+    local sd = cfg.InfiniteItems and game.saveData()
+    if not sd then itemLast = nil; return end
+    local now = itemCounts(sd)
+    if itemLast and usingItems() then
+        local inv = game.lib("CPP_BFL_SaveDataInventory")
+        for id, n in pairs(itemLast) do
+            if (now[id] or 0) < n then inv:SetInventoryItem(id, n); now[id] = n end
+        end
+    end
+    itemLast = now
+end
+mod:on("saveLoaded", function() itemLast = nil end)
 
 -- Infinite Gil: Gil topped up to the game's maximum (with a game loaded, outside loading screens).
 local function applyInfiniteGil()
@@ -829,6 +919,8 @@ mod:every(1000, function()
     applyTurbo()
 end, "main loop")
 mod:every(500, refillParty, "refill")
+mod:every(500, autoLibra, "auto libra")
+mod:every(300, keepItems, "unlimited items")
 mod:every(250, limitBurst, "limit burst")
 mod:every(400, confirmResults, "results")
 if QOL then mod:log("FFRS-QoL found: its settings are left to it") end

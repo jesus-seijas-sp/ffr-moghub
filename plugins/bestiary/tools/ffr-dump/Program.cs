@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 //   ffr-dump raw <filePath> <out>          one file's bytes (ini, locres, ...)
 //   ffr-dump locres <culture> <out.json>   FFRS Game.locres for a culture (e.g. en) as JSON
 //   ffr-dump enums <nameRegex>             enums from the mappings, with their values
+//   ffr-dump fields <propRegex>            structs from the mappings with a matching property
 static class Program
 {
     const string PAKS = @"C:\Games\FFR-mod\FFRS\Content\Paks";
@@ -118,6 +119,16 @@ static class Program
             {
                 var path = provider.Files.Keys.First(k => k.Equals($"FFRS/Content/Localization/Game/{args[1]}/Game.locres", StringComparison.OrdinalIgnoreCase));
                 Write(args[2], new CUE4Parse.UE4.Localization.FTextLocalizationResource(provider.CreateReader(path)));
+                return 0;
+            }
+            case "fields":
+            {
+                var rx = new System.Text.RegularExpressions.Regex(args[1]);
+                foreach (var (name, type) in provider.MappingsForGame!.Types.OrderBy(t => t.Key))
+                {
+                    var hits = type.Properties.Values.Where(p => rx.IsMatch(p.Name)).Select(p => p.Name).ToList();
+                    if (hits.Count > 0) Console.WriteLine($"{name}: {string.Join(", ", hits)}  (all: {string.Join(", ", type.Properties.Values.Select(p => p.Name))})");
+                }
                 return 0;
             }
             case "enums":

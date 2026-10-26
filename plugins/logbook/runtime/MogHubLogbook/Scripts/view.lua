@@ -295,6 +295,11 @@ local function show(i)
         if joined then body[#body + 1] = t("sumParty", "Party members: {1} / {2}", joined, members) end
         if progress.visions() then body[#body + 1] = t("sumVisions", "Visions: {1}", progress.visions()) end
         if progress.encounters() then body[#body + 1] = t("sumEncounters", "Encounters: {1}", progress.encounters()) end
+        local rec = progress.records()
+        if rec and rec.wins then
+            body[#body + 1] = t("sumBattles", "Battles won: {1}   Escapes: {2}   Successful steals: {3}", rec.wins, rec.escapes, rec.steals)
+            body[#body + 1] = t("sumBreaks", "Staggers: {1}   Resonances: {2}", rec.breaks, rec.finishers)
+        end
         val = t("hintOpen", "Confirm on a section: open / close")
     elseif r.kind == "section" then
         name = r.section.label()
