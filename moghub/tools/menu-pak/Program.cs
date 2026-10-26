@@ -21,6 +21,9 @@ static class Program
         ("MogHub_2", "UI.MainMenu.Scene.MogHub2", "Mod 2"),
         ("MogHub_3", "UI.MainMenu.Scene.MogHub3", "Mod 3"),
     };
+    // FFR Bestiary's row (Law19902, Nexus mod 88), as its own pak builds it (tools/uasset-json): its pak replaces the
+    // same two tables, and ours loads after it, so the row has to be in ours too for both mods to work together
+    const string FFRB_ROW = "Bestiary", FFRB_TAG = "UI.MainMenu.Scene.Bestiary";
 
     static int Main(string[] argv)
     {
@@ -94,6 +97,24 @@ static class Program
             table.Insert(system < 0 ? table.Count : system, row);
             AddNames(d, "None", rowName, tag, "MogHub", "SceneTitle_" + rowName, "EntryName_" + rowName, LAYOUT[..dot], LAYOUT[(dot + 1)..]);
         }
+        if (!table.Any(r => (string?)r["Name"] == FFRB_ROW))
+        {
+            var row = (JObject)template.DeepClone();
+            row["Name"] = FFRB_ROW;
+            Prop(Prop(row, "SceneTag"), "TagName")["Value"] = FFRB_TAG;
+            foreach (var key in new[] { "SceneTitle", "EntryName" })
+            {
+                var p = Prop(row, key);
+                p["HistoryType"] = "Base"; p["TableId"] = null; p["Namespace"] = "FFRBestiary"; p["Value"] = key;
+                p["CultureInvariantString"] = "Bestiary";
+            }
+            Prop(row, "OpenInputActionName")["Value"] = "None";
+            var path = (JObject)Prop(Prop(row, "LayoutData"), "LayoutWidget")["Value"]!["AssetPath"]!;
+            path["PackageName"] = LAYOUT[..dot]; path["AssetName"] = LAYOUT[(dot + 1)..];
+            int system = table.ToList().FindIndex(r => Tag(r) == "UI.MainMenu.Scene.System");
+            table.Insert(system < 0 ? table.Count : system, row);
+            AddNames(d, "None", FFRB_ROW, FFRB_TAG, "FFRBestiary", "SceneTitle", "EntryName", LAYOUT[..dot], LAYOUT[(dot + 1)..]);
+        }
         Console.WriteLine("menu rows: " + string.Join(", ", table.Select(r => Tag(r))));
     }
 
@@ -101,7 +122,7 @@ static class Program
     static void AddTagRows(JObject d)
     {
         var table = Rows(d);
-        foreach (var (_, tag, _) in ROWS)
+        foreach (var tag in ROWS.Select(r => r.Tag).Append(FFRB_TAG))
         {
             var name = tag.Replace('.', '_');
             if (table.Any(r => (string?)r["Name"] == name)) throw new Exception("tag row " + name + " already there");

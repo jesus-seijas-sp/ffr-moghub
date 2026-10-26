@@ -159,7 +159,7 @@ local function base(u, w)
     -- the indent pads the button's own content (bar, background, text): the list resets the entry's outer padding
     -- whenever it reuses a row while scrolling
     local e = { right = u.new("HorizontalBox", tree), value = u.text("", nil, tree), indentSlot = overlay.Slot,
-                tree = tree, built = {}, custom = {} }
+                tree = tree, built = {}, custom = {}, overlay = overlay }
     pcall(function() e.value:SetJustification(2) end)    -- right
     e.right:AddChildToHorizontalBox(e.value):SetVerticalAlignment(2)
     local s = overlay:AddChildToOverlay(e.right)
@@ -167,15 +167,94 @@ local function base(u, w)
     s:SetPadding({ Left = 0, Top = 0, Right = 24, Bottom = 0 })
     e.inner = button.WidgetTree.RootWidget
     e.title = u.find(e.inner, "Text_Title")
+    e.scale = u.find(e.inner, "ScaleBox_0")
+    e.titleAlign = 1                                     -- Left, unless the game's own slot says otherwise
+    pcall(function()
+        if e.scale:GetContent():GetAddress() == e.title:GetAddress() then e.titleAlign = e.title.Slot.HorizontalAlignment end
+    end)
     return e
+end
+
+local function same(a, b)
+    local ok, r = pcall(function() return a:GetAddress() == b:GetAddress() end)
+    return ok and r
+end
+
+-- Another mod's boxes on the row (the game's own Overlay_0 holds an Image and the button, never a HorizontalBox):
+-- hidden while the row is ours, shown again when we give it back.
+local function hideForeign(e)
+    e.foreign = e.foreign or {}
+    pcall(function()
+        for i = 0, e.overlay:GetChildrenCount() - 1 do
+            local x = e.overlay:GetChildAt(i)
+            if not same(x, e.right) and x:GetClass():GetFName():ToString() == "HorizontalBox" then
+                local key = x:GetAddress()
+                if not e.foreign[key] then e.foreign[key] = { w = x, vis = x:GetVisibility() } end
+                if x:GetVisibility() ~= 1 then x:SetVisibility(1) end
+            end
+        end
+    end)
+end
+
+-- the title as the ScaleBox's own content, as the game has it
+local function titleHome(e)
+    if not (e.scale and e.title) then return end
+    pcall(function()
+        if not same(e.scale:GetContent(), e.title) then
+            local slot = e.scale:SetContent(e.title)
+            pcall(function() slot:SetHorizontalAlignment(e.titleAlign) end)
+        end
+    end)
+end
+
+-- The rows as the game made them, for whoever uses the pooled widgets next (FFR Bestiary uses the same Help layout
+-- and the same rows): our extras hidden, no indent, the title back as the ScaleBox's own content.
+local function restore(e)
+    pcall(function() e.right:SetVisibility(1) end)
+    for key, f in pairs(e.foreign or {}) do
+        pcall(function() f.w:SetVisibility(f.vis) end)
+        e.foreign[key] = nil
+    end
+    M.indent(e, 0)
+    titleHome(e)
+end
+
+-- Ours again: extras shown, and the title back in our [lead][title] line if another mod moved it.
+local function reclaim(e)
+    hideForeign(e)
+    pcall(function() e.right:SetVisibility(4) end)
+    if e.line and e.scale and e.title then
+        pcall(function()
+            if not same(e.scale:GetContent(), e.line) then
+                local slot = e.scale:SetContent(e.line)
+                pcall(function() slot:SetHorizontalAlignment(1) end)
+                e.line:AddChildToHorizontalBox(e.title):SetVerticalAlignment(2)
+            end
+        end)
+    else
+        titleHome(e)                                     -- no lead: the title is the ScaleBox's own content
+    end
+end
+
+-- a screen closed: every row it used goes back to the game's own state
+function M.releaseAll()
+    for _, e in pairs(extras) do
+        if e.owner then
+            if e.owner.release then pcall(e.owner.release, e) end
+            for _, x in ipairs(e.custom) do pcall(function() x:SetVisibility(1) end) end
+            restore(e)
+            e.owner, e.shown, e.row = nil, nil, nil
+        end
+    end
 end
 
 -- [lead][title] in the title's ScaleBox. Every row stays one height (the list assumes it): the lead box is `size`
 -- tall on every row, and 0 wide on rows without a lead
 local function addLead(u, w, e, size)
-    local scale = u.find(e.inner, "ScaleBox_0")
+    local scale = e.scale
     if not (scale and e.title) then return end
     local line = u.new("HorizontalBox", w.WidgetTree)
+    e.line = line
     local slot = scale:SetContent(line)
     pcall(function() slot:SetHorizontalAlignment(1) end)
     e.lead = u.image(nil, size, w.WidgetTree)
@@ -202,6 +281,7 @@ function List:extra(w)
     if prev and prev.release then pcall(prev.release, e) end
     for _, x in ipairs(e.custom) do pcall(function() x:SetVisibility(1) end) end
     e.owner, e.shown, e.row = self, nil, nil
+    reclaim(e)
     M.indent(e, 0)
     M.setValue(e, "", nil)
     if self.leadSize and not e.lead then addLead(self.u, w, e, self.leadSize); kit.trace("list: lead added") end

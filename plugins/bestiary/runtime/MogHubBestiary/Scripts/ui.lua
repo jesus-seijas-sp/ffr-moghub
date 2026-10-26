@@ -81,6 +81,7 @@ local function build()
 
     local body = new("HorizontalBox")
     L:setContent(body)
+    ui.body = body
     local column = new("VerticalBox")
     body:AddChildToHorizontalBox(column)
     local summary = new("HorizontalBox")
@@ -779,6 +780,12 @@ end
 -- h: the Help layout MogHub hands over, uu: kit.ui bound to it. The game pools the widget: it is built once per
 -- object and refreshed each time it opens.
 local builtFor, pending
+-- the window still shows our page: other screens (MogHub's own, FFR Bestiary) put theirs in the same pooled Help
+-- layout, and the last one built stays there until someone builds again
+local function ownsWindow()
+    local ok, mine = pcall(function() return L.slot:GetContent():GetAddress() == ui.body:GetAddress() end)
+    return ok and mine
+end
 function M.open(h, uu)
     host, u = h, uu
     local addr = h:GetFullName()                          -- unique per object, unlike its address
@@ -786,7 +793,7 @@ function M.open(h, uu)
         -- built again for a new widget, or when the language changed (texts are built in)
         local key = addr .. "|" .. kit.i18n.lang
         kit.trace("bestiary: open (build %s)", tostring(builtFor ~= key or not (ui and valid(ui.name))))
-        if builtFor ~= key or not (ui and valid(ui.name)) then build(); builtFor = key end
+        if builtFor ~= key or not (ui and valid(ui.name)) or not ownsWindow() then build(); builtFor = key end
         kit.trace("bestiary: refresh")
         pendingForm, pendingConfirm, pendingRefresh = nil, nil, nil   -- input from before it was open
         local here = tracker.currentArea()

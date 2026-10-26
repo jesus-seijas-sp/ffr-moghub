@@ -10,7 +10,7 @@ local M = {}
 local kit
 
 local BASE_GAME = { ["ffrs-windows"] = true, ["ffrs-windows_0_p"] = true, ["global"] = true }
-local OURS = { ["zzz_moghub_p"] = true }
+local OURS = { ["zzz_moghub_9_p"] = true, ["zzz_moghub_p"] = true }   -- (1.0.0 named it zzz_MogHub_P)
 local NOT_MODS = { shared = true, Keybinds = true }   -- UE4SS's own library folders, not mods
 
 M.list = {}                -- { kind = "ue4ss" | "pak", name, on, path, where, files, changed }

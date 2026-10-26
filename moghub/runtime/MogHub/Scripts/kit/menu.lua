@@ -1,4 +1,4 @@
--- Main-menu screens. The kit's data pak (zzz_MogHub_P) adds scene rows to the game's main-menu table: "Mods"
+-- Main-menu screens. The kit's data pak (zzz_MogHub_9_P) adds scene rows to the game's main-menu table: "Mods"
 -- (the kit's hub) and a few spare slots that plugins can claim for an entry of their own (MogHub Bestiary does). Each
 -- row opens the game's Help layout, which the screen's owner then rebuilds, so the page gets the game's own frame,
 -- header, list, scrollbar, key guide, transitions and input handling.
@@ -10,7 +10,7 @@ local kit, valid, game
 
 M.HUB_TAG = "UI.MainMenu.Scene.Mods"
 M.SLOT_TAGS = { "UI.MainMenu.Scene.MogHub1", "UI.MainMenu.Scene.MogHub2", "UI.MainMenu.Scene.MogHub3" }
-M.PAK = "zzz_MogHub_P"
+M.PAK = "zzz_MogHub_9_P"
 M.HOST_CLASS = "WBP_HelpLayout_C"
 M.HOST_PARENT = "WBP_MainMenuLayout"    -- the game's own Help screen is not under the main menu
 local MENU_TABLE = "/Game/UI/MainMenu/Data/DT_MainMenuScene.DT_MainMenuScene"
@@ -179,6 +179,21 @@ local function findHost()
     end
 end
 
+-- the main menu's open page: the top of its page stack (CPP_VM_MainMenu.SceneDataStack); nil when unreadable
+local function currentScene()
+    local tag
+    pcall(function()
+        for _, vm in ipairs(FindAllOf("CPP_VM_MainMenu") or {}) do
+            local stack = vm.SceneDataStack
+            for i = #stack, 1, -1 do                      -- the newest page that isn't the menu's root
+                local t = stack[i].SceneTag.TagName:ToString()
+                if t ~= "UI.MainMenu.Scene.Root" then tag = t; return end
+            end
+        end
+    end)
+    return tag
+end
+
 -- which entry is focused in the main menu right now (backup for the click hook)
 local function focusedTag()
     for _, e in ipairs(FindAllOf("WBP_MainMenuRootEntry_C") or {}) do
@@ -192,6 +207,7 @@ end
 M.open = nil             -- { host, name, screen, ui }
 M.titleHost = nil        -- full name of the Help layout borrowed on the title screen
 local pendingConfirm, clickTick, ticks, lastClick = false, nil, 0, 0
+local foreign            -- the open host belongs to another mod's entry
 
 local function close()
     local o = M.open
@@ -200,6 +216,7 @@ local function close()
     if o and o.name == M.titleHost then M.titleHost = nil end
     if o and o.screen.closed then kit.guarded(o.screen.owner, "screen closed", o.screen.closed) end
     if o and kit.list then kit.list.giveKeys(o.name) end      -- the list's own Left / Right paging back
+    if o and kit.list then pcall(kit.list.releaseAll) end     -- the rows as the game made them, for the next user
 end
 
 -- safety net: if a tutorial pop-up still opens over our screen, hide it and take it off the input stack
@@ -227,14 +244,24 @@ function M.poll()
     local host = findHost()
     if not host then
         if M.open then close() end
+        foreign = nil
         return
     end
     local name = host:GetFullName()
+    if name == foreign then return end
     if not M.open or M.open.name ~= name then
         if M.open then close() end
-        -- the host was just activated: the entry chosen a moment ago says which screen it is
+        -- the host was just activated: the entry chosen a moment ago says which screen it is. Another mod's entry
+        -- that also opens the Help layout (FFR Bestiary's) leaves it alone.
+        local scene = name ~= M.titleHost and currentScene() or nil
+        if (scene and scene:find("^UI%.MainMenu%.Scene%.") and not M.screens[scene])
+            or (not scene and lastTag and not M.screens[lastTag] and os.clock() - lastTagAt < 3) then
+            foreign = name
+            return
+        end
         local tag
         if name == M.titleHost then tag = M.HUB_TAG
+        elseif scene and M.screens[scene] then tag = scene
         elseif lastTag and M.screens[lastTag] and os.clock() - lastTagAt < 3 then tag = lastTag
         else tag = focusedTag() or (M.screens[lastTag or ""] and lastTag) or M.HUB_TAG end
         if not shown(tag) then tag = M.HUB_TAG end          -- an entry left over from before its plugin was switched off

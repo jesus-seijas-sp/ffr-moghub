@@ -106,7 +106,7 @@ function scan(gameDir) {
   out.push({ kind: 'moghub', id: 'moghub', name: 'MogHub', version: hubVersion ? hubVersion[1] : '',
     installed: exists(path.join(moghub, 'Scripts', 'main.lua')),
     on: exists(path.join(moghub, 'enabled.txt')), where: 'ue4ss\\Mods\\MogHub', path: moghub, fixed: true,
-    pakInstalled: exists(path.join(p.modPaks, 'zzz_MogHub_P.utoc')) });
+    pakInstalled: ['zzz_MogHub_9_P.utoc', 'zzz_MogHub_P.utoc'].some((f) => exists(path.join(p.modPaks, f))) });   // 1.0.0 named it zzz_MogHub_P
   const listed = modsTxt(p);
   const plugins = [], others = [];
   for (const folder of dirs(p.mods)) {

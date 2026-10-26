@@ -1,7 +1,7 @@
 -- MogHub core: logging, the one game-thread tick, timers, events and the plugin loader.
 -- Every plugin runs in this Lua state (UE4SS gives each of its mods a separate one), so plugins call the kit
 -- directly. One timer drives everything: UE4SS callbacks running into each other break its Lua state.
-local kit = { VERSION = "1.0.0", plugins = {}, dir = nil, modsDir = nil, debug = false }
+local kit = { VERSION = "1.0.1", plugins = {}, dir = nil, modsDir = nil, debug = false }
 
 local function log(tag, fmt, ...)
     local ok, msg = pcall(string.format, fmt, ...)
@@ -328,15 +328,46 @@ function kit.setEnabled(mod, on)
     kit.menu.changed()
 end
 
--- every folder in ue4ss/Mods with a moghub.lua, in name order (plugins sort themselves with Order in moghub.ini)
-local function pluginFolders()
-    local out = {}
-    local p = io.popen('dir /b /ad "' .. kit.modsDir:gsub("/", "\\") .. '" 2>nul')
-    if p then
-        for name in p:lines() do
-            if kit.exists(kit.modsDir .. "/" .. name .. "/moghub.lua") then out[#out + 1] = name end
+-- the folders in ue4ss/Mods, from UE4SS's own listing (in the game's process); nil when it doesn't work. Never a dir
+-- command: io.popen starts a cmd.exe whose console window takes the focus from the game (input dead until alt-tab),
+-- and on some players' PCs it listed nothing at all, so MogHub came up with no plugins.
+local KNOWN = { "MogHubBestiary", "MogHubFieldKit", "MogHubLogbook", "MogHubTrainer" }
+local function modsFolders()
+    local found, hub = {}, false
+    pcall(function()
+        local d = IterateGameDirectories().Game
+        for _, part in ipairs({ "Binaries", "Win64", "ue4ss", "Mods" }) do d = d and d[part] end
+        for k, v in pairs(d or {}) do
+            if type(k) == "string" and k:sub(1, 2) ~= "__" and type(v) == "table" then
+                found[#found + 1] = k
+                if k:lower() == "moghub" then hub = true end
+            end
         end
-        p:close()
+    end)
+    if hub then return found, "UE4SS" end
+end
+
+-- every folder in ue4ss/Mods with a moghub.lua, in name order (plugins sort themselves with Order in moghub.ini).
+-- Without a folder listing: the known plugins and the mods in mods.txt, each checked by name.
+local function pluginFolders()
+    local names, how = modsFolders()
+    if not names then
+        kit.log("couldn't list ue4ss/Mods: looking for the known plugins by name")
+        names = {}
+        for _, n in ipairs(KNOWN) do names[#names + 1] = n end
+        for line in (kit.readFile(kit.modsDir .. "/mods.txt") or ""):gmatch("[^\r\n]+") do
+            local n = line:match("^%s*([^;#:][^:]-)%s*:")
+            if n then names[#names + 1] = n end
+        end
+    elseif kit.debug then
+        kit.log("ue4ss/Mods listed by %s", how)
+    end
+    local out, seen = {}, {}
+    for _, name in ipairs(names) do
+        if not seen[name:lower()] and kit.exists(kit.modsDir .. "/" .. name .. "/moghub.lua") then
+            seen[name:lower()] = true
+            out[#out + 1] = name
+        end
     end
     table.sort(out, function(a, b) return a:lower() < b:lower() end)
     return out

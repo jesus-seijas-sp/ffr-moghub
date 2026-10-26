@@ -28,7 +28,7 @@
       "kind": "framework",
       "description": "The mod framework: a Mods menu in the game for every mod, and the base MogHub Trainer and MogHub Bestiary run on.",
       "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
       "requires": [ "ue4ss" ],
       "install": [
@@ -66,7 +66,7 @@
       "kind": "plugin",
       "description": "A bestiary in the main menu: every enemy you have met, by area, with its scan data, sprite, drop and steal chances, and each area's enemy levels.",
       "homepage": "https://github.com/jesus-seijas-sp/ffr-moghub/tree/main/plugins/bestiary",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": { "type": "github", "repo": "jesus-seijas-sp/ffr-moghub", "ref": "main" },
       "requires": [ "moghub" ],
       "install": [

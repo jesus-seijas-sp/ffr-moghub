@@ -14,9 +14,18 @@ Store.__index = Store
 
 function M.init(k) kit = k end
 
+-- the folder, made only when it isn't there yet: os.execute starts a cmd.exe whose console window takes the focus
+-- from the game, which then ignored keyboard, mouse and controller until the player alt-tabbed back
+local function ensureDir(dir)
+    local probe = dir .. ".probe"
+    local f = io.open(probe, "w")
+    if f then f:close(); os.remove(probe); return end
+    os.execute('mkdir "' .. dir:gsub("/", "\\") .. '" 2>nul')
+end
+
 function M.new(mod, name, opts)
     local dir = mod.dir .. "/saves/"
-    os.execute('mkdir "' .. dir:gsub("/", "\\") .. '" 2>nul')
+    ensureDir(dir)
     name = name or "data"
     local file = opts and opts.file or (name .. "_slot%s.json")
     local st = setmetatable({ mod = mod, name = name, file = file, dir = dir, data = {}, slot = nil, loaders = {}, savers = {} }, Store)

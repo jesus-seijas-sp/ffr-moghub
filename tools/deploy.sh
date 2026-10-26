@@ -14,7 +14,8 @@ cp moghub/runtime/MogHub/Scripts/kit/*.lua "$MODS/MogHub/Scripts/kit/"
 mkdir -p "$MODS/MogHub/lang" && cp moghub/runtime/MogHub/lang/*.ini "$MODS/MogHub/lang/"
 [ -f "$MODS/MogHub/config.ini" ] || sed 's/^Debug = 0/Debug = 1/' moghub/runtime/MogHub/config.ini > "$MODS/MogHub/config.ini"
 touch "$MODS/MogHub/enabled.txt"
-for f in moghub/build/out/zzz_MogHub_P.*; do          # only when changed: the running game locks it
+rm -f "$PAKS"/zzz_MogHub_P.*                            # 1.0.0's name: the _9_ one has to be the only copy
+for f in moghub/build/out/zzz_MogHub_9_P.*; do          # only when changed: the running game locks it
     cmp -s "$f" "$PAKS/$(basename "$f")" || cp "$f" "$PAKS/"
 done
 

@@ -32,7 +32,7 @@ touch(path.join(p.mods, 'Listed', 'Scripts', 'main.lua'));
 touch(path.join(p.mods, 'mods.txt'), 'Listed : 1\r\nOther : 0\r\n');
 touch(path.join(p.mods, 'shared', 'types.lua'));
 for (const f of ['FFRS-Windows.pak', 'FFRS-Windows.utoc', 'Extra_P.pak']) touch(path.join(p.paks, f));
-for (const f of ['MRP_P.pak', 'MRP_P.utoc', 'MRP_P.ucas', 'Old_P.pak', 'zzz_MogHub_P.pak', 'zzz_MogHub_P.utoc']) touch(path.join(p.modPaks, f));
+for (const f of ['MRP_P.pak', 'MRP_P.utoc', 'MRP_P.ucas', 'Old_P.pak', 'zzz_MogHub_9_P.pak', 'zzz_MogHub_P.utoc']) touch(path.join(p.modPaks, f));
 touch(path.join(p.modPaks, 'Sub', 'Off_P.pak.disabled'));
 touch(path.join(p.modPaks, 'Sub', 'Off_P.utoc'));
 

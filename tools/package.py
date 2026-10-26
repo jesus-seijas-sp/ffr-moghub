@@ -3,7 +3,7 @@
 usage (from the repository root):  python tools/package.py      -> dist/<Name>-<version>.zip
 
 MogHub-<v>.zip            FFRS/Binaries/Win64/ue4ss/Mods/MogHub (scripts, translations, config.ini, enabled.txt)
-                          and its menu pak FFRS/Content/Paks/~mods/zzz_MogHub_P.* (moghub/build/out)
+                          and its menu pak FFRS/Content/Paks/~mods/zzz_MogHub_9_P.* (moghub/build/out)
 MogHub<Plugin>-<v>.zip    FFRS/Binaries/Win64/ue4ss/Mods/<Folder> (moghub.ini, moghub.lua, Scripts with the plugin's
                           data/*.lua, translations, LICENSE)
 <Name>-<v>.zip            standalone paks (no UE4SS), e.g. HideKeyGuide: FFRS/Content/Paks/~mods/zzz_<Name>_P.*
@@ -49,7 +49,7 @@ files = [(rel('moghub/runtime/MogHub/Scripts/main.lua'), f'{arc}/Scripts/main.lu
          (rel('LICENSE'), f'{arc}/LICENSE')]
 files += [(f, f'{arc}/Scripts/kit/{os.path.basename(f)}') for f in glob.glob(rel('moghub/runtime/MogHub/Scripts/kit/*.lua'))]
 files += translations(rel('moghub/runtime/MogHub'), arc)
-paks = glob.glob(rel('moghub/build/out/zzz_MogHub_P.*'))
+paks = glob.glob(rel('moghub/build/out/zzz_MogHub_9_P.*'))
 assert len(paks) == 3, 'menu pak missing: run moghub/tools/build_pak.sh'
 files += [(f, f'{PAKS}/{os.path.basename(f)}') for f in paks]
 write(f'MogHub-{version}.zip', files)
