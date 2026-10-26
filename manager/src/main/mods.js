@@ -9,7 +9,7 @@ const path = require('path');
 const { paths } = require('./game');
 
 const BASE_GAME_PAKS = new Set(['ffrs-windows', 'ffrs-windows_0_p', 'global']);
-const OUR_PAKS = new Set(['zzz_moghub_p']);
+const OUR_PAKS = new Set(['zzz_moghub_9_p', 'zzz_moghub_p'])   // (1.0.0 named it zzz_MogHub_P);
 const NOT_MODS = new Set(['shared', 'Keybinds']);
 const REGISTRY = 'moghub-manager.json';
 
