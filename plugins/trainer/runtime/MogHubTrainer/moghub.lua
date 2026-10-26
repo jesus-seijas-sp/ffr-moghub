@@ -7,8 +7,14 @@ local game, tables = kit.game, kit.tables
 local live = require("live")
 live.init(kit)
 
--- a quick action from live.lua (with a game loaded): its result, or why it couldn't run, on screen
-local function act(fn) return mod:action(fn, { game = true }) end
+-- a quick action from live.lua (with a game loaded): its result, or why it couldn't run, on screen. These change the
+-- game being played, so a done message reminds the player to save (loading a save would undo them).
+local function act(fn)
+    return mod:action(fn, { game = true, notify = function(msg, color, ms)
+        if color == "on" then msg = msg .. "\n" .. mod:t("saveToKeep", "Save your game to keep it.") end
+        mod:notice(msg, color, ms and ms + 1500)
+    end })
+end
 local valid = kit.valid
 
 local x = "x%g"
@@ -58,7 +64,7 @@ cfg = mod:settings{
     { header = "Speed" },
     mult("TurboMultiplier", "Turbo", 1, 4, 1, "Speeds up the whole game: field, battles and cutscenes. Hotkey: Ctrl+F6."),
     mult("BattleSpeedMultiplier", "Battle speed", 0.5, 5, 0.5, "Scales the game's own battle speed steps."),
-    mult("FieldSpeedMultiplier", "Walking speed", 0.5, 3, 0.5, "Hotkey: Ctrl+F4."),
+    mult("FieldSpeedMultiplier", "Walking speed", 0.5, 3, 0.25, "Hotkey: Ctrl+F4."),
 
     { header = "Rewards" },
     mult("ExpMultiplier", "EXP", 0, 10, 0.5),
@@ -71,6 +77,8 @@ cfg = mod:settings{
     { key = "AlwaysStealRare", label = "Steals give the rare item", type = "toggle", default = false },
     mult("RareEnemyMultiplier", "Rare enemy chance", 1, 10, 1,
          "How often Cactuars, Gil Snappers and Pots turn up in random battles."),
+    { key = "InfiniteGil", label = "Infinite Gil", type = "toggle", default = false,
+      help = "Your Gil stays at the maximum (99,999,999) while this is on: after loading any save and after every purchase, no saving needed. Switched off, your Gil stays where it is." },
     { key = "GilAmount", label = "Gil to add", type = "choice", default = 10000, keep = true,
       choices = { { 1000, "1,000" }, { 10000, "10,000" }, { 100000, "100,000" }, { 1000000, "1,000,000" } } },
     { label = "Add Gil", type = "action", button = "Add", help = "Adds the amount above to your Gil.",
@@ -116,7 +124,7 @@ cfg = mod:settings{
     { label = "Get every artifact", type = "action", button = "Get", run = act(live.allArtifacts),
       help = "Adds every finished artifact you don't own yet (the unfinished ones in the game files are left out)." },
     { label = "Max Mastery Rank", type = "action", button = "Max", run = act(live.maxMastery),
-      help = "Every character's Mastery Rank with every vision you own, at the maximum." },
+      help = "Every character's Mastery Rank with every vision you own, at the maximum, with each rank's rewards (AP, stats, master skills) as if earned in battle." },
     { label = "Max awakening", type = "action", button = "Max", run = act(live.maxAwakening),
       help = "Every vision you own, fully awakened." },
     { label = "Libra on every enemy met", type = "action", button = "Scan", run = act(live.libraAll),
@@ -494,6 +502,14 @@ local function applyTurbo()
     turboSet = m ~= 1
 end
 
+-- Infinite Gil: Gil topped up to the game's maximum (with a game loaded, outside loading screens).
+local function applyInfiniteGil()
+    if not cfg.InfiniteGil or not game.saveData() then return end
+    local lib = game.lib("CPP_BFL_SaveDataPlayer")
+    local max = lib:GetMaxNumMoney()
+    if max and max > 0 and lib:GetCurrentMoney() < max then lib:SetCurrentMoney(max, true, false) end
+end
+
 -- Walking speed: the player character's own time dilation (movement and animation together).
 local fieldSpeedSet = false
 local function applyFieldSpeed()
@@ -808,6 +824,7 @@ mod:every(1000, function()
     ticks = ticks + 1
     if ticks % 2 == 0 then applyTables() end              -- tables reloaded by a map change get the edits again
     rememberParty()
+    applyInfiniteGil()
     applyFieldSpeed()
     applyTurbo()
 end, "main loop")

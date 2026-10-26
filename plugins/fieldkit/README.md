@@ -17,4 +17,13 @@ Every switch puts the game back as it was when turned off (or when the plugin is
 
 ## Install
 
-Install MogHub, then extract the Field Kit into the game folder: it adds `FFRS\Binaries\Win64\ue4ss\Mods\MogHubFieldKit`.
+Download it from [Nexus Mods](https://www.nexusmods.com/finalfantasyresonance/mods/115). Install
+[MogHub](https://www.nexusmods.com/finalfantasyresonance/mods/110), then extract the Field Kit into the game folder: it adds
+`FFRS\Binaries\Win64\ue4ss\Mods\MogHubFieldKit`.
+
+## Hide Key Guide (standalone pak)
+
+For players who want only the hidden key guide, without UE4SS or MogHub: `HideKeyGuide-<version>.zip` (an optional
+file on the Nexus page) holds `zzz_HideKeyGuide_P.*` for `FFRS\Content\Paks\~mods`. It is always on; delete the three
+files to get the key guide back. `tools/build_hidekeyguide.sh` builds it (`tools/hide-pak` sets the key guide widget's
+inner overlay and button grid to Collapsed); rerun it after a game patch.

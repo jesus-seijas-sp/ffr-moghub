@@ -82,22 +82,84 @@ function M.allArtifacts()
     return mod:t("artifactsDone", "{1} artifacts added", n)
 end
 
--- Mastery Rank (each character's synchro with each vision) to the maximum
+-- The rewards of each Mastery Rank (synchro mastery level), from the game's table (DT_VisionSynchroMasteryData): what
+-- the game hands a character on reaching the level in battle. Base parameter bonuses (EquipCost = the AP to equip
+-- abilities, HP, stats...) and master skills belong to the character; a level's active and passive skills come with
+-- the level itself, so setting the points is enough for those.
+local BASE_PARAMETER, MASTER_SKILL = 5, 4              -- eVisionMasteryParameterType
+local synchroRewards                                   -- [vision id][level] = { { type, a, b }, ... }
+local function rewardsOf(visionId)
+    if not synchroRewards then
+        synchroRewards = {}
+        kit.tables.rows("VISION_MASTERY_DATA", function(row, _, t)
+            if not t.path:find("Synchro") then return end
+            local list = {}
+            each(row.detailData, function(d)
+                local typ = kit.ue.enum(d.parameterType)
+                if typ == BASE_PARAMETER or typ == MASTER_SKILL then
+                    local p = kit.ue.values(d.params)
+                    list[#list + 1] = { typ, p[1], p[2] }
+                end
+            end)
+            synchroRewards[row.ID] = synchroRewards[row.ID] or {}
+            synchroRewards[row.ID][row.Level] = list
+        end)
+    end
+    return synchroRewards[visionId] or {}
+end
+
+-- a character's master skills (all three kinds), as a set; nil when the lists can't be read
+local function masterSkills(saved, unit)
+    local have, read = {}, 0
+    for _, get in ipairs({ "GetMasterActiveSkillList", "GetMasterCommandSkillList", "GetMasterPassiveSkillList" }) do
+        local ok = pcall(function()
+            local out = {}
+            saved[get](saved, out, unit)
+            for _, id in ipairs(kit.ue.values(out)) do have[id] = true end
+        end)
+        if ok then read = read + 1 end
+    end
+    return read == 3 and have or nil
+end
+
+-- Mastery Rank (each character's synchro with each vision) to the maximum, with the rewards of every level skipped:
+-- the base parameter bonuses and master skills a battle would have given. Characters already at max rank get any
+-- master skill they are missing (an earlier version of this action didn't hand them out).
 function M.maxMastery()
     local sd = game.saveData()
-    local vision = game.lib("CPP_BFL_Vision")
-    local units, n = characters(sd), 0
+    local vision, saved = game.lib("CPP_BFL_Vision"), game.lib("CPP_BFL_SaveDataUnit")
+    local units, n, rewards = characters(sd), 0, 0
     each(sd.visionList, function(v)
         local id = v.ID
         local max = vision:GetMaxMasteryPoint(id, SYNCHRO)
+        local maxLevel = vision:GetMaxLevel(id, SYNCHRO)
+        if max <= 0 then return end
+        local byLevel = rewardsOf(id)
         for _, unit in ipairs(units) do
-            if max > 0 and vision:GetSynchroMasteryPoint(id, unit) < max then
+            local from = vision:GetSynchroMasteryLevel(id, unit)
+            if vision:GetSynchroMasteryPoint(id, unit) < max then
                 vision:SetSynchroMasteryPoint(id, unit, max)
                 n = n + 1
             end
+            local have
+            for level = 1, maxLevel do
+                for _, r in ipairs(byLevel[level] or {}) do
+                    if r[1] == BASE_PARAMETER and level > from and r[2] and r[2] > 0 and r[3] then
+                        saved:AddBaseParameter(unit, r[2], r[3])
+                        rewards = rewards + 1
+                    elseif r[1] == MASTER_SKILL and r[2] and r[2] > 0 then
+                        if have == nil then have = masterSkills(saved, unit) or false end
+                        if have and not have[r[2]] then              -- unreadable lists: no blind adds
+                            saved:AddMasterSkill(unit, r[2])
+                            have[r[2]] = true
+                            rewards = rewards + 1
+                        end
+                    end
+                end
+            end
         end
     end)
-    return mod:t("masteryDone", "{1} vision / character pairs at max rank", n)
+    return mod:t("masteryDone", "{1} vision / character pairs at max rank ({2} rank rewards given)", n, rewards)
 end
 
 function M.maxAwakening()

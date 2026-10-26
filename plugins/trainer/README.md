@@ -28,7 +28,9 @@ When FFRS-QoL is installed, the settings it also handles are left to it.
 
 ## Install
 
-Install MogHub, then extract the trainer into the game folder: it adds `FFRS\Binaries\Win64\ue4ss\Mods\MogHubTrainer`.
+Download it from [Nexus Mods](https://www.nexusmods.com/finalfantasyresonance/mods/111). Install
+[MogHub](https://www.nexusmods.com/finalfantasyresonance/mods/110), then extract the trainer into the game folder: it adds
+`FFRS\Binaries\Win64\ue4ss\Mods\MogHubTrainer`.
 
 ## Development
 

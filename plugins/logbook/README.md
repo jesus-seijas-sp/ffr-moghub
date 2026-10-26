@@ -21,7 +21,9 @@ tables. The Logbook only reads your game, through the game's own functions and c
 
 ## Install
 
-Install MogHub, then extract the Logbook into the game folder: it adds `FFRS\Binaries\Win64\ue4ss\Mods\MogHubLogbook`.
+Download it from [Nexus Mods](https://www.nexusmods.com/finalfantasyresonance/mods/112). Install
+[MogHub](https://www.nexusmods.com/finalfantasyresonance/mods/110), then extract the Logbook into the game folder: it adds
+`FFRS\Binaries\Win64\ue4ss\Mods\MogHubLogbook`.
 
 ## Development
 

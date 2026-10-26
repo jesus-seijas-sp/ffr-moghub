@@ -6,6 +6,7 @@ MogHub-<v>.zip            FFRS/Binaries/Win64/ue4ss/Mods/MogHub (scripts, transl
                           and its menu pak FFRS/Content/Paks/~mods/zzz_MogHub_P.* (moghub/build/out)
 MogHub<Plugin>-<v>.zip    FFRS/Binaries/Win64/ue4ss/Mods/<Folder> (moghub.ini, moghub.lua, Scripts with the plugin's
                           data/*.lua, translations, LICENSE)
+<Name>-<v>.zip            standalone paks (no UE4SS), e.g. HideKeyGuide: FFRS/Content/Paks/~mods/zzz_<Name>_P.*
 lang/en.ini is left out everywhere: it is the template for translators, never read (the English is in the code).
 """
 import glob, os, re, zipfile
@@ -69,3 +70,12 @@ for folder in sorted(glob.glob(rel('plugins/*/runtime/*/'))):
     if os.path.exists(os.path.join(plugin, 'LICENSE')):
         files.append((os.path.join(plugin, 'LICENSE'), f'{arc}/LICENSE'))
     write(f'{name}-{version}.zip', files)
+
+# ---------- standalone paks (no UE4SS): built by each plugin's tools, e.g. fieldkit/tools/build_hidekeyguide.sh ----------
+STANDALONE = {'HideKeyGuide': ('plugins/fieldkit/build/out/zzz_HideKeyGuide_P.*', '1.0.0')}
+for name, (pattern, version) in STANDALONE.items():
+    paks = glob.glob(rel(pattern))
+    if len(paks) != 3:
+        print(f'{name}: not built, skipped')
+        continue
+    write(f'{name}-{version}.zip', [(f, f'{PAKS}/{os.path.basename(f)}') for f in paks])

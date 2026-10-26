@@ -36,8 +36,10 @@ list, per-save storage and the game's events.
 - Works with controller and keyboard; uses the game's own fonts, panels and icons
 
 ## Install
-1. Install [MogHub](../../README.md) (it comes with its own instructions, including the one-time UE4SS setup).
-2. Extract `MogHubBestiary-<version>.zip` into the game folder (the one containing `FFRS`). It adds
+1. Install [MogHub](https://www.nexusmods.com/finalfantasyresonance/mods/110) (it comes with its own instructions,
+   including the one-time UE4SS setup).
+2. Download the Bestiary from [Nexus Mods](https://www.nexusmods.com/finalfantasyresonance/mods/113) and extract
+   `MogHubBestiary-<version>.zip` into the game folder (the one containing `FFRS`). It adds
    `FFRS\Binaries\Win64\ue4ss\Mods\MogHubBestiary`. Bestiary appears in the main menu above System.
 
 Don't install the original FFR Bestiary alongside (delete its `FFRS\Content\Paks\~mods\zzz_FFRBestiary_P.*` files):

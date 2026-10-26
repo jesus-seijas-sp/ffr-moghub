@@ -150,11 +150,28 @@ local function hideMeter()
     if valid(meter.widget) then meter.widget:SetVisibility(VIS.Collapsed) end
 end
 
--- 0..1, or nil when there is nothing to show (no field, no random battles here)
+-- the meter is a layer of its own over the screen: it steps aside while the game is paused or one of its menus,
+-- dialogs or tutorials is open over the field (the game keeps its closed menus around, hidden: only visible ones count)
+local MENUS = { "WBP_MainMenuRootLayout_C", "WBP_MainMenuLayout_C", "WBP_SystemMenuLayout_C", "WBP_SHOP_Layout_C",
+                "WBP_DialogLayout_C", "WBP_ChoiceDialogLayout_C", "WBP_TutorialLayout_C", "WBP_ATCLayout_C",
+                "WBP_TalkEvent_SystemMenuLayout_C", "WBP_TalkEvent_ChoiceDialogLayout_C" }
+local function menuOpen()
+    if game.isPaused() then return true end
+    for _, class in ipairs(MENUS) do
+        for _, w in ipairs(game.all(class)) do
+            local ok, shown = pcall(function() return w:IsVisible() and (w:IsInViewport() or valid(w:GetParent())) end)
+            if ok and shown then return true end
+        end
+    end
+    return false
+end
+
+-- 0..1, or nil when there is nothing to show (no field, no random battles here, a menu open)
 local function encounterShare()
     if kit.events.battle or kit.loading then return nil end
     local layout = fieldLayout()
     if not layout or not layout:IsVisible() or cfg.HideHUD then return nil end
+    if menuOpen() then return nil end
     local mm = game.first("CPP_MapManager")
     if not mm then return nil end
     local ok, data = pcall(function() return game.lib("CPP_BFL_Map"):GetCurrntMapData() end)
