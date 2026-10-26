@@ -52,7 +52,8 @@ def ref(t):
 maps = {}
 for f in glob.glob(BDT + '/Map/MapData/DT_MapData_*.json'):
     for rk, v in rows(f).items():
-        maps[v['ID']] = {'row': rk, 'type': v['MapType'].split('::')[-1], 'island': v.get('island', '').split('::')[-1]}
+        maps[v['ID']] = {'row': rk, 'type': v['MapType'].split('::')[-1], 'island': v.get('island', '').split('::')[-1],
+                         'same': v.get('sameMapId', -1)}
 island_name = {v['IslandType'].split('::')[-1]: v['Name'].get('Key') for v in rows(BDT + '/Map/DT_MapIslandData.json').values()}
 region_of_prefix = {}                                   # '01Gra' -> 1
 for mid, m in maps.items():
@@ -110,6 +111,14 @@ def placements(name):
     return [json.loads(line) for line in open(path, encoding='utf8')] if os.path.exists(path) else []
 
 
+def save_map(mid):
+    """the map the save files a map's chests and item spots under: versions of one place (Grandshelt Castle and the
+    castle during the fire, the capital before and after the fire) share one record, their sameMapId"""
+    same = maps.get(mid, {}).get('same', -1)
+    return same if isinstance(same, int) and same >= 0 else mid
+
+
+# a placement's unique id left out of the level file has the class default, -1 (Quarry Cave's only chest)
 chest_uid = {}                                          # (map, table id) -> unique id
 loose = collections.defaultdict(list)                  # chests with their contents on the placement, no table row
                                                         # (Grandshelt Castle's upper floor holds its chests this way)
@@ -118,11 +127,13 @@ for r in placements('chestactors.jsonl'):
     if p.get('m_IsOpen') and not t:
         continue                                        # chests placed already open: scenery
     if t:
-        chest_uid[(t['mapId'], t['ID'])] = p.get('m_UniqueId', 0)
+        chest_uid[(t['mapId'], t['ID'])] = p.get('m_UniqueId', -1)
         continue
+    # kept only on maps whose chests the save shares with other versions of the place (the capital's two): the ones in
+    # the prologue's castle (2014) are never opened in players' saves, and that map can't be visited again
     mid = map_of(r['package'])
-    if mid and mid != WORLD_MAP and not r['package'].split('.')[0].endswith('_EV'):   # (event scenes' props left out)
-        loose[mid].append({'map': mid, 'id': p.get('m_Id', 0), 'uid': p.get('m_UniqueId', 0), 'item': p.get('m_ItemId', 0),
+    if mid and mid != WORLD_MAP and save_map(mid) != mid and not r['package'].split('.')[0].endswith('_EV'):
+        loose[mid].append({'map': mid, 'id': p.get('m_Id', 0), 'uid': p.get('m_UniqueId', -1), 'item': p.get('m_ItemId', 0),
                            'num': p.get('m_ItemNum', 1), 'gil': p.get('m_Money', 0), 'trap': bool(p.get('m_IsTrap'))})
 
 spots = collections.defaultdict(list)                   # map (or ('field', region)) -> item spots
@@ -132,7 +143,7 @@ for r in placements('fielditems.jsonl'):
         continue                                        # props of a story or quest scene, not pickups
     shard = r['type'].startswith('BP_MapGimmick_FieldItem_Medal')
     mid = map_of(r['package'])
-    s = {'map': mid, 'uid': p['m_UniqueId'], 'item': SHARD if shard else p.get('m_ItemId', 0), 'num': p.get('m_ItemNum', 1),
+    s = {'map': mid, 'uid': p.get('m_UniqueId', -1), 'item': SHARD if shard else p.get('m_ItemId', 0), 'num': p.get('m_ItemNum', 1),
          'gil': p.get('m_Money', 0), 'shard': shard}
     island = re.search(r'Wld_(\d\d)[A-Z]', r['package'])
     spots[('field', int(island.group(1))) if mid == WORLD_MAP and island else mid].append(s)
@@ -165,9 +176,14 @@ for mid, m in maps.items():
     a['maps'].append(mid)
 for a in areas.values():
     a['maps'].sort()
+    seen = set()                                        # (save map, unique id): one place's versions share them
     for mid in a['maps']:
-        a['chests'] += sorted(chests.get(mid, []), key=lambda c: c['id'])
-        a['spots'] += spots.get(mid, [])
+        for kind, items in (('chests', sorted(chests.get(mid, []), key=lambda c: c['id'])), ('spots', spots.get(mid, []))):
+            for c in items:
+                c = dict(c, map=save_map(c['map']))
+                if (kind, c['map'], c['uid']) not in seen:
+                    seen.add((kind, c['map'], c['uid']))
+                    a[kind].append(c)
 # a region's name: the island its world-map area is (Bestiary islandArea keys are island:<MAP_NAME key>)
 # (Grandshelt, Lanzelt and Kolobos share the name "Kingdom of Grandshelt": the runtime gives them one heading)
 REGION_ISLAND = {1: 'Grandshelt', 2: 'Lanzelt', 3: 'Kolobos', 4: 'Dirnado', 5: 'Olderion', 6: 'Zoldaad',

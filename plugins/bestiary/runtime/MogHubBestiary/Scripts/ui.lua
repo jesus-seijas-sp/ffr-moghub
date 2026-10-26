@@ -6,6 +6,7 @@ local game = require("game")
 local store = require("store")
 local tracker = require("tracker")
 local data = require("bestiary_data")
+local worldmap = require("worldmap_data")
 local libra = require("libra")
 
 local M = {}
@@ -32,6 +33,17 @@ local DROP_LABEL_W = 190           -- "Items Dropped" / "Stealable Items"
 local PANEL_PAD = 16               -- inside a framed panel (the game's WBP_Cmn_Window), each side
 local VALUE_W = DETAIL_W - SPRITE - 24 - LABEL_W - 10 - 2 * PANEL_PAD   -- detail width - sprite - gap - label - panel
 local AREAS_H = 110                -- locations list height; scrolls beyond that
+-- the world map on an area's page, drawn like the game's map screen (the technique and the positions in
+-- worldmap_data.lua are from FFR Bestiary 0.1.6 by Law19902, MIT)
+local MAP_H = 420                  -- under the area's counts, the panel's full width
+local MAP_INSET = 12               -- clear of the info frame's border, each side
+local MAP_WORLD_FILL = 0.8         -- the world's height in it (the game's map screen leaves sea all round)
+local MAP_MARKER = 36              -- the area's marker (bigger ones reached the next island)
+local MAP_MARKER_TEX = "/Game/UI/Textures/menu/T_WldMapCursor_Focus.T_WldMapCursor_Focus"   -- the world map's cursor
+-- the game's map screen (WBP_WldMapBG / WBP_WldMapLayout): its sea, vignette and frame
+local MAP_LAYERS = { { tex = "/Game/UI/Textures/MapCapture/Wld/T_Wld_ocean.T_Wld_ocean", z = -20 },
+                     { tex = "/Game/UI/Textures/Menu/T_Menu_Map_Vignette.T_Menu_Map_Vignette", z = 50 },
+                     { tex = "/Game/UI/Textures/MapCapture/Wld/T_Wld_frame.T_Wld_frame", z = 60 } }
 -- affinity groups shown in the scan panel (DA_BtlLibra styles Weak/Halved/Invalid/Absorb), eResistance values
 -- (labels: the scan panel's own keys have no text, so the battle's damage words: Weak / Resisted / Immune / Absorbed)
 local RESIST_ROWS = { { key = "UIBtlProp_Weakness", value = 1 }, { key = "UIBtlProp_Halved", value = 2 },
@@ -72,10 +84,14 @@ local function row(parent, key, valueW) return u.row(parent, game.libra(key) or 
 local function widgetRow(parent, key, labelW) return u.widgetRow(parent, game.libra(key) or key, labelW or LABEL_W) end
 
 -- build (once per host widget; the game pools it) ---------------------------------------------------------------
-local function build()
+local function attach()
     -- kit.list sizes the window and list and collapses Help's own title (the page header already says BESTIARY)
-    L = kit.list.attach(host, u, { window = { WINDOW_W, WINDOW_H }, list = { LIST_W, LIST_H }, lead = FACE,
-                                   row = rowWidgets, release = releaseRow })
+    return kit.list.attach(host, u, { window = { WINDOW_W, WINDOW_H }, list = { LIST_W, LIST_H }, lead = FACE,
+                                      row = rowWidgets, release = releaseRow })
+end
+
+local function build()
+    L = attach()
     ui = {}
     kit.trace("bestiary build: list attached")
 
@@ -93,8 +109,10 @@ local function build()
     summary:AddChildToHorizontalBox(u.check(26)):SetVerticalAlignment(2)
     summary:AddChildToHorizontalBox(text(" " .. SCANNED() .. "  ", GREY))
     summary:AddChildToHorizontalBox(ui.summaryScanned)
-    column:AddChildToVerticalBox(sized(summary, LIST_W, nil)):SetPadding({ Left = 14, Top = TOP_PAD, Right = 0, Bottom = 8 })
+    ui.summaryBox = sized(summary, LIST_W, nil)
+    column:AddChildToVerticalBox(ui.summaryBox):SetPadding({ Left = 14, Top = TOP_PAD, Right = 0, Bottom = 8 })
     L:takeList(column)
+    ui.column = column
     body:AddChildToHorizontalBox(sized(nil, COLUMN_GAP, nil))
 
     -- an enemy with many affinities / locations / long traits can need more room: the panel then shrinks to fit
@@ -127,6 +145,32 @@ local function build()
     ui.areaLevel = row(areaInfo, mod:t("enemyLevel", "Enemy level"))
     ui.areaInfo = panel(areaInfo)
     detail:AddChildToVerticalBox(sized(ui.areaInfo, DETAIL_W / 2, nil))
+    -- the world map under them: its sea filling the space, the world's island tiles centred in it, its vignette and
+    -- frame on top, and a marker. Textures load one a tick (loadQueuedTile).
+    ui.mapW, ui.mapH = DETAIL_W - 2 * MAP_INSET, MAP_H
+    local wh = math.floor(MAP_H * MAP_WORLD_FILL)
+    local ww = math.floor(wh * worldmap.aspect)
+    ui.world = { x = (ui.mapW - ww) / 2, y = (ui.mapH - wh) / 2, w = ww, h = wh }
+    ui.map = sized(nil, ui.mapW, ui.mapH)
+    pcall(function() ui.map:SetClipping(1) end)          -- tiles reaching past the map's edge are cut off
+    ui.mapCanvas = new("CanvasPanel")
+    ui.map:SetContent(ui.mapCanvas)
+    ui.mapTiles, ui.mapShow, ui.mapQueue, ui.mapQueued = {}, {}, {}, {}   -- queue: jobs in order; queued: tiles in it
+    for _, l in ipairs(MAP_LAYERS) do
+        local img = new("Image")
+        img:SetVisibility(1)                              -- until its texture is in
+        local slot = ui.mapCanvas:AddChildToCanvas(img)
+        slot:SetPosition({ X = 0, Y = 0 }); slot:SetSize({ X = ui.mapW, Y = ui.mapH }); slot:SetZOrder(l.z)
+        ui.mapQueue[#ui.mapQueue + 1] = { img = img, tex = l.tex }
+    end
+    ui.mapMarker = new("Image")
+    local markerTex = game.load(MAP_MARKER_TEX)
+    if markerTex then ui.mapMarker:SetBrushFromTexture(markerTex, false)
+    else ui.mapMarker:SetColorAndOpacity({ R = 1, G = 0.3, B = 0.2, A = 1 }) end
+    ui.mapMarkerSlot = ui.mapCanvas:AddChildToCanvas(ui.mapMarker)
+    ui.mapMarkerSlot:SetSize({ X = MAP_MARKER, Y = MAP_MARKER })
+    ui.mapMarkerSlot:SetZOrder(100)
+    detail:AddChildToVerticalBox(ui.map):SetPadding({ Left = MAP_INSET, Top = 12, Right = 0, Bottom = 0 })
 
     local top = new("HorizontalBox")
     ui.top = top
@@ -407,6 +451,75 @@ end
 local function blocks(visible)
     ui.top:SetVisibility(visible and 4 or 1); ui.scan:SetVisibility(visible and 4 or 1)
     ui.areaInfo:SetVisibility(visible and 1 or 4)
+    ui.map:SetVisibility(visible and 1 or 4)
+end
+
+-- world map ---------------------------------------------------------------------------------------------------------
+-- `w` on the map over u0..u1, v0..v1 (map coordinates, 0..1 over the whole world)
+local function mapX(x) return ui.world.x + x * ui.world.w end
+local function mapY(y) return ui.world.y + y * ui.world.h end
+local function placeOnMap(w, u0, v0, u1, v1, z)
+    local slot = ui.mapCanvas:AddChildToCanvas(w)
+    slot:SetPosition({ X = mapX(u0), Y = mapY(v0) })
+    slot:SetSize({ X = mapX(u1) - mapX(u0), Y = mapY(v1) - mapY(v0) })
+    slot:SetZOrder(z or 0)
+    return slot
+end
+
+-- the save's main story progress: some islands' tiles change with it (Olderion before / after the flood, ...)
+local function storyProgress()
+    local ok, p = pcall(function() return kit.game.saveData().Progress.Progress[1] end)
+    return ok and tonumber(p) or 0
+end
+
+local function tileWanted(t, progress)
+    local c = t.cond
+    return not c or (c.op == "<" and progress < c.progress) or (c.op == ">=" and progress >= c.progress)
+        or (c.op == "==" and progress == c.progress)
+end
+
+-- the islands as the game's own map shows them at this point of the story (tiles not loaded yet are queued)
+local function showTiles()
+    local progress = storyProgress()
+    for i, t in ipairs(worldmap.tiles) do
+        local want = tileWanted(t, progress)
+        ui.mapShow[i] = want
+        if ui.mapTiles[i] then ui.mapTiles[i]:SetVisibility(want and 4 or 1)
+        elseif want and not ui.mapQueued[i] then ui.mapQueued[i] = true; ui.mapQueue[#ui.mapQueue + 1] = i end
+    end
+end
+
+-- the map for an area: the islands, and the area's marker
+local function showMap(area)
+    showTiles()
+    local p = worldmap.areas[area]
+    ui.mapMarker:SetVisibility(p and 4 or 1)
+    if p then ui.mapMarkerSlot:SetPosition({ X = mapX(p.u) - MAP_MARKER / 2, Y = mapY(p.v) - MAP_MARKER / 2 }) end
+end
+
+-- Map textures (the tiles are 1024 x 1024), two a tick, from the moment the page is built: the map is usually
+-- complete before the cursor reaches an area. They load once: the page (map included) is kept between visits, and
+-- a texture still in memory is found at once.
+local function loadQueuedTile()
+    if not ui or not ui.mapQueue then return end
+    for _ = 1, 2 do
+        local i = table.remove(ui.mapQueue, 1)
+        if not i then return end
+        if type(i) == "table" then                        -- a full-size layer (sea, vignette, frame)
+            local tex = game.load(i.tex)
+            if tex then i.img:SetBrushFromTexture(tex, false); i.img:SetVisibility(4) end
+        else
+            local t = worldmap.tiles[i]
+            local tex = game.load(t.tex)
+            if tex then
+                local img = new("Image")
+                img:SetBrushFromTexture(tex, false)
+                placeOnMap(img, t.rect[1], t.rect[2], t.rect[3], t.rect[4], t.z)
+                img:SetVisibility(ui.mapShow[i] and 4 or 1)
+                ui.mapTiles[i] = img
+            end
+        end
+    end
 end
 
 -- the level range of an area's random encounters, bosses left out: { min, max }, or nil (towns, and caves whose
@@ -427,6 +540,8 @@ local function showHeader(r)
     pcall(function() ui.areaLevel:GetParent():SetVisibility(M.areaLevels and 4 or 1) end)
     ui.areasHead:SetVisibility(1)
     ui.areas:ClearChildren()
+    local ok, err = pcall(showMap, r.header)
+    if not ok then log("map: " .. tostring(err)) end
 end
 
 local function showUnknown()
@@ -780,11 +895,25 @@ end
 -- h: the Help layout MogHub hands over, uu: kit.ui bound to it. The game pools the widget: it is built once per
 -- object and refreshed each time it opens.
 local builtFor, pending
--- the window still shows our page: other screens (MogHub's own, FFR Bestiary) put theirs in the same pooled Help
--- layout, and the last one built stays there until someone builds again
+-- the window still shows our page: the Help layout puts its own content back each time it opens, and other screens
+-- (MogHub's own, FFR Bestiary) put theirs in the same pooled widget
 local function ownsWindow()
     local ok, mine = pcall(function() return L.slot:GetContent():GetAddress() == ui.body:GetAddress() end)
+    if not (ok and mine) then kit.trace("bestiary: window taken (%s %s)", tostring(ok), tostring(mine)) end
     return ok and mine
+end
+
+-- Our page back in the window as it was, list and all: building it again left the old page's widgets (and the map's
+-- textures) to the garbage collector each time, and the game crashed while the map loaded after a few of those.
+local function reattach()
+    local fresh = attach()                                -- the window and list sizes, and Left / Right, again
+    fresh.textures, fresh.keep, fresh.queue, fresh.queued = L.textures, L.keep, L.queue, L.queued
+    L = fresh
+    L:setContent(ui.body)
+    ui.column:ClearChildren()
+    ui.column:AddChildToVerticalBox(ui.summaryBox):SetPadding({ Left = 14, Top = TOP_PAD, Right = 0, Bottom = 8 })
+    ui.column:AddChildToVerticalBox(L.listBox)
+    if L.keep then ui.column:AddChildToVerticalBox(L.keep) end
 end
 function M.open(h, uu)
     host, u = h, uu
@@ -793,7 +922,9 @@ function M.open(h, uu)
         -- built again for a new widget, or when the language changed (texts are built in)
         local key = addr .. "|" .. kit.i18n.lang
         kit.trace("bestiary: open (build %s)", tostring(builtFor ~= key or not (ui and valid(ui.name))))
-        if builtFor ~= key or not (ui and valid(ui.name)) or not ownsWindow() then build(); builtFor = key end
+        if builtFor ~= key or not (ui and valid(ui.name)) then build(); builtFor = key
+        elseif not ownsWindow() then reattach() end
+        pcall(showTiles)                                  -- the map starts loading now (see loadQueuedTile)
         kit.trace("bestiary: refresh")
         pendingForm, pendingConfirm, pendingRefresh = nil, nil, nil   -- input from before it was open
         local here = tracker.currentArea()
@@ -809,6 +940,7 @@ function M.close() host = nil end
 -- every tick while open
 function M.poll()
     if not host or not ui then return end
+    pcall(loadQueuedTile)
     if pendingRefresh then local r = pendingRefresh; pendingRefresh = nil; pcall(refresh, r ~= true and r or shown) end
     if pendingConfirm then local r = pendingConfirm; pendingConfirm = nil; pcall(confirmed, r ~= true and r or nil) end
     if pendingForm then local f = pendingForm; pendingForm = nil; pcall(M.switchForm, f) end

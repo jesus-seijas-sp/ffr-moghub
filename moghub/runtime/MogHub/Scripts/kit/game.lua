@@ -38,9 +38,19 @@ end
 -- an asset by path ('/Game/Path/Asset.Asset'), loaded if needed, with UE4SS's own LoadAsset. (Not through the
 -- engine's soft paths: UE4SS hands an FSoftObjectPath to Lua without its SubPathString, and passing it back to the
 -- game left that field as garbage. That crashed the game now and then.)
+-- loaded with the engine's own blocking load (KismetSystemLibrary, as FFR Bestiary's map does), UE4SS's LoadAsset as
+-- a fallback: textures loaded with LoadAsset in a row (the Bestiary's map tiles) were followed by a crash
+local kismet
 function M.load(path)
     local o = StaticFindObject(path)
     if valid(o) then return o end
+    kismet = valid(kismet) and kismet or StaticFindObject("/Script/Engine.Default__KismetSystemLibrary")
+    if valid(kismet) then
+        local ok, r = pcall(function()
+            return kismet:LoadAsset_Blocking(kismet:Conv_SoftObjPathToSoftObjRef(kismet:MakeSoftObjectPath(path)))
+        end)
+        if ok and valid(r) then return r end
+    end
     local ok, r = pcall(LoadAsset, path)
     if ok and valid(r) then return r end
     o = StaticFindObject(path)

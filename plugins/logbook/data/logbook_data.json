@@ -266,7 +266,7 @@
    ],
    "chests": [
     {
-     "map": 2010,
+     "map": 2001,
      "id": 0,
      "uid": 4,
      "item": 3,
@@ -275,25 +275,7 @@
      "trap": false
     },
     {
-     "map": 2010,
-     "id": 2,
-     "uid": 8,
-     "item": 0,
-     "num": 1,
-     "gil": 400,
-     "trap": false
-    },
-    {
-     "map": 2011,
-     "id": 0,
-     "uid": 4,
-     "item": 3,
-     "num": 1,
-     "gil": 0,
-     "trap": false
-    },
-    {
-     "map": 2011,
+     "map": 2001,
      "id": 2,
      "uid": 8,
      "item": 0,
@@ -318,7 +300,7 @@
    ],
    "chests": [
     {
-     "map": 2012,
+     "map": 2002,
      "id": 0,
      "uid": 53,
      "item": 11024,
@@ -327,7 +309,7 @@
      "trap": false
     },
     {
-     "map": 2012,
+     "map": 2002,
      "id": 1,
      "uid": 63,
      "item": 209,
@@ -336,7 +318,7 @@
      "trap": false
     },
     {
-     "map": 2012,
+     "map": 2002,
      "id": 5,
      "uid": 60,
      "item": 4,
@@ -345,7 +327,7 @@
      "trap": false
     },
     {
-     "map": 2012,
+     "map": 2002,
      "id": 6,
      "uid": 61,
      "item": 4,
@@ -354,7 +336,7 @@
      "trap": false
     },
     {
-     "map": 2012,
+     "map": 2002,
      "id": 7,
      "uid": 62,
      "item": 11002,
@@ -363,7 +345,7 @@
      "trap": false
     },
     {
-     "map": 2012,
+     "map": 2002,
      "id": 8,
      "uid": 55,
      "item": 35,
@@ -372,7 +354,7 @@
      "trap": false
     },
     {
-     "map": 2012,
+     "map": 2002,
      "id": 9,
      "uid": 51,
      "item": 32,
@@ -381,61 +363,7 @@
      "trap": false
     },
     {
-     "map": 2014,
-     "id": 0,
-     "uid": 1,
-     "item": 1,
-     "num": 1,
-     "gil": 800,
-     "trap": false
-    },
-    {
-     "map": 2014,
-     "id": 1,
-     "uid": 2,
-     "item": 1,
-     "num": 1,
-     "gil": 500,
-     "trap": false
-    },
-    {
-     "map": 2014,
-     "id": 3,
-     "uid": 4,
-     "item": 4,
-     "num": 1,
-     "gil": 0,
-     "trap": false
-    },
-    {
-     "map": 2014,
-     "id": 4,
-     "uid": 6,
-     "item": 1,
-     "num": 1,
-     "gil": 1000,
-     "trap": false
-    },
-    {
-     "map": 2014,
-     "id": 5,
-     "uid": 22,
-     "item": 30005,
-     "num": 1,
-     "gil": 0,
-     "trap": false
-    },
-    {
-     "map": 3020,
-     "id": 0,
-     "uid": 53,
-     "item": 11024,
-     "num": 1,
-     "gil": -1,
-     "trap": false
-    },
-    {
-     "map": 3020,
+     "map": 2002,
      "id": 1,
      "uid": 7,
      "item": 209,
@@ -444,64 +372,10 @@
      "trap": false
     },
     {
-     "map": 3020,
-     "id": 3,
-     "uid": 63,
-     "item": 7,
-     "num": 4,
-     "gil": -1,
-     "trap": false
-    },
-    {
-     "map": 3020,
+     "map": 2002,
      "id": 4,
      "uid": 9,
      "item": 209,
-     "num": 2,
-     "gil": -1,
-     "trap": false
-    },
-    {
-     "map": 3020,
-     "id": 5,
-     "uid": 60,
-     "item": 4,
-     "num": 1,
-     "gil": -1,
-     "trap": false
-    },
-    {
-     "map": 3020,
-     "id": 6,
-     "uid": 61,
-     "item": 4,
-     "num": 2,
-     "gil": -1,
-     "trap": false
-    },
-    {
-     "map": 3020,
-     "id": 7,
-     "uid": 62,
-     "item": 11002,
-     "num": 1,
-     "gil": -1,
-     "trap": false
-    },
-    {
-     "map": 3020,
-     "id": 8,
-     "uid": 55,
-     "item": 35,
-     "num": 1,
-     "gil": -1,
-     "trap": false
-    },
-    {
-     "map": 3020,
-     "id": 9,
-     "uid": 51,
-     "item": 32,
      "num": 2,
      "gil": -1,
      "trap": false
@@ -3112,7 +2986,7 @@
     {
      "map": 10031,
      "id": 0,
-     "uid": 0,
+     "uid": -1,
      "item": 12098,
      "num": 1,
      "gil": -1,
