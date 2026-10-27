@@ -57,14 +57,23 @@ function M.load(path)
     if valid(o) then return o end
 end
 
+-- a Blueprint class the game has loaded itself, or nil (never loads it: for hooks, installed once the game uses it.
+-- Loading the title screen's classes while the game was still starting up left some players with no input at all.)
+function M.loadedClass(path)
+    if not path:find("%.") then local name = path:match("([^/]+)$"); path = path .. "." .. name .. "_C" end
+    local c = StaticFindObject(path)
+    return valid(c) and c or nil
+end
+
 -- a Blueprint class: '/Game/Path/WBP_X' or '/Game/Path/WBP_X.WBP_X_C', loaded if needed
 function M.class(path)
     if not path:find("%.") then local name = path:match("([^/]+)$"); path = path .. "." .. name .. "_C" end
     local c = StaticFindObject(path)
     if valid(c) then return c end
-    pcall(LoadAsset, (path:gsub("_C$", "")))             -- the Blueprint asset; its class comes with it
-    c = StaticFindObject(path)
-    if valid(c) then return c end
+    -- unloaded again after a trip to another map: loaded the engine's way, as UE4SS's LoadAsset of the Blueprint
+    -- crashed the game when the Bestiary opened after a fast travel
+    kit.trace("class %s: loading", path)
+    return M.load(path)
 end
 
 function M.playerController()

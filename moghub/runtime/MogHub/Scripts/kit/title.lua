@@ -54,10 +54,17 @@ local function openHub()
         end
     end
     if not pushed then kit.notice.show(kit.t("title.unavailable", "Mods: open it from the main menu once a game is loaded"), "warn", 3000); return end
+    -- no screen within 3 s (the game was starting a save, say): the layout goes again, or it keeps the input while
+    -- nothing shows
     local tries, timer = 0, nil
     timer = kit.every(100, function()
         tries = tries + 1
-        if tries > 30 then timer.cancelled = true; return end
+        if tries > 30 then
+            timer.cancelled = true
+            kit.log("title: the Mods screen did not open; layout removed")
+            pcall(function() lib:RemoveLayoutWidget({ TagName = FName(tag) }) end)
+            return
+        end
         for _, w in ipairs(FindAllOf(kit.menu.HOST_CLASS) or {}) do
             if valid(w) and not w:GetFullName():find(kit.menu.HOST_PARENT, 1, true) then
                 local ok, active = pcall(function() return w:IsActivated() end)
@@ -69,7 +76,7 @@ end
 
 local function hook()
     if state.hooked then return end
-    if not (kit.game.class(TITLE) and kit.game.class(TITLE_ENTRY)) then return end
+    if not (kit.game.loadedClass(TITLE) and kit.game.loadedClass(TITLE_ENTRY)) then return end
     state.hooked = true
     local ok, err = pcall(function()
         RegisterHook(TITLE .. ":SetDisplayEntryList", function(ctx, list)
@@ -80,7 +87,9 @@ local function hook()
             state.entry = nil
             kit.after(50, function() addEntry(layout, types) end, "title entry", { loading = true })
         end)
-        -- the click handler gets the button event, not the entry: the chosen one has the focus (or the mouse)
+        -- the click handler gets the button event, not the entry: the chosen one has the focus (a mouse click
+        -- focuses it too). Not the mouse merely over it: the cursor resting on Mods while Continue was chosen with
+        -- the keyboard or a controller opened the Mods screen over the game starting the save, and took the input.
         RegisterHook(TITLE .. ":HandleClickedEntry", function(ctx)
             local mine
             for _, e in ipairs(entries(ctx:get())) do
@@ -91,7 +100,6 @@ local function hook()
                 local hit = false
                 pcall(function() hit = hit or w:HasAnyUserFocus() end)
                 pcall(function() hit = hit or w:HasFocusedDescendants() end)
-                pcall(function() hit = hit or w:IsHovered() end)
                 return hit
             end
             local chosen = active(mine)

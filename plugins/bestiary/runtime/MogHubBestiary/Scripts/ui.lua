@@ -7,6 +7,7 @@ local store = require("store")
 local tracker = require("tracker")
 local data = require("bestiary_data")
 local worldmap = require("worldmap_data")
+local travel = require("travel")
 local libra = require("libra")
 
 local M = {}
@@ -35,15 +36,34 @@ local VALUE_W = DETAIL_W - SPRITE - 24 - LABEL_W - 10 - 2 * PANEL_PAD   -- detai
 local AREAS_H = 110                -- locations list height; scrolls beyond that
 -- the world map on an area's page, drawn like the game's map screen (the technique and the positions in
 -- worldmap_data.lua are from FFR Bestiary 0.1.6 by Law19902, MIT)
-local MAP_H = 420                  -- under the area's counts, the panel's full width
-local MAP_INSET = 12               -- clear of the info frame's border, each side
-local MAP_WORLD_FILL = 0.8         -- the world's height in it (the game's map screen leaves sea all round)
-local MAP_MARKER = 36              -- the area's marker (bigger ones reached the next island)
-local MAP_MARKER_TEX = "/Game/UI/Textures/menu/T_WldMapCursor_Focus.T_WldMapCursor_Focus"   -- the world map's cursor
--- the game's map screen (WBP_WldMapBG / WBP_WldMapLayout): its sea, vignette and frame
+local MAP_H = 490                  -- under the area's counts, in the room the four lines above leave
+local MAP_W = math.floor(MAP_H * 16 / 9)   -- the map art's shape (its sea is 1920 x 1080), centred
+local MAP_WORLD_FILL = 0.92        -- the world's height in it (a little sea all round, under the vignette)
+-- the game's map screen (WBP_WldMapBG): its sea and vignette. Not its ornamental frame: a thin line instead, and the
+-- panel's own frame round it
 local MAP_LAYERS = { { tex = "/Game/UI/Textures/MapCapture/Wld/T_Wld_ocean.T_Wld_ocean", z = -20 },
-                     { tex = "/Game/UI/Textures/Menu/T_Menu_Map_Vignette.T_Menu_Map_Vignette", z = 50 },
-                     { tex = "/Game/UI/Textures/MapCapture/Wld/T_Wld_frame.T_Wld_frame", z = 60 } }
+                     { tex = "/Game/UI/Textures/Menu/T_Menu_Map_Vignette.T_Menu_Map_Vignette", z = 50 } }
+local MAP_LINE, MAP_LINE_COLOR = 2, { R = 0.72, G = 0.8, B = 0.95, A = 0.55 }
+-- The area's marker: the field map's icon for its kind of place (data/travel_data.lua kinds: the eMapType of its maps;
+-- the world map's island areas have a star), an arrow over it, both in the colour of its Fast Travel line.
+local MAP_MARKER, MAP_ARROW = 40, 22
+local ICONS = "/Game/UI/Textures/Icon/Map/"
+local MARKER_TEX = { Town = ICONS .. "ICON_MAP_L_Town.ICON_MAP_L_Town",
+                     Dungeon = ICONS .. "ICON_MAP_L_Cave.ICON_MAP_L_Cave",
+                     Underworld = ICONS .. "ICON_MAP_L_Cave.ICON_MAP_L_Cave",
+                     VisionSmallShrine = ICONS .. "ICON_MAP_L_Shrine.ICON_MAP_L_Shrine",
+                     Field = "/Game/UI/Textures/menu/T_SymbolArrow00.T_SymbolArrow00" }
+local MARKER_ARROW_TEX = "/Game/UI/Textures/menu/ICON_MAP_CursorPiece.ICON_MAP_CursorPiece"   -- points up: turned over
+-- An enemy's page: a small map beside its Locations list, a circle (the world map's own cursor) on each area listed
+-- there by name. Areas still ??? in the list get none, so the map gives nothing away.
+local MINI_H = 150
+local MINI_W = math.floor(MINI_H * 16 / 9)
+local MINI_GAP = 16
+local RING, RING_TEX = 24, "/Game/UI/Textures/menu/T_WldMapCursor_Focus.T_WldMapCursor_Focus"
+local RING_COLOR = { R = 1, G = 0.84, B = 0.3, A = 1 }
+-- travel here / you are here / not visited yet / anything else (no fast travel to it, or none from here now)
+local MARKER_COLOR = { go = { R = 0.35, G = 0.95, B = 0.45, A = 1 }, here = { R = 1, G = 0.85, B = 0.25, A = 1 },
+                       unvisited = { R = 1, G = 0.35, B = 0.3, A = 1 }, other = { R = 0.7, G = 0.72, B = 0.78, A = 1 } }
 -- affinity groups shown in the scan panel (DA_BtlLibra styles Weak/Halved/Invalid/Absorb), eResistance values
 -- (labels: the scan panel's own keys have no text, so the battle's damage words: Weak / Resisted / Immune / Absorbed)
 local RESIST_ROWS = { { key = "UIBtlProp_Weakness", value = 1 }, { key = "UIBtlProp_Halved", value = 2 },
@@ -88,6 +108,36 @@ local function attach()
     -- kit.list sizes the window and list and collapses Help's own title (the page header already says BESTIARY)
     return kit.list.attach(host, u, { window = { WINDOW_W, WINDOW_H }, list = { LIST_W, LIST_H }, lead = FACE,
                                       row = rowWidgets, release = releaseRow })
+end
+
+-- A world map w x h like the game's map screen: its sea filling the space, the world's island tiles centred in it
+-- (as many as the story shows: showTiles), its vignette on top and a thin line round it. Textures load two a tick
+-- (loadQueuedTile), for every map of the page.
+local function newMap(w, h)
+    local m = { w = w, h = h, tiles = {}, show = {}, queue = {}, queued = {} }   -- queue: jobs in order; queued: tiles in it
+    local wh = math.floor(h * MAP_WORLD_FILL)
+    local ww = math.floor(wh * worldmap.aspect)
+    m.world = { x = (w - ww) / 2, y = (h - wh) / 2, w = ww, h = wh }
+    m.box = sized(nil, w, h)
+    pcall(function() m.box:SetClipping(1) end)           -- tiles reaching past the map's edge are cut off
+    m.canvas = new("CanvasPanel")
+    m.box:SetContent(m.canvas)
+    for _, l in ipairs(MAP_LAYERS) do
+        local img = new("Image")
+        img:SetVisibility(1)                              -- until its texture is in
+        local slot = m.canvas:AddChildToCanvas(img)
+        slot:SetPosition({ X = 0, Y = 0 }); slot:SetSize({ X = w, Y = h }); slot:SetZOrder(l.z)
+        m.queue[#m.queue + 1] = { img = img, tex = l.tex }
+    end
+    for _, edge in ipairs({ { 0, 0, w, MAP_LINE }, { 0, h - MAP_LINE, w, MAP_LINE },
+                            { 0, 0, MAP_LINE, h }, { w - MAP_LINE, 0, MAP_LINE, h } }) do
+        local line = new("Image")
+        line:SetColorAndOpacity(MAP_LINE_COLOR)
+        local slot = m.canvas:AddChildToCanvas(line)
+        slot:SetPosition({ X = edge[1], Y = edge[2] }); slot:SetSize({ X = edge[3], Y = edge[4] }); slot:SetZOrder(60)
+    end
+    ui.maps[#ui.maps + 1] = m
+    return m
 end
 
 local function build()
@@ -143,34 +193,25 @@ local function build()
     ui.areaEnc = row(areaInfo, ENCOUNTERED())
     ui.areaScan = row(areaInfo, SCANNED())
     ui.areaLevel = row(areaInfo, mod:t("enemyLevel", "Enemy level"))
+    ui.areaTravel = row(areaInfo, travel.name() or mod:t("fastTravel", "Fast Travel"))
     ui.areaInfo = panel(areaInfo)
     detail:AddChildToVerticalBox(sized(ui.areaInfo, DETAIL_W / 2, nil))
-    -- the world map under them: its sea filling the space, the world's island tiles centred in it, its vignette and
-    -- frame on top, and a marker. Textures load one a tick (loadQueuedTile).
-    ui.mapW, ui.mapH = DETAIL_W - 2 * MAP_INSET, MAP_H
-    local wh = math.floor(MAP_H * MAP_WORLD_FILL)
-    local ww = math.floor(wh * worldmap.aspect)
-    ui.world = { x = (ui.mapW - ww) / 2, y = (ui.mapH - wh) / 2, w = ww, h = wh }
-    ui.map = sized(nil, ui.mapW, ui.mapH)
-    pcall(function() ui.map:SetClipping(1) end)          -- tiles reaching past the map's edge are cut off
-    ui.mapCanvas = new("CanvasPanel")
-    ui.map:SetContent(ui.mapCanvas)
-    ui.mapTiles, ui.mapShow, ui.mapQueue, ui.mapQueued = {}, {}, {}, {}   -- queue: jobs in order; queued: tiles in it
-    for _, l in ipairs(MAP_LAYERS) do
-        local img = new("Image")
-        img:SetVisibility(1)                              -- until its texture is in
-        local slot = ui.mapCanvas:AddChildToCanvas(img)
-        slot:SetPosition({ X = 0, Y = 0 }); slot:SetSize({ X = ui.mapW, Y = ui.mapH }); slot:SetZOrder(l.z)
-        ui.mapQueue[#ui.mapQueue + 1] = { img = img, tex = l.tex }
-    end
-    ui.mapMarker = new("Image")
-    local markerTex = game.load(MAP_MARKER_TEX)
-    if markerTex then ui.mapMarker:SetBrushFromTexture(markerTex, false)
-    else ui.mapMarker:SetColorAndOpacity({ R = 1, G = 0.3, B = 0.2, A = 1 }) end
-    ui.mapMarkerSlot = ui.mapCanvas:AddChildToCanvas(ui.mapMarker)
+    -- the world map under them, with the area's marker
+    ui.maps = {}
+    ui.areaMap = newMap(MAP_W, MAP_H)
+    ui.map = ui.areaMap.box
+    ui.mapMarker, ui.mapArrow = new("Image"), new("Image")
+    ui.mapMarkerSlot = ui.areaMap.canvas:AddChildToCanvas(ui.mapMarker)
     ui.mapMarkerSlot:SetSize({ X = MAP_MARKER, Y = MAP_MARKER })
     ui.mapMarkerSlot:SetZOrder(100)
-    detail:AddChildToVerticalBox(ui.map):SetPadding({ Left = MAP_INSET, Top = 12, Right = 0, Bottom = 0 })
+    local arrowTex = game.load(MARKER_ARROW_TEX)
+    if arrowTex then ui.mapArrow:SetBrushFromTexture(arrowTex, false) end
+    ui.mapArrow:SetRenderTransformPivot({ X = 0.5, Y = 0.5 })
+    ui.mapArrow:SetRenderTransformAngle(180)
+    ui.mapArrowSlot = ui.areaMap.canvas:AddChildToCanvas(ui.mapArrow)
+    ui.mapArrowSlot:SetSize({ X = MAP_ARROW, Y = MAP_ARROW })
+    ui.mapArrowSlot:SetZOrder(100)
+    detail:AddChildToVerticalBox(ui.map):SetPadding({ Left = math.floor((DETAIL_W - MAP_W) / 2), Top = 12, Right = 0, Bottom = 0 })
 
     local top = new("HorizontalBox")
     ui.top = top
@@ -252,12 +293,17 @@ local function build()
     detail:AddChildToVerticalBox(ui.scan)
 
     detail:AddChildToVerticalBox(spacer(6))
-    local where = new("VerticalBox")
-    where:AddChildToVerticalBox(heading(mod:t("locations", "Locations")))   -- the game has no string for this
+    local where = new("HorizontalBox")
+    local list = new("VerticalBox")
+    list:AddChildToVerticalBox(heading(mod:t("locations", "Locations")))   -- the game has no string for this
     ui.areasScroll = new("ScrollBox")
-    where:AddChildToVerticalBox(sized(ui.areasScroll, nil, AREAS_H))
+    list:AddChildToVerticalBox(sized(ui.areasScroll, nil, AREAS_H))
     ui.areas = new("VerticalBox")
     ui.areasScroll:AddChild(ui.areas)
+    where:AddChildToHorizontalBox(sized(list, DETAIL_W - 2 * PANEL_PAD - MINI_W - MINI_GAP, nil))
+    ui.enemyMap = newMap(MINI_W, MINI_H)
+    ui.rings = {}                                         -- circles on it, made as an enemy needs more
+    where:AddChildToHorizontalBox(ui.enemyMap.box):SetPadding({ Left = MINI_GAP, Top = 0, Right = 0, Bottom = 0 })
     ui.areasHead = panel(where)                           -- shown / hidden as a whole
     kit.trace("bestiary build: done")
     detail:AddChildToVerticalBox(ui.areasHead)
@@ -456,12 +502,12 @@ end
 
 -- world map ---------------------------------------------------------------------------------------------------------
 -- `w` on the map over u0..u1, v0..v1 (map coordinates, 0..1 over the whole world)
-local function mapX(x) return ui.world.x + x * ui.world.w end
-local function mapY(y) return ui.world.y + y * ui.world.h end
-local function placeOnMap(w, u0, v0, u1, v1, z)
-    local slot = ui.mapCanvas:AddChildToCanvas(w)
-    slot:SetPosition({ X = mapX(u0), Y = mapY(v0) })
-    slot:SetSize({ X = mapX(u1) - mapX(u0), Y = mapY(v1) - mapY(v0) })
+local function mapX(m, x) return m.world.x + x * m.world.w end
+local function mapY(m, y) return m.world.y + y * m.world.h end
+local function placeOnMap(m, w, u0, v0, u1, v1, z)
+    local slot = m.canvas:AddChildToCanvas(w)
+    slot:SetPosition({ X = mapX(m, u0), Y = mapY(m, v0) })
+    slot:SetSize({ X = mapX(m, u1) - mapX(m, u0), Y = mapY(m, v1) - mapY(m, v0) })
     slot:SetZOrder(z or 0)
     return slot
 end
@@ -478,53 +524,136 @@ local function tileWanted(t, progress)
         or (c.op == "==" and progress == c.progress)
 end
 
--- the islands as the game's own map shows them at this point of the story (tiles not loaded yet are queued)
-local function showTiles()
+-- the islands as the game's own map shows them at this point of the story, on map `m` or on every map of the page
+-- (tiles not loaded yet are queued)
+local function showTiles(m)
+    if not m then for _, each in ipairs(ui.maps) do showTiles(each) end; return end
     local progress = storyProgress()
     for i, t in ipairs(worldmap.tiles) do
         local want = tileWanted(t, progress)
-        ui.mapShow[i] = want
-        if ui.mapTiles[i] then ui.mapTiles[i]:SetVisibility(want and 4 or 1)
-        elseif want and not ui.mapQueued[i] then ui.mapQueued[i] = true; ui.mapQueue[#ui.mapQueue + 1] = i end
+        m.show[i] = want
+        if m.tiles[i] then m.tiles[i]:SetVisibility(want and 4 or 1)
+        elseif want and not m.queued[i] then m.queued[i] = true; m.queue[#m.queue + 1] = i end
     end
 end
 
--- the map for an area: the islands, and the area's marker
-local function showMap(area)
-    showTiles()
+-- the map for an area: the islands, and the area's marker in the colour of `status` (a MARKER_COLOR key)
+local markerTex = {}
+local function showMap(area, status)
+    showTiles(ui.areaMap)
     local p = worldmap.areas[area]
-    ui.mapMarker:SetVisibility(p and 4 or 1)
-    if p then ui.mapMarkerSlot:SetPosition({ X = mapX(p.u) - MAP_MARKER / 2, Y = mapY(p.v) - MAP_MARKER / 2 }) end
+    local path = MARKER_TEX[travel.kind(area) or "Field"] or MARKER_TEX.Field
+    if p and not valid(markerTex[path]) then markerTex[path] = game.load(path) end
+    local tex = p and markerTex[path]
+    ui.mapMarker:SetVisibility(tex and 4 or 1)
+    ui.mapArrow:SetVisibility(tex and 4 or 1)
+    if not tex then return end
+    local color = MARKER_COLOR[status] or MARKER_COLOR.other
+    ui.mapMarker:SetBrushFromTexture(tex, false)
+    ui.mapMarker:SetColorAndOpacity(color)
+    ui.mapArrow:SetColorAndOpacity(color)
+    local x, y = mapX(ui.areaMap, p.u), mapY(ui.areaMap, p.v)
+    ui.mapMarkerSlot:SetPosition({ X = x - MAP_MARKER / 2, Y = y - MAP_MARKER / 2 })
+    ui.mapArrowSlot:SetPosition({ X = x - MAP_ARROW / 2, Y = y - MAP_MARKER / 2 - MAP_ARROW })
 end
 
 -- Map textures (the tiles are 1024 x 1024), two a tick, from the moment the page is built: the map is usually
 -- complete before the cursor reaches an area. They load once: the page (map included) is kept between visits, and
 -- a texture still in memory is found at once.
 local function loadQueuedTile()
-    if not ui or not ui.mapQueue then return end
-    for _ = 1, 2 do
-        local i = table.remove(ui.mapQueue, 1)
-        if not i then return end
-        if type(i) == "table" then                        -- a full-size layer (sea, vignette, frame)
-            local tex = game.load(i.tex)
-            if tex then i.img:SetBrushFromTexture(tex, false); i.img:SetVisibility(4) end
-        else
-            local t = worldmap.tiles[i]
-            local tex = game.load(t.tex)
-            if tex then
-                local img = new("Image")
-                img:SetBrushFromTexture(tex, false)
-                placeOnMap(img, t.rect[1], t.rect[2], t.rect[3], t.rect[4], t.z)
-                img:SetVisibility(ui.mapShow[i] and 4 or 1)
-                ui.mapTiles[i] = img
+    if not ui or not ui.maps then return end
+    local n = 0
+    for _, m in ipairs(ui.maps) do
+        while n < 2 do
+            local i = table.remove(m.queue, 1)
+            if not i then break end
+            n = n + 1
+            if type(i) == "table" then                    -- a full-size layer (sea, vignette)
+                local tex = game.load(i.tex)
+                if tex then i.img:SetBrushFromTexture(tex, false); i.img:SetVisibility(4) end
+            else
+                local t = worldmap.tiles[i]
+                local tex = game.load(t.tex)
+                if tex then
+                    local img = new("Image")
+                    img:SetBrushFromTexture(tex, false)
+                    placeOnMap(m, img, t.rect[1], t.rect[2], t.rect[3], t.rect[4], t.z)
+                    img:SetVisibility(m.show[i] and 4 or 1)
+                    m.tiles[i] = img
+                end
             end
         end
     end
 end
 
+-- an enemy's areas on its mini map: a circle on each of `areas` that has a place on the world map
+local ringTex
+local function showRings(areas)
+    local m = ui.enemyMap
+    showTiles(m)
+    if not valid(ringTex) then ringTex = game.load(RING_TEX) end
+    local n = 0
+    for _, a in ipairs(areas) do
+        local p = worldmap.areas[a]
+        if p and ringTex then
+            n = n + 1
+            local r = ui.rings[n]
+            if not r then
+                local img = new("Image")
+                img:SetBrushFromTexture(ringTex, false)
+                img:SetColorAndOpacity(RING_COLOR)
+                local slot = m.canvas:AddChildToCanvas(img)
+                slot:SetSize({ X = RING, Y = RING }); slot:SetZOrder(100)
+                r = { img = img, slot = slot }
+                ui.rings[n] = r
+            end
+            r.slot:SetPosition({ X = mapX(m, p.u) - RING / 2, Y = mapY(m, p.v) - RING / 2 })
+            r.img:SetVisibility(4)
+        end
+    end
+    for i = n + 1, #ui.rings do ui.rings[i].img:SetVisibility(1) end
+end
+
 -- the level range of an area's random encounters, bosses left out: { min, max }, or nil (towns, and caves whose
 -- enemies are placed on the map). From the data file (tools/area_levels.py).
 local function levelRange(area) return data.areaLevel and data.areaLevel[area] end
+
+-- "Fast Travel" on an area's page: R3 / T travels there (the game asks first), or why it can't
+local TRAVEL_KEYS = { "Gamepad_RightThumbstick", "T" }   -- R3 / T (Y opens the main menu's Map)
+local TRAVEL_WHY = {
+    locked = function() return mod:t("travelLocked", "Not unlocked yet") end,
+    dungeon = function() return mod:t("travelDungeon", "Not from inside a dungeon") end,
+    unvisited = function() return mod:t("travelUnvisited", "Not visited yet") end,
+    here = function() return mod:t("travelHere", "You are here") end,
+}
+local trip = { map = nil, area = nil, down = false }
+local function showTravel(area)
+    trip.map, trip.area = nil, area
+    local map, why = travel.target(area)
+    kit.trace("travel: %s -> %s (%s)", tostring(area), tostring(map), tostring(why))
+    local line = ui.areaTravel:GetParent():GetParent()   -- the value's size box, then its line
+    if map then
+        trip.map = map
+        set(ui.areaTravel, mod:t("travelHint", "R3 / T: travel here"))
+    elseif TRAVEL_WHY[why] then
+        set(ui.areaTravel, TRAVEL_WHY[why](), GREY)
+    end
+    pcall(function() line:SetVisibility((map or TRAVEL_WHY[why]) and 4 or 1) end)
+    return map and "go" or why
+end
+
+-- R3 / T on an area that can be reached: the game's world map opens on it with its own Fast Travel question
+local function pollTravel()
+    local down = false
+    for _, k in ipairs(TRAVEL_KEYS) do if kit.game.keyDown(k) then down = true end end
+    local pressed = down and not trip.down
+    trip.down = down
+    if not (pressed and trip.map) then return end
+    local map = trip.map
+    trip.map = nil
+    log("travel to map " .. tostring(map) .. " (" .. tostring(trip.area) .. ")")
+    travel.go(map)
+end
 
 local function showHeader(r)
     setSprite(nil)
@@ -537,10 +666,11 @@ local function showHeader(r)
     set(ui.areaScan, r.scanned .. " / " .. r.total)
     local lv = levelRange(r.header)
     set(ui.areaLevel, lv and (lv[1] == lv[2] and tostring(lv[1]) or (lv[1] .. " - " .. lv[2])) or "-")
-    pcall(function() ui.areaLevel:GetParent():SetVisibility(M.areaLevels and 4 or 1) end)
+    pcall(function() ui.areaLevel:GetParent():GetParent():SetVisibility(M.areaLevels and 4 or 1) end)
     ui.areasHead:SetVisibility(1)
     ui.areas:ClearChildren()
-    local ok, err = pcall(showMap, r.header)
+    local _, status = pcall(showTravel, r.header)
+    local ok, err = pcall(showMap, r.header, status)
     if not ok then log("map: " .. tostring(err)) end
 end
 
@@ -557,11 +687,12 @@ end
 local function showLocations(e, id)
     ui.areasHead:SetVisibility(4)
     ui.areas:ClearChildren()
-    local seen, shownAny = seenAreasOf(e), false
+    local seen, shownAny, ringed = seenAreasOf(e), false, {}
     for _, a in ipairs(e.areas) do
         local named = data.areas[a] and data.areas[a].table
         if named then
             local k = seen[a]
+            if k then ringed[#ringed + 1] = a end
             ui.areas:AddChildToVerticalBox(text(k and areaName(a) or UNKNOWN, k and WHITE or DIM)):SetPadding({ Left = 14, Top = 2, Right = 0, Bottom = 2 })
             shownAny = true
         end
@@ -569,6 +700,8 @@ local function showLocations(e, id)
     if not shownAny then                                  -- only met in unnamed places (world-map events)
         ui.areas:AddChildToVerticalBox(text(game.libra("UI_Libra_Nodata") or "-", DIM)):SetPadding({ Left = 14, Top = 2, Right = 0, Bottom = 2 })
     end
+    local ok, err = pcall(showRings, ringed)
+    if not ok then log("enemy map: " .. tostring(err)) end
     setSprite(id)
 end
 
@@ -732,6 +865,7 @@ local function show(i, force)
     if not r or (shown == i and not force) then return end
     if shown ~= i then form = 1 end
     shown = i
+    trip.map = nil                                        -- travel belongs to the area page shown
     if r.header then showHeader(r) elseif r.known then showEntry(r.entry, r.met) else showUnknown() end
 end
 
@@ -941,6 +1075,7 @@ function M.close() host = nil end
 function M.poll()
     if not host or not ui then return end
     pcall(loadQueuedTile)
+    pcall(pollTravel)
     if pendingRefresh then local r = pendingRefresh; pendingRefresh = nil; pcall(refresh, r ~= true and r or shown) end
     if pendingConfirm then local r = pendingConfirm; pendingConfirm = nil; pcall(confirmed, r ~= true and r or nil) end
     if pendingForm then local f = pendingForm; pendingForm = nil; pcall(M.switchForm, f) end

@@ -57,7 +57,26 @@ end
 
 -- puts `content` in the window, with the list inside it where the screen wants: content must hold L.listBox
 -- (add it with L:takeList(parent) first)
-function List:setContent(content) self.slot:SetContent(content) end
+-- Another mod's page taken out of the window (FFR Bestiary's, in the same pooled Help layout) is kept in a hidden box
+-- inside ours. Left alone, nothing refers to it: the garbage collector frees it at the next save point or map change,
+-- FFR Bestiary puts the freed page back in the window, and the game crashes (in SetContent). Putting it back takes it
+-- out of the box by itself.
+local mine, hold = {}, nil  -- full names of the pages MogHub put in a window; the box, moved into each of them
+function List:setContent(content)
+    local prev
+    pcall(function() prev = self.slot:GetContent() end)
+    self.slot:SetContent(content)
+    local ok, err = pcall(function()
+        mine[content:GetFullName()] = true
+        if not valid(hold) then hold = self.u.new("VerticalBox"); hold:SetVisibility(1) end   -- Collapsed
+        content:AddChild(hold)
+        if valid(prev) and not mine[prev:GetFullName()] and prev:GetAddress() ~= self.listBox:GetAddress() then
+            kit.trace("list: another mod's page kept: %s", prev:GetFullName())
+            hold:AddChild(prev)
+        end
+    end)
+    if not ok then kit.trace("list: keeping the window's page: %s", tostring(err)) end
+end
 function List:takeList(parent, fill)
     local add = parent.AddChildToVerticalBox and "AddChildToVerticalBox" or "AddChildToHorizontalBox"
     local s = parent[add](parent, self.listBox)
@@ -159,7 +178,7 @@ local function base(u, w)
     -- the indent pads the button's own content (bar, background, text): the list resets the entry's outer padding
     -- whenever it reuses a row while scrolling
     local e = { right = u.new("HorizontalBox", tree), value = u.text("", nil, tree), indentSlot = overlay.Slot,
-                tree = tree, built = {}, custom = {}, overlay = overlay }
+                tree = tree, built = {}, custom = {}, overlay = overlay, widget = w, widgetName = w:GetFullName() }
     pcall(function() e.value:SetJustification(2) end)    -- right
     e.right:AddChildToHorizontalBox(e.value):SetVerticalAlignment(2)
     local s = overlay:AddChildToOverlay(e.right)
@@ -236,10 +255,19 @@ local function reclaim(e)
     end
 end
 
+-- The row widget is still the one the extras were made for. A trip to another map can free the list's row widgets:
+-- touching their old extras then crashed the game (UE4SS reads a freed widget before any pcall can help), and a new
+-- widget can come back at a freed one's address.
+local function alive(e)
+    local ok, same = pcall(function() return valid(e.widget) and e.widget:GetFullName() == e.widgetName end)
+    return ok and same
+end
+
 -- a screen closed: every row it used goes back to the game's own state
 function M.releaseAll()
-    for _, e in pairs(extras) do
-        if e.owner then
+    for key, e in pairs(extras) do
+        if not alive(e) then extras[key] = nil; kit.trace("list: a freed row forgotten")
+        elseif e.owner then
             if e.owner.release then pcall(e.owner.release, e) end
             for _, x in ipairs(e.custom) do pcall(function() x:SetVisibility(1) end) end
             restore(e)
@@ -268,7 +296,8 @@ end
 function List:extra(w)
     local key = w:GetAddress()
     local e = extras[key]
-    if not (e and valid(e.value)) then
+    if e and not (alive(e) and valid(e.value)) then extras[key], e = nil, nil end
+    if not e then
         kit.trace("list: extras for a new row widget")
         e = base(self.u, w)
         if not e then return nil end

@@ -179,18 +179,12 @@ local function findHost()
     end
 end
 
--- the main menu's open page: the top of its page stack (CPP_VM_MainMenu.SceneDataStack); nil when unreadable
+-- the main menu's open page (CPP_VM_MainMenu:GetCurrentScene), or nil. Not its page stack (SceneDataStack): UE4SS
+-- can't always read the stack's GameplayTags, and an unreadable stack let FFR Bestiary take MogHub's pages for its own
 local function currentScene()
     local tag
-    pcall(function()
-        for _, vm in ipairs(FindAllOf("CPP_VM_MainMenu") or {}) do
-            local stack = vm.SceneDataStack
-            for i = #stack, 1, -1 do                      -- the newest page that isn't the menu's root
-                local t = stack[i].SceneTag.TagName:ToString()
-                if t ~= "UI.MainMenu.Scene.Root" then tag = t; return end
-            end
-        end
-    end)
+    pcall(function() tag = FindFirstOf("CPP_VM_MainMenu"):GetCurrentScene().TagName:ToString() end)
+    if tag == "" or tag == "None" then tag = nil end
     return tag
 end
 
@@ -267,6 +261,7 @@ function M.poll()
         if not shown(tag) then tag = M.HUB_TAG end          -- an entry left over from before its plugin was switched off
         local screen = M.screens[tag] or M.screens[M.HUB_TAG]
         if not screen then return end
+        kit.trace("open %s: widgets", screen.title)
         local o = { host = host, name = name, screen = screen, ui = kit.ui.on(host) }
         M.open = o
         -- Left / Right belong to the screen while it is open (kit.list.takeKeys; given back in close())
@@ -296,7 +291,7 @@ end
 local hooked = false
 local function installHooks()
     if hooked then return end
-    if not kit.game.class(ENTRY) then return end
+    if not kit.game.loadedClass(ENTRY) then return end
     hooked = true
     pcall(function()
         RegisterHook("/Game/UI/MainMenu/Root/Widget/WBP_MainMenuRootEntry.WBP_MainMenuRootEntry_C:BP_OnClicked", function(ctx)
